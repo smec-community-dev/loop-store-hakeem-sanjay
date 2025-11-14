@@ -1,0 +1,19 @@
+{
+  "name": "adminprofile",
+  "version": "1.0.0",
+  "main": "home.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon home.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^5.1.0",
+    "hbs": "^4.2.0",
+    "mongoose": "^8.19.3",
+    "nodemon": "^3.1.11"
+  }
+}

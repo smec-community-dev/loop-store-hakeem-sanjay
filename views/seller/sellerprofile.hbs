@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard - ShopHub</title>
+    <link rel="stylesheet" href="/sellerprofile.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-seller">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="index.html" class="logo">ShopHub <span class="badge-seller">Seller</span></a>
+            </div>
+            <ul class="nav-links">
+                <li><span class="seller-welcome">Welcome, TechStore Pro</span></li>
+                <li><a href="login.html" class="btn btn-secondary btn-sm">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="seller-section">
+        <div class="seller-container">
+            <!-- Sidebar -->
+            <aside class="seller-sidebar">
+                <div class="seller-profile-card">
+                    <div class="seller-avatar">TP</div>
+                    <h3>TechStore Pro</h3>
+                    <p class="seller-rating">⭐ 4.8/5</p>
+                    <p class="seller-since">Member since Jan 2024</p>
+                </div>
+
+                <nav class="seller-nav">
+                    <ul>
+                        <li><a href="#dashboard" class="seller-link active">
+                                <span class="icon">📊</span> Dashboard
+                            </a></li>
+                        <li><a href="#products" class="seller-link">
+                                <span class="icon">📦</span> Products
+                            </a></li>
+                        <li><a href="#orders" class="seller-link">
+                                <span class="icon">🛒</span> Orders
+                            </a></li>
+                        <!-- <li><a href="#analytics" class="seller-link">
+                            <span class="icon">📈</span> Analytics
+                        </a></li>
+                        <li><a href="#reviews" class="seller-link">
+                            <span class="icon">⭐</span> Reviews
+                        </a></li>
+                        <li><a href="#settings" class="seller-link">
+                            <span class="icon">⚙️</span> Settings
+                        </a></li> -->
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <section class="seller-content">
+                <!-- Dashboard -->
+                <div class="seller-tab active" id="dashboard">
+                    <h2>Seller Dashboard</h2>
+
+                    <div class="seller-stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">📦</div>
+                            <div class="stat-info">
+                                <h3>Active Products</h3>
+                                <p class="stat-number">2,450</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">🛒</div>
+                            <div class="stat-info">
+                                <h3>Orders (This Month)</h3>
+                                <p class="stat-number">1,240</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-info">
+                                <h3>Revenue (This Month)</h3>
+                                <p class="stat-number">$24,560</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">⭐</div>
+                            <div class="stat-info">
+                                <h3>Average Rating</h3>
+                                <p class="stat-number">4.8/5</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="dashboard-grid">
+                        <div class="chart-card">
+                            <h3>Sales This Month</h3>
+                            <div class="chart-placeholder">📈 Sales Chart</div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3>Top Products</h3>
+                            <div class="top-products">
+                                <div class="product-item">
+                                    <span>Laptop Pro 15"</span>
+                                    <span class="product-sales">680 sold</span>
+                                </div>
+                                <div class="product-item">
+                                    <span>USB-C Cable</span>
+                                    <span class="product-sales">450 sold</span>
+                                </div>
+                                <div class="product-item">
+                                    <span>Phone Charger</span>
+                                    <span class="product-sales">380 sold</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+
+                <!-- 🛍️ Products Management -->
+<div class="seller-tab" id="products">
+  <div class="section-header d-flex justify-content-between align-items-center">
+    <h2>Manage Products</h2>
+    <!-- When clicked, opens modal -->
+    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
+      ➕ Add Product
+    </button>
+  </div>
+
+  <!-- Product Table -->
+  <table class="seller-table mt-3">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Product ID</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Sales</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Example Row -->
+      <tr>
+        <td><img src="/uploads/laptop.png" width="60" height="60" style="border-radius:8px;" alt="Product"></td>
+        <td>#P001</td>
+        <td>Laptop Pro 15"</td>
+        <td>$1,299</td>
+        <td>85</td>
+        <td>680</td>
+        <td><span class="status active">Active</span></td>
+        <td>
+          <button class="link">Edit</button>
+          <button class="link">Stats</button>
+          <button class="link text-danger">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 🧾 Modal for Add Product -->
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg">
+
+      <form action="/seller/prfile" method="POST" enctype="multipart/form-data">
+
+        <!-- HEADER -->
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- BODY -->
+        <div class="modal-body">
+
+          <!-- Product Name -->
+          <div class="mb-3">
+            <label class="form-label">Product Name</label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3" required></textarea>
+          </div>
+
+          <!-- Price -->
+          <div class="mb-3">
+            <label class="form-label">Price ($)</label>
+            <input type="number" name="price" class="form-control" step="0.01" required>
+          </div>
+
+          <!-- Stock -->
+          <div class="mb-3">
+            <label class="form-label">Stock Quantity</label>
+            <input type="number" name="stock" class="form-control" required>
+          </div>
+
+          <!-- Category -->
+          <div class="mb-3">
+            <label class="form-label">Category</label>
+           <select name="category" class="form-control" required>
+
+    <!-- Electronics -->
+    <option value="electronics">Electronics</option>
+    <option value="mobiles">Mobiles</option>
+    <option value="laptops">Laptops</option>
+    <option value="accessories">Accessories</option>
+    <option value="audio">Headphones & Audio</option>
+    <option value="smartwatch">Smart Watches</option>
+
+    <!-- Fashion -->
+    <option value="mens-fashion">Men's Fashion</option>
+    <option value="womens-fashion">Women's Fashion</option>
+    <option value="footwear">Footwear</option>
+    <option value="watches">Watches</option>
+
+    <!-- Home & Kitchen -->
+    {{!-- <option value="home-appliances">Home Appliances</option>
+    <option value="kitchen">Kitchen Items</option>
+    <option value="furniture">Furniture</option>
+    <option value="decor">Home Decor</option> --}}
+
+    <!-- Beauty -->
+    {{!-- <option value="beauty">Beauty & Personal Care</option>
+    <option value="skincare">Skin Care</option>
+    <option value="haircare">Hair Care</option> --}}
+
+
+    <!-- Others -->
+    <option value="toys">Toys</option>
+    <option value="baby">Baby Products</option>
+    <option value="stationary">Stationery</option>
+    <option value="automotive">Automotive</option>
+</select>
+
+          </div>
+
+          <!-- Multi Image Upload -->
+          <div class="mb-3">
+            <label class="form-label">Upload Product Images</label>
+            <input type="file" name="productImages" class="form-control" accept="image/*" multiple required>
+          </div>
+
+          <!-- Image Preview -->
+          <div id="imagePreviewContainer" class="d-flex gap-2 flex-wrap"></div>
+
+          <!-- Specifications -->
+          <div class="mb-3">
+            <label class="form-label">Specifications (optional)</label>
+
+            <div id="specificationsContainer" name="Specifications">"djfkdj"slkdjksjks</div>
+
+            <button type="button" class="btn btn-sm btn-primary mt-2" id="addSpecBtn">
+              ➕ Add Specification
+            </button>
+          </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Product</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+
+                <!-- Orders -->
+                <div class="seller-tab" id="orders">
+                    <div class="section-header">
+                        <h2>Recent Orders</h2>
+                    </div>
+
+                    <div class="orders-list">
+                        <div class="order-card">
+                            <div class="order-header">
+                                <h3>Order #SO-2025-0541</h3>
+                                <span class="order-status status-shipped">Shipped</span>
+                            </div>
+                            <div class="order-details">
+                                <p><strong>Customer:</strong> Sarah Johnson</p>
+                                <p><strong>Items:</strong> Laptop Pro 15" x1</p>
+                                <p><strong>Total:</strong> $1,299.00</p>
+                                <p><strong>Date:</strong> Jan 15, 2025</p>
+                            </div>
+                            <div class="order-actions">
+                                <button class="btn btn-secondary btn-sm">View Details</button>
+                                <button class="btn btn-primary btn-sm">Print Label</button>
+                            </div>
+                        </div>
+
+                        <div class="order-card">
+                            <div class="order-header">
+                                <h3>Order #SO-2025-0540</h3>
+                                <span class="order-status status-pending">Pending</span>
+                            </div>
+                            <div class="order-details">
+                                <p><strong>Customer:</strong> Mike Wilson</p>
+                                <p><strong>Items:</strong> Wireless Mouse x2, USB-C Cable x3</p>
+                                <p><strong>Total:</strong> $195.50</p>
+                                <p><strong>Date:</strong> Jan 14, 2025</p>
+                            </div>
+                            <div class="order-actions">
+                                <button class="btn btn-primary btn-sm">Mark as Shipped</button>
+                                <button class="btn btn-secondary btn-sm">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics -->
+                <div class="seller-tab" id="analytics">
+                    <h2>Sales Analytics</h2>
+                    <div class="analytics-grid">
+                        <div class="chart-card">
+                            <h3>Monthly Revenue</h3>
+                            <div class="chart-placeholder">📊 Revenue Chart</div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Product Performance</h3>
+                            <div class="chart-placeholder">🥧 Performance Chart</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews -->
+                <div class="seller-tab" id="reviews">
+                    <h2>Customer Reviews</h2>
+                    <div class="reviews-list">
+                        <div class="review-card">
+                            <div class="review-header">
+                                <h3>Excellent Product Quality</h3>
+                                <span class="review-rating">⭐⭐⭐⭐⭐ 5/5</span>
+                            </div>
+                            <p>The laptop is amazing! Fast delivery and excellent packaging.</p>
+                            <p class="review-author">- John Smith (Verified Purchase)</p>
+                            <p class="review-date">Jan 10, 2025</p>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="review-header">
+                                <h3>Great Value for Money</h3>
+                                <span class="review-rating">⭐⭐⭐⭐ 4/5</span>
+                            </div>
+                            <p>Good quality products at reasonable prices. Will buy again!</p>
+                            <p class="review-author">- Emma Davis (Verified Purchase)</p>
+                            <p class="review-date">Jan 8, 2025</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 ShopHub Seller. All rights reserved.</p>
+        </div>
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <script>
+        document.querySelectorAll('.seller-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.seller-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelectorAll('.seller-link').forEach(l => {
+                    l.classList.remove('active');
+                });
+                const target = link.getAttribute('href').substring(1);
+                document.getElementById(target).classList.add('active');
+                link.classList.add('active');
+            });
+        });
+
+// MULTI IMAGE PREVIEW
+document.querySelector('input[name="productImages"]').addEventListener("change", function (e) {
+    let container = document.getElementById("imagePreviewContainer");
+    container.innerHTML = "";
+
+    [...e.target.files].forEach(file => {
+        let reader = new FileReader();
+        reader.onload = ev => {
+            let img = document.createElement("img");
+            img.src = ev.target.result;
+            img.style.height = "100px";
+            img.style.borderRadius = "8px";
+            img.style.margin = "5px";
+            container.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    });
+});
+
+// ADD SPECIFICATION FIELDS
+document.getElementById("addSpecBtn").addEventListener("click", () => {
+    const container = document.getElementById("specificationsContainer");
+
+    const row = document.createElement("div");
+    row.classList.add("d-flex", "gap-2", "mb-2");
+
+    row.innerHTML = `
+        <input type="text" name="specKey[]" class="form-control" placeholder="Key (e.g. RAM)">
+        <input type="text" name="specValue[]" class="form-control" placeholder="Value (e.g. 16GB)">
+        <button type="button" class="btn btn-danger btn-sm removeSpec">X</button>
+    `;
+    
+    container.appendChild(row);
+
+    // Remove button
+    row.querySelector(".removeSpec").addEventListener("click", () => row.remove());
+});
+
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+const express=require('express')
+const hbs=require('hbs')
+const mongoose=require('mongoose')
+const sellerRouter=require('./Routes/sellerRouter')
+
+
+
+let app = express()
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.set('view engine', 'hbs')
+app.set('views', __dirname + '/views')
+app.use(express.static(__dirname + '/public'))
+
+
+mongoose
+  .connect("mongodb://localhost:27017/LiveProject")
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.log("❌ Connection error:", err));
+
+
+
+app.use('/seller', sellerRouter)
+
+
+
+app.listen(4000, (req, res) => {
+  
+    console.log("  the server 4000 is running http://localhost:4000 ");
+
+})
