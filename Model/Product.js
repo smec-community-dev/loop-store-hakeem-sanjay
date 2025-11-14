@@ -21,24 +21,24 @@ const productSchema = new mongoose.Schema({
     required: [true, "Please add a price"],
   }, images: [
     {
-      url: { type: String },
-      alt: { type: String, trim: true },//using this for multi image storing
+       type: String,  // storing image URL/path
+      required: true
     },
   ], category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
-    required: [true, "Please select a category"],
+   // required: [true, "Please select a category"],
   }, seller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true
+    //required: true
   },
   review: [
     {
       user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: [true, "Please select a user"],
+       // required: [true, "Please select a user"],
       },
       content: {
         type: String,
@@ -51,7 +51,7 @@ const productSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 
-module.exports =Products= mongoose.model("Product", productSchema);
+module.exports =mongoose.model("Product", productSchema);
 
 
 

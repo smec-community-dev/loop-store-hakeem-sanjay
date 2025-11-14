@@ -4,12 +4,16 @@ const bcrypt = require('bcrypt')
 let path=require('path')
 const mongoose = require('mongoose')
 const Seller = require('../Model/Seller')
-let Products= require('../Model/Product')
+let Product= require('../Model/Product')
+const upload=require('../multer/multer')
 
 const router = express.Router()
 
 
 router.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+
 
 router.get('/register', (req, res) => {
     res.render('seller/sellerregister')
@@ -42,6 +46,7 @@ router.get('/login', (req, res) => {
     res.render('seller/sellerlogin')
 })
 
+
 router.post('/login', async(req, res) => {
 
     let {email,password}= req.body;
@@ -69,24 +74,28 @@ router.get('/profile',(req,res)=>{
     res.render('seller/sellerprofile')
 })
 
-router.post('/profile',(req,res)=>{
- let {name,description,price,stock,category,productImages}=req.body;
+router.post('/profile', upload.array("productImages[]", 10),async(req,res)=>{
+ let {name,description,price,stock,category}=req.body;
+ console.log(req.files);
  console.log(req.body)
+  const images = req.files.map(file => "/uploads/products/" + file.filename);
 
+try{
+  await Product.create({
+    name:name,
+    description:description,
+    price:price,
+    stock:stock,
+    //category:category,
+    images:images
 
- //  Handle Specifications
-    let specs = {}; // map object
-
-    (req.body.specKey || []).forEach((key, index) => {
-      let value = req.body.specValue[index];
-
-      if (!key || !value) return;
-
-      if (!specs[key]) {
-        specs[key] = []; // create array for duplicate values
-      }
-      specs[key].push(value); // add new value
-    });
+  })
+  console.log('the data saved in database');
+ return res.redirect('seller/profile')
+  
+}catch(error){
+  console.error("data not saved in data base:"+error)
+}
 
 
 })

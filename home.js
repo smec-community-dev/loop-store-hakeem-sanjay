@@ -12,6 +12,7 @@ app.set('view engine', 'hbs')
 app.set('views', __dirname + '/views')
 app.use(express.static(__dirname + '/public'))
 
+app.use('/uploads', express.static('uploads'));
 
 mongoose
   .connect("mongodb://localhost:27017/LiveProject")
