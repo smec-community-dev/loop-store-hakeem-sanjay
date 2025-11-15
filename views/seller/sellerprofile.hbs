@@ -15,11 +15,11 @@
     <nav class="navbar navbar-seller">
         <div class="container">
             <div class="navbar-brand">
-                <a href="index.html" class="logo">ShopHub <span class="badge-seller">Seller</span></a>
+                <a href="#" class="logo">ShopHub <span class="badge-seller">Seller</span></a>
             </div>
             <ul class="nav-links">
                 <li><span class="seller-welcome">Welcome, TechStore Pro</span></li>
-                <li><a href="login.html" class="btn btn-secondary btn-sm">Logout</a></li>
+                <li><a href="/seller/logout" class="btn btn-secondary btn-sm">Logout</a></li>
             </ul>
         </div>
     </nav>
@@ -126,163 +126,175 @@
                 </div>
 
                 <!-- 🛍️ Products Management -->
-<div class="seller-tab" id="products">
-  <div class="section-header d-flex justify-content-between align-items-center">
-    <h2>Manage Products</h2>
-    <!-- When clicked, opens modal -->
-    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
-      ➕ Add Product
-    </button>
-  </div>
+                <div class="seller-tab" id="products">
+                    <div class="section-header d-flex justify-content-between align-items-center">
+                        <h2>Manage Products</h2>
+                        <!-- When clicked, opens modal -->
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                            ➕ Add Product
+                        </button>
+                    </div>
 
-  <!-- Product Table -->
-  <table class="seller-table mt-3">
-    <thead>
-      <tr>
-        <th>Image</th>
-        <th>Product ID</th>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Stock</th>
-        <th>Sales</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Example Row -->
-      <tr>
-        <td><img src="/uploads/laptop.png" width="60" height="60" style="border-radius:8px;" alt="Product"></td>
-        <td>#P001</td>
-        <td>Laptop Pro 15"</td>
-        <td>$1,299</td>
-        <td>85</td>
-        <td>680</td>
-        <td><span class="status active">Active</span></td>
-        <td>
-          <button class="link">Edit</button>
-          <button class="link">Stats</button>
-          <button class="link text-danger">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- 🧾 Modal for Add Product -->
-<!-- Add Product Modal -->
-<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content border-0 shadow-lg">
-
-      <form action="/seller/profile" method="POST" enctype="multipart/form-data">
-
-        <!-- HEADER -->
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-
-        <!-- BODY -->
-        <div class="modal-body">
-
-          <!-- Product Name -->
-          <div class="mb-3">
-            <label class="form-label">Product Name</label>
-            <input type="text" name="name" class="form-control" required>
-          </div>
-
-          <!-- Description -->
-          <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea name="description" class="form-control" rows="3" required></textarea>
-          </div>
-
-          <!-- Price -->
-          <div class="mb-3">
-            <label class="form-label">Price ($)</label>
-            <input type="number" name="price" class="form-control"  required>
-          </div>
-
-          <!-- Stock -->
-          <div class="mb-3">
-            <label class="form-label">Stock Quantity</label>
-            <input type="number" name="stock" class="form-control" required>
-          </div>
-
-          <!-- Category -->
-          <div class="mb-3">
-            <label class="form-label">Category</label>
-           <select name="category" class="form-control" required>
-
-    <!-- Electronics -->
-    <option value="electronics">Electronics</option>
-    <option value="mobiles">Mobiles</option>
-    <option value="laptops">Laptops</option>
-    <option value="accessories">Accessories</option>
-    <option value="audio">Headphones & Audio</option>
-    <option value="smartwatch">Smart Watches</option>
-
-    <!-- Fashion -->
-    <option value="mens-fashion">Men's Fashion</option>
-    <option value="womens-fashion">Women's Fashion</option>
-    <option value="footwear">Footwear</option>
-    <option value="watches">Watches</option>
-
-    <!-- Home & Kitchen -->
-    {{!-- <option value="home-appliances">Home Appliances</option>
-    <option value="kitchen">Kitchen Items</option>
-    <option value="furniture">Furniture</option>
-    <option value="decor">Home Decor</option> --}}
-
-    <!-- Beauty -->
-    {{!-- <option value="beauty">Beauty & Personal Care</option>
-    <option value="skincare">Skin Care</option>
-    <option value="haircare">Hair Care</option> --}}
+                    <!-- Product Table -->
+                    <table class="seller-table mt-3">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                {{!-- <th>Sales</th> --}}
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
 
-    <!-- Others -->
-    <option value="toys">Toys</option>
-    <option value="baby">Baby Products</option>
-    <option value="stationary">Stationery</option>
-    <option value="automotive">Automotive</option>
-</select>
 
-          </div>
+                            <!-- Example Row -->
+                            {{#each datas}}
+                            <tr>
+                                <td><img src={{this.images.[0]}} width="60" height="60" style="border-radius:8px;"
+                                        alt="Product"></td>
+                                {{!-- <td>#P001</td> --}}
+                                <td>{{this.name}}</td>
+                                <td>{{this.price}}₹</td>
+                                <td>{{this.stock}}</td>
+                                {{!-- <td>680</td> --}}
+                                <td><span class="status active">Active</span></td>
+                                <td>
+                                    <button class="link"> <a href="/seller/profile/update?id={{this._id}}"> Edit </a></button>
+                             <br>
+                                    <button class="link text-danger">Delete</button>
+                                </td>
+                            </tr>
+                            {{/each }}
 
-          <!-- Multi Image Upload -->
-          <div class="mb-3">
-            <label class="form-label">Upload Product Images</label>
-            <input type="file" name="productImages[]" class="form-control" accept="image/*" multiple required>
-          </div>
 
-          <!-- Image Preview -->
-          <div id="imagePreviewContainer" class="d-flex gap-2 flex-wrap"></div>
 
-          <!-- Specifications -->
-          <div class="mb-3">
-            <label class="form-label">Specifications (optional)</label>
+                        </tbody>
+                    </table>
+                </div>
 
-            <div id="specificationsContainer" name="Specifications"></div>
+                <!-- 🧾 Modal for Add Product -->
+                <!-- Add Product Modal -->
+                <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content border-0 shadow-lg">
 
-            <button type="button" class="btn btn-sm btn-primary mt-2" id="addSpecBtn">
-              ➕ Add Specification
-            </button>
-          </div>
+                            <form action="/seller/profile" method="POST" enctype="multipart/form-data">
 
-        </div>
+                                <!-- HEADER -->
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                                    <button type="button" class="btn-close btn-close-white"
+                                        data-bs-dismiss="modal"></button>
+                                </div>
 
-        <!-- FOOTER -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Product</button>
-        </div>
+                                <!-- BODY -->
+                                <div class="modal-body">
 
-      </form>
+                                    <!-- Product Name -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Product Name</label>
+                                        <input type="text" name="name" class="form-control" required>
+                                    </div>
 
-    </div>
-  </div>
-</div>
+                                    <!-- Description -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Description</label>
+                                        <textarea name="description" class="form-control" rows="3" required></textarea>
+                                    </div>
+
+                                    <!-- Price -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Price ($)</label>
+                                        <input type="number" name="price" class="form-control" required>
+                                    </div>
+
+                                    <!-- Stock -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Stock Quantity</label>
+                                        <input type="number" name="stock" class="form-control" required>
+                                    </div>
+
+                                    <!-- Category -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Category</label>
+                                        <select name="category" class="form-control" required>
+
+                                            <!-- Electronics -->
+                                            <option value="electronics">Electronics</option>
+                                            <option value="mobiles">Mobiles</option>
+                                            <option value="laptops">Laptops</option>
+                                            <option value="accessories">Accessories</option>
+                                            <option value="audio">Headphones & Audio</option>
+                                            <option value="smartwatch">Smart Watches</option>
+
+                                            <!-- Fashion -->
+                                            <option value="mens-fashion">Men's Fashion</option>
+                                            <option value="womens-fashion">Women's Fashion</option>
+                                            <option value="footwear">Footwear</option>
+                                            <option value="watches">Watches</option>
+
+                                            <!-- Home & Kitchen -->
+                                            {{!-- <option value="home-appliances">Home Appliances</option>
+                                            <option value="kitchen">Kitchen Items</option>
+                                            <option value="furniture">Furniture</option>
+                                            <option value="decor">Home Decor</option> --}}
+
+                                            <!-- Beauty -->
+                                            {{!-- <option value="beauty">Beauty & Personal Care</option>
+                                            <option value="skincare">Skin Care</option>
+                                            <option value="haircare">Hair Care</option> --}}
+
+
+                                            <!-- Others -->
+                                            <option value="toys">Toys</option>
+                                            <option value="baby">Baby Products</option>
+                                            <option value="stationary">Stationery</option>
+                                            <option value="automotive">Automotive</option>
+                                        </select>
+
+                                    </div>
+
+                                    <!-- Multi Image Upload -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Upload Product Images</label>
+                                        <input type="file" name="productImages[]" class="form-control" accept="image/*"
+                                            multiple required>
+                                    </div>
+
+                                    <!-- Image Preview -->
+                                    <div id="imagePreviewContainer" class="d-flex gap-2 flex-wrap"></div>
+
+                                    <!-- Specifications -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Specifications (optional)</label>
+
+                                        <div id="specificationsContainer" name="Specifications"></div>
+
+                                        {{!-- <button type="button" class="btn btn-sm btn-primary mt-2" id="addSpecBtn">
+                                            ➕ Add Specification
+                                        </button> --}}
+                                    </div>
+
+                                </div>
+
+                                <!-- FOOTER -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Save Product</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
 
 
 
@@ -399,44 +411,44 @@
             });
         });
 
-// MULTI IMAGE PREVIEW
-document.querySelector('input[name="productImages[]"]').addEventListener("change", function (e) {
-    let container = document.getElementById("imagePreviewContainer");
-    container.innerHTML = "";
+        // MULTI IMAGE PREVIEW
+        document.querySelector('input[name="productImages[]"]').addEventListener("change", function (e) {
+            let container = document.getElementById("imagePreviewContainer");
+            container.innerHTML = "";
 
-    [...e.target.files].forEach(file => {
-        let reader = new FileReader();
-        reader.onload = ev => {
-            let img = document.createElement("img");
-            img.src = ev.target.result;
-            img.style.height = "100px";
-            img.style.borderRadius = "8px";
-            img.style.margin = "5px";
-            container.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-    });
-});
+            [...e.target.files].forEach(file => {
+                let reader = new FileReader();
+                reader.onload = ev => {
+                    let img = document.createElement("img");
+                    img.src = ev.target.result;
+                    img.style.height = "100px";
+                    img.style.borderRadius = "8px";
+                    img.style.margin = "5px";
+                    container.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
 
 
-// ADD SPECIFICATION FIELDS
-document.getElementById("addSpecBtn").addEventListener("click", () => {
-    const container = document.getElementById("specificationsContainer");
+        // ADD SPECIFICATION FIELDS
+        document.getElementById("addSpecBtn").addEventListener("click", () => {
+            const container = document.getElementById("specificationsContainer");
 
-    const row = document.createElement("div");
-    row.classList.add("d-flex", "gap-2", "mb-2");
+            const row = document.createElement("div");
+            row.classList.add("d-flex", "gap-2", "mb-2");
 
-    row.innerHTML = `
+            row.innerHTML = `
         <input type="text" name="specKey[]" class="form-control" placeholder="Key (e.g. RAM)">
         <input type="text" name="specValue[]" class="form-control" placeholder="Value (e.g. 16GB)">
         <button type="button" class="btn btn-danger btn-sm removeSpec">X</button>
     `;
-    
-    container.appendChild(row);
 
-    // Remove button
-    row.querySelector(".removeSpec").addEventListener("click", () => row.remove());
-});
+            container.appendChild(row);
+
+            // Remove button
+            row.querySelector(".removeSpec").addEventListener("click", () => row.remove());
+        });
 
 
 
