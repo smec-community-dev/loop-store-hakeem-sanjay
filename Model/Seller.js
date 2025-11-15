@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
 let sellerSchema = new mongoose.Schema({
     seller: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "Usercol"
    //     required: [true, "there mustbe a seller"]
     },
     name: {

@@ -2,10 +2,13 @@ const express=require('express')
 const hbs=require('hbs')
 const mongoose=require('mongoose')
 const sellerRouter=require('./Routes/sellerRouter')
+const userrouter=require("./Routes/userrouter")
+
 
 
 
 let app = express()
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'hbs')
@@ -21,6 +24,7 @@ mongoose
 
 
 app.use('/seller', sellerRouter)
+app.use("/user",userrouter)
 
 
 
