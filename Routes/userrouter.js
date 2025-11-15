@@ -7,6 +7,9 @@ const router=express.Router()
 const session=require("express-session")
 const usermodel=require("../Model/user")
 const Products=require("../Model/Product")
+const userauth=require("../middleware/userauth")
+const Category=require("../Model/Category")
+const Seller = require('../Model/Seller')
 
 router.use(session({
     secret: "THIS_IS_SECRET_KEY",
@@ -25,62 +28,61 @@ router.use(session({
 }));
 
 
-router.get("/userregister",(req,res)=>{
-    res.render("user/userregister")
+router.get("/register",(req,res)=>{
+    res.render("user/register")
 })
-router.post("/userregister",async(req,res)=>{
+router.post("/register",async(req,res)=>{
     let hased=await bcrypt.hash(req.body.password,10)
     let data=await usermodel.create({
-        firstname:req.body.firstname,
-        username:req.body.username,
+        name:req.body.firstname,
         email:req.body.email,
         phone:req.body.phone,
         password:hased,
     })
-    res.redirect("/user/userlogin")
+    res.redirect("/login")
 })
-router.get("/userlogin",(req,res)=>{
-    res.render("user/userlogin")
+router.get("/login",(req,res)=>{
+    res.render("user/login")
 })
-router.post("/userlogin",async(req,res)=>{
+router.post("/login",async(req,res)=>{
     let data=await usermodel.findOne({email:req.body.email})
     if(!data){
-        res.redirect("/user/userlogin")
+        res.redirect("/login")
     }
     let matched=await bcrypt.compare(req.body.password,data.password)
     if(!matched){
-        res.redirect("/user/userlogin")
+        res.redirect("/login")
     }
     req.session.user={
         userid:data._id,
         email:data.email,
         username:data.username
     }
-    res.redirect("/user/userhomepage")
+    res.redirect("/")
 })
-router.get("/userprofile",async(req,res)=>{
+router.get("/profile",async(req,res)=>{
     let data=await usermodel.findById(req.session.user.userid)
-    res.render("user/userprofile",{data})
+    res.render("user/profile",{data})
 })
-router.post("/userprofile",async(req,res)=>{
+router.post("/profile",async(req,res)=>{
     let data=await usermodel.findById(req.session.user.userid)
     await usermodel.findByIdAndUpdate(data._id,{firstname:req.body.firstname,email:req.body.email,phone:req.body.phone})
-    res.redirect("/user/userprofile")
+    res.redirect("/profile")
 })
-router.get("/userhomepage",(req,res)=>{
-    res.render("user/userhomepage")
+router.get("/",(req,res)=>{
+    res.render("user/homepage")
 })
-router.post("/userhomepage",async(req,res)=>{
-    let search=req.body.search.toLowerCase()
-    let data=await Products.find({$or:[{
-        name:{$regex:search,$options:"i"}
-    },{category:{$regex:search,$options:"i"}}]})
-    res.render("user/usercategorypage",{data})
-})
+// router.post("/userhomepage",async(req,res)=>{
+//     let search=req.body.search.toLowerCase()
+//     let data=await Products.find({$or:[{
+//         name:{$regex:search,$options:"i"}
+//     },{category:{$regex:search,$options:"i"}}]})
+//     res.render("user/usercategorypage",{data})
+// })
 
 router.get("/usercategorypage",async(req,res)=>{
     let cat=req.query.cat
-    let data=await Products.findOne({category:cat})
+    let data=await Products.find({category:cat})
     res.render("user/usercategorypage",{cat,data})
 })
 module.exports=router

@@ -25,7 +25,7 @@ mongoose
 
 
 app.use('/seller', sellerRouter)
-app.use("/user",userrouter)
+app.use("/",userrouter)
 
 
 

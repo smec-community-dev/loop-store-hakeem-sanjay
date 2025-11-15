@@ -8,7 +8,6 @@ let Product= require('../Model/Product')
 const upload=require('../multer/multer')
 const sellerauth=require('../middleware/sellerauth')
 
-
 const router = express.Router()
 const cookieParser=require('cookie-parser')
 const session=require('express-session')
