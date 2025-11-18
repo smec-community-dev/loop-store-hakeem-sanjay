@@ -1,96 +1,156 @@
-/* Background Section */
-.auth-section {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    background: linear-gradient(135deg, #1f2937, #374151);
-    padding: 50px;
+/* ============================
+   GOOGLE FONTS
+============================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap');
+
+/* ============================
+   GLOBAL
+============================ */
+body {
+    font-family: "Inter", sans-serif;
+    background: #f2f4f8;
+    margin: 0;
+    padding: 0;
+    color: #1a1a1a;
 }
 
-/* Layout - Form Big, Image Small */
-.auth-container {
-    display: grid;
-    grid-template-columns: 2fr 1fr; /* Form larger */
-    gap: 60px;
+h1, h2, h3, h4 {
+    font-family: "Poppins", sans-serif;
+}
+
+/* ============================
+   NAVBAR
+============================ */
+.navbar {
+    background: #ff9f00;
+    padding: 16px 0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.navbar .container {
     max-width: 1200px;
     margin: auto;
-    align-items: center; /* vertical center for both sides */
+    display: flex;
+    align-items: center;
 }
 
-/* Form Card Styling */
+.logo {
+    color: white;
+    font-size: 1.7rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* ============================
+   AUTH SECTION (WIDER)
+============================ */
+.auth-section {
+    min-height: calc(100vh - 90px);
+    display: flex;
+    align-items: center;
+    padding: 40px 0;
+    width: 100%;
+}
+
+/* Main Grid (wider) */
+.auth-container {
+    width: 90%;
+    max-width: 1350px;              /* increased */
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;   /* wider form section */
+    gap: 70px;                           /* increased gap */
+    align-items: center;
+}
+
+/* ============================
+   AUTH CARD (Register)
+============================ */
 .auth-card {
-    background: #fff;
-    padding: 50px;
-    border-radius: 25px;
-    box-shadow: 0 15px 25px rgba(0,0,0,0.25);
+    background: #ffffff;
+    padding: 55px;              /* increased padding */
+    border-radius: 22px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    width: 100%;
 }
 
-.auth-card h1 {
-    font-size: 2.2rem;
-    color: #111827;
-    margin-bottom: 10px;
+.auth-heading {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 12px;
 }
 
 .auth-subtitle {
+    text-align: center;
+    font-size: 1rem;
     color: #6b7280;
-    margin-bottom: 30px;
+    margin-bottom: 28px;
 }
 
-/* Input Fields */
+/* ============================
+   FORM INPUTS
+============================ */
 .form-group {
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 }
 
 .form-group label {
-    display: block;
-    margin-bottom: 6px;
     font-weight: 600;
-    color: #111827;
+    margin-bottom: 6px;
+    color: #333;
+    display: block;
 }
 
 .form-group input {
     width: 100%;
-    padding: 15px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1.5px solid #ddd;
+    background: #f9f9f9;
     font-size: 1rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    font-family: inherit;
-    outline: none;
-    transition: .2s;
+    transition: 0.25s;
 }
 
 .form-group input:focus {
-    border-color: #3b82f6;
+    border-color: #ff9f00;
+    box-shadow: 0 0 0 4px rgba(255,159,0,0.15);
+    outline: none;
 }
 
-/* Button */
+/* ============================
+   BUTTON
+============================ */
 .btn-primary {
-    background: #3b82f6;
+    background: #ff9f00;
     color: white;
-    border: none;
-    padding: 16px;
+    padding: 15px;
     width: 100%;
-    font-size: 1rem;
-    font-weight: 600;
     border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    font-size: 1.05rem;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.25s;
 }
 
 .btn-primary:hover {
-    background: #1e40af;
+    background: #e68a00;
+    transform: translateY(-2px);
 }
 
-/* Login Bottom Text */
+/* ============================
+   BOTTOM TEXT
+============================ */
 .auth-bottom-text {
     text-align: center;
     margin-top: 15px;
-    color: #6b7280;
-    font-size: 0.95rem;
+    color: #666;
 }
 
 .auth-bottom-text a {
-    color: #3b82f6;
+    color: #ff4d4d;
     font-weight: 600;
     text-decoration: none;
 }
@@ -99,56 +159,67 @@
     text-decoration: underline;
 }
 
-/* Right Side Image Section (Vertical Center) */
+/* ============================
+   RIGHT SIDE IMAGE
+============================ */
 .auth-image {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;   /* vertical center */
-    height: 100%;
-    color: white;
     text-align: center;
 }
 
-.illustration-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-/* Circular Small Image */
-.illustration-img {
-    width: 160px;
-    height: 160px;
-    object-fit: cover;
+.illustration-circle {
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
-    border: 4px solid #ffffff;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    background: url('/uploads/slider-1.jpg') center/cover no-repeat;
+    border: 4px solid white;
+    margin: auto;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.25);
 }
 
-.auth-image h2 {
-    font-size: 1.8rem;
-    margin-top: 10px;
-    color: #fff;
+.auth-illustration h2 {
+    font-size: 1.7rem;
+    margin-top: 20px;
+    color: #333;
 }
 
-.auth-image p {
-    color: #d1d5db;
+.auth-illustration p {
+    color: #666;
     margin-top: 5px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* ============================
+   FOOTER
+============================ */
+.footer {
+    padding: 18px;
+    background: #172337;
+    color: #ccc;
+    text-align: center;
+    margin-top: 40px;
+}
+
+/* ============================
+   RESPONSIVE
+============================ */
+@media (max-width: 900px) {
     .auth-container {
         grid-template-columns: 1fr;
         text-align: center;
+        width: 95%;
     }
 
+    .auth-image {
+        order: -1;
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 600px) {
     .auth-card {
-        padding: 35px;
+        padding: 32px;
     }
 
-    .illustration-img {
+    .illustration-circle {
         width: 130px;
         height: 130px;
     }

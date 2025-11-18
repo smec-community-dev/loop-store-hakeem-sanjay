@@ -1,55 +1,265 @@
+/* ============================
+   GOOGLE FONTS
+============================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap');
+
+/* ============================
+   GLOBAL
+============================ */
 body {
-      background: #f2f4f7;
-      font-family: "Poppins", sans-serif;
-    }
+  font-family: "Inter", sans-serif;
+  background: #f5f7fa;
+  color: #111;
+  margin: 0;
+  padding: 0;
+}
 
-    /* NAVBAR */
-    .navbar {
-      background: #2874f0;
-    }
-    .navbar-brand {
-      color: #fff;
-      font-size: 1.5rem;
-    }
-    .navbar-brand span {
-      color: #ffe500;
-    }
-    .search-bar input {
-      border-radius: 0;
-      border: none;
-    }
-    .search-bar button {
-      background: #fff;
-      border: none;
-      color: #2874f0;
-    }
+h1, h2, h3, h4, h5 {
+  font-family: "Poppins", sans-serif;
+}
 
-    /* PRODUCT CARD */
-    .product-card {
-      background: #fff;
-      border-radius: 10px;
-      transition: 0.3s;
-      cursor: pointer;
-    }
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .product-img {
-      width: 100%;
-      height: 220px;
-      object-fit: contain;
-    }
-    .product-title {
-      font-weight: 600;
-    }
-    .price {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #388e3c;
-    }
-    .old-price {
-      color: #888;
-      text-decoration: line-through;
-      font-size: 0.9rem;
-    }
+/* ============================
+   NAVBAR
+============================ */
+.main-nav {
+  background: #ff9f00;
+  padding: 14px 0;
+}
+
+.logo-text {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: white;
+}
+
+.logo-yellow {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.logo-icon {
+  font-size: 1.6rem;
+  color: white;
+}
+
+/* Search Bar */
+.search-bar {
+  width: 420px;
+  background: white;
+  border-radius: 50px;
+  padding: 4px;
+  overflow: hidden;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  padding-left: 15px;
+}
+
+.search-bar button {
+  background: none;
+  border: none;
+  padding: 0 12px;
+  color: #ff9f00;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* Navbar Links */
+.nav-link {
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.nav-link:hover {
+  color: #222;
+}
+
+/* ============================
+   CATEGORY TITLE
+============================ */
+.container h2 {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.9rem;
+  color: #222;
+}
+
+/* ============================
+   PRODUCT CARD GRID
+============================ */
+.product-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+/* Product Image Box */
+.img-box {
+  position: relative;
+  width: 100%;
+  height: 210px;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: 0.3s;
+}
+
+.product-card:hover .product-img {
+  transform: scale(1.05);
+}
+
+/* ============================
+   BADGES
+============================ */
+.badge-new,
+.badge-sale {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  color: white;
+  border-radius: 8px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+}
+
+.badge-new {
+  background: #16a34a; /* green */
+}
+
+.badge-sale {
+  background: #e11d48; /* pink-red */
+}
+
+/* ============================
+   PRODUCT TEXT
+============================ */
+.product-title {
+  margin: 12px 0 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.category-text {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+/* ============================
+   PRICE SECTION
+============================ */
+.price-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.old-price {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.new-price {
+  color: #ff4d4d;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* ============================
+   BUTTON
+============================ */
+.view-btn {
+  display: inline-block;
+  margin-top: 12px;
+  background: #ff9f00;
+  color: white;
+  padding: 10px 0;
+  width: 100%;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.25s;
+}
+
+.view-btn:hover {
+  background: #e68a00;
+  transform: translateY(-2px);
+}
+/* ============================
+   PAGINATION
+============================ */
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.pagination {
+  display: flex;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.page-item .page-link {
+  background: white;
+  border: 2px solid #ff9f00;
+  color: #ff9f00;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.25s;
+}
+
+.page-item .page-link:hover {
+  background: #ff9f00;
+  color: white;
+}
+
+.page-item.active .page-link {
+  background: #ff9f00;
+  color: white;
+  border-color: #ff9f00;
+}
+
+
+/* ============================
+   RESPONSIVE
+============================ */
+@media (max-width: 992px) {
+  .search-bar {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .product-card {
+    padding: 13px;
+  }
+  .img-box {
+    height: 180px;
+  }
+}

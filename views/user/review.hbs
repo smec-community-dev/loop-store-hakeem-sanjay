@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{product.name}} - Reviews</title>
+
+
+</head>
+<link rel="stylesheet" href="/user/review.css">
+<body>
+
+<div class="container">
+
+    <!-- PRODUCT DETAILS -->
+    <div class="product-box">
+        <img src="{{product.images.[0]}}" alt="Product">
+        <div class="product-info">
+            <h2>{{product.name}}</h2>
+            <p>Price: ₹{{product.price}}</p>
+            <p>Total Reviews: {{product.review.length}}</p>
+        </div>
+    </div>
+
+    <!-- ADD REVIEW -->
+    <div class="review-section">
+        <h3>Write a Review</h3>
+
+        <form action="/review/{{product._id}}" method="POST">
+
+            <!-- ⭐ REVERSE STAR ORDER -->
+            <div class="rating-stars">
+                <input type="radio" name="rating" id="star5" value="5">
+                <label for="star5">★</label>
+
+                <input type="radio" name="rating" id="star4" value="4">
+                <label for="star4">★</label>
+
+                <input type="radio" name="rating" id="star3" value="3">
+                <label for="star3">★</label>
+
+                <input type="radio" name="rating" id="star2" value="2">
+                <label for="star2">★</label>
+
+                <input type="radio" name="rating" id="star1" value="1">
+                <label for="star1">★</label>
+            </div>
+
+            <textarea name="content" placeholder="Write your review..."></textarea>
+            <button class="btn">Submit Review</button>
+        </form>
+    </div>
+
+    <!-- SHOW ALL REVIEWS -->
+    <h3 style="margin-top:25px;">Customer Reviews</h3>
+
+    {{#each product.review}}
+        <div class="review-card">
+            <div class="review-header">
+                <h4>{{this.user.name}}</h4>
+                <p class="stars">
+                    {{#times this.rating}}★{{/times}}
+                </p>
+            </div>
+
+            <p class="comment">{{this.content}}</p>
+            <p class="date">{{this.createdAt}}</p>
+        </div>
+    {{/each}}
+
+</div>
+
+</body>
+</html>

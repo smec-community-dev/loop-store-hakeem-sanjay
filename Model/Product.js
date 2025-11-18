@@ -30,7 +30,7 @@ const productSchema = new mongoose.Schema({
    // required: [true, "Please select a category"],
   }, seller: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Seller",
     required: true
   },
   review: [

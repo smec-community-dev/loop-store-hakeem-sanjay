@@ -1,88 +1,344 @@
-const express=require("express")
-const { route } = require("./sellerRouter")
-const bcrypt=require("bcrypt")
-const cookie=require("cookie-parser")
-const mongostore=require("connect-mongo")
-const router=express.Router()
-const session=require("express-session")
-const usermodel=require("../Model/user")
-const Products=require("../Model/Product")
-const userauth=require("../middleware/userauth")
-const Category=require("../Model/Category")
-const Seller = require('../Model/Seller')
+const express = require("express");
+const router = express.Router();
+const bcrypt = require("bcrypt");
+const session = require("express-session");
+const mongostore = require("connect-mongo");
+
+const Products = require("../Model/Product");
+const Category = require("../Model/Category");
+const user = require("../Model/user");
+const Cart = require("../Model/Cart");
+const Wishlist = require("../Model/wishlist");
+const Order = require("../Model/Order");
+const Address = require("../Model/Adress");
+const hbs = require("hbs");
+const { any } = require("../multer/multer");
+const userrauth=require('../middleware/userauth')
+
+
+
+hbs.registerHelper("multiply", function (a, b) {
+    return a * b;
+});
+
+hbs.registerHelper("sum", function (a, b) {
+    return a + b;
+});
+hbs.registerHelper("subtract", function(a, b) {
+    return a - b;
+});
+
+
+hbs.registerHelper("times", function(n, block) {
+    let accum = "";
+    for (let i = 0; i < n; ++i) {
+        accum += block.fn(i);
+    }
+    return accum;
+});
+
 
 router.use(session({
     secret: "THIS_IS_SECRET_KEY",
     resave: false,
     saveUninitialized: false,
     store: mongostore.create({
-        mongoUrl: "mongodb://localhost:27017/LiveProject",   
-        collectionName: "usersession",                     
-        ttl: 60 * 60,                                    
+        mongoUrl: "mongodb://localhost:27017/LiveProject",
+        collectionName: "usersession",
+        ttl: 60 * 60,
     }),
     cookie: {
-        maxAge: 1000 * 60 * 60,  
+        maxAge: 1000 * 60 * 60,
         httpOnly: true,
-        secure: false
+        secure: false,
     }
 }));
 
+router.get("/register", (req, res) => {
+    res.render("user/register");
+});
 
-router.get("/register",(req,res)=>{
-    res.render("user/register")
-})
-router.post("/register",async(req,res)=>{
-    let hased=await bcrypt.hash(req.body.password,10)
-    let data=await usermodel.create({
-        name:req.body.firstname,
-        email:req.body.email,
-        phone:req.body.phone,
-        password:hased,
+router.post("/register", async (req, res) => {
+    let hashed = await bcrypt.hash(req.body.password, 10);
+
+    await user.create({
+        name: req.body.name,
+        email: req.body.email,
+        phone: req.body.phone,
+        password: hashed,
+    });
+
+    res.redirect("/login");
+});
+
+
+router.get("/login", (req, res) => {
+    res.render("user/login");
+});
+
+router.post("/login", async (req, res) => {
+    let data = await user.findOne({ email: req.body.email });
+    if (!data) return res.redirect("/login");
+
+    let matched = await bcrypt.compare(req.body.password, data.password);
+    if (!matched) return res.redirect("/login");
+
+    req.session.user = {
+        userid: data._id,
+        email: data.email,
+        username: data.firstname
+    };
+
+    res.redirect("/");
+});
+
+
+router.get("/profile",userrauth, async (req, res) => {
+
+    const userid = req.session.user.userid;
+
+    let orders = await Order.find({ user: userid })
+    .populate({
+        path: "items.product",
+        select: "name images price"
     })
-    res.redirect("/login")
-})
-router.get("/login",(req,res)=>{
-    res.render("user/login")
-})
-router.post("/login",async(req,res)=>{
-    let data=await usermodel.findOne({email:req.body.email})
-    if(!data){
-        res.redirect("/login")
-    }
-    let matched=await bcrypt.compare(req.body.password,data.password)
-    if(!matched){
-        res.redirect("/login")
-    }
-    req.session.user={
-        userid:data._id,
-        email:data.email,
-        username:data.username
-    }
-    res.redirect("/")
-})
-router.get("/profile",async(req,res)=>{
-    let data=await usermodel.findById(req.session.user.userid)
-    res.render("user/profile",{data})
-})
-router.post("/profile",async(req,res)=>{
-    let data=await usermodel.findById(req.session.user.userid)
-    await usermodel.findByIdAndUpdate(data._id,{firstname:req.body.firstname,email:req.body.email,phone:req.body.phone})
-    res.redirect("/profile")
-})
-router.get("/",(req,res)=>{
-    res.render("user/homepage")
-})
-// router.post("/userhomepage",async(req,res)=>{
-//     let search=req.body.search.toLowerCase()
-//     let data=await Products.find({$or:[{
-//         name:{$regex:search,$options:"i"}
-//     },{category:{$regex:search,$options:"i"}}]})
-//     res.render("user/usercategorypage",{data})
-// })
+    .lean();
 
-router.get("/usercategorypage",async(req,res)=>{
-    let cat=req.query.cat
-    let data=await Products.find({category:cat})
-    res.render("user/usercategorypage",{cat,data})
+    
+    
+    let data = await user.findById(userid).lean();
+
+    const wishlist = await Wishlist.findOne({ user: userid }).populate("items.product").lean();
+
+    const items = wishlist ? wishlist.items : [];
+
+    const cart = await Cart.findOne({ user: userid }).lean();
+    const cartCount = cart ? cart.items.length : 0;
+
+    res.render("user/profile", {
+        data,
+        items,
+        cartCount,orders
+    });
+});
+
+
+router.post("/profile", async (req, res) => {
+    await user.findByIdAndUpdate(req.session.user.userid, {
+        name: req.body.firstname,
+        email: req.body.email,
+        phone: req.body.phone
+    });
+
+    res.redirect("/profile");
+});
+
+router.get("/", async (req, res) => {
+    const categories = await Category.find();
+    const topOffers = await Products.find().skip(0).limit(4).populate("category");
+    const dealsOfDay = await Products.find().skip(4).limit(4).populate("category");
+    const topPicks = await Products.find().skip(8).limit(4).populate("category");
+    res.render("user/homepage", {user,categories,topOffers,dealsOfDay,topPicks});
+});
+
+
+router.post("/", async (req, res) => {
+    let search = req.body.search.trim().toLowerCase();
+    let matchedProducts = await Products.find({
+        name: { $regex: search, $options: "i" }
+    })
+    if (matchedProducts.length === 0) {
+        return res.render("user/usercategorypage", {data: []});
+    }
+    res.render("user/usercategorypage", {
+        data:matchedProducts
+    });
+});
+
+
+router.get("/usercategorypage", async (req, res) => {
+    let catName = req.query.cat;
+    let category = await Category.findOne({
+        name: catName
+    });
+    let data = [];
+    if (category) {
+        data = await Products.find({ category: category._id });
+    }
+    res.render("user/usercategorypage",{data});
+});
+
+router.get("/singlepage/:id", async (req, res) => {
+        let id = req.params.id;
+        let data = await Products.findById(id).populate("category").populate("seller").populate("review.user").lean();
+        if (!data){
+            res.send("Product not found");
+        } 
+        let related = await Products.find({category: data.category._id }).limit(3).lean();
+        res.render("user/singlepage", { data, related });
+});
+
+router.get("/cart/add/:id",userrauth, async (req, res) => {
+    const userid = req.session.user.userid;
+    const productId = req.params.id;
+
+    const product = await Products.findById(productId).lean();
+    let userCart = await Cart.findOne({ user: userid });
+
+    if (!userCart) {
+        userCart = await Cart.create({
+            user: userid,
+            items: [{
+                product: productId,
+                quantity: 1,
+                priceAtAddTime: product.price
+            }],
+            totalPrice: product.price
+        });
+    } else {
+             await userCart.items.push({
+                product: productId,
+                quantity: 1,
+                priceAtAddTime: product.price
+            });
+        userCart.totalPrice += product.price;
+        await userCart.save();
+    }
+    res.redirect("/cart");
+});
+router.get("/cart/remove/:id",async(req,res)=>{
+    let productid=req.params.id
+    let userid=req.session.user.userid
+    await Cart.findOneAndUpdate({user:userid},{$pull:{items:{product:productid}}})
+    res.redirect("/cart")
 })
-module.exports=router
+
+router.get("/cart",userrauth, async (req, res) => {
+    const userid = req.session.user.userid;
+
+   const userCart = await Cart.findOne({ user: userid }).populate({path: "items.product",populate: {path: "seller"}});
+    if (!userCart) {
+        return res.render("user/cart", { items: [], totalPrice: 0 });
+    }
+
+    res.render("user/cart", {
+        items: userCart.items,
+        totalPrice: userCart.totalPrice
+    });
+});
+router.get("/wishlist/add/:id",userrauth, async (req, res) => {
+        const userid = req.session.user.userid;
+        const productId = req.params.id;
+
+        let wishlist = await Wishlist.findOne({ user: userid });
+
+        if (!wishlist) {
+            wishlist = await Wishlist.create({
+                user: userid,
+                items: [{ product: productId }]
+            });
+        } else {
+            const exists = wishlist.items.some(
+                item => item.product.toString() === productId
+            );
+            if (!exists) {
+                wishlist.items.push({ product: productId });
+                await wishlist.save();
+            }
+        }
+        
+        res.redirect("/profile");
+});
+router.get("/wishlist/remove/:id",userrauth, async (req, res) => {
+        const userid = req.session.user.userid;
+        const productId = req.params.id;
+
+        await Wishlist.updateOne(
+            { user: userid },
+            { $pull: { items: { product: productId } } }
+        );
+        res.redirect("/profile");
+});
+router.get("/order/:id",userrauth, async (req, res) => {
+        const userid = req.session.user.userid;
+        const productId = req.params.id;
+
+        let data = await Products.findById(productId).lean();
+
+        let address = await Address.findOne({ user: userid }).lean();
+
+        res.render("user/order", {
+            data,
+            address
+        });
+});
+
+router.post("/order/:id", async (req, res) => {
+        const userid = req.session.user.userid;
+        let exists = await Address.findOne({ user: userid });
+
+        if (exists) {
+            await Address.updateOne(
+                { user: userid },
+                { address: req.body.address }
+            );
+        } else {
+            await Address.create({
+                user: userid,
+                address: req.body.address
+            });
+        }
+
+        res.redirect("/order/" + req.params.id);
+});
+
+
+router.get("/placeorder/:id",userrauth,async(req,res)=>{
+    let userid=req.session.user.userid
+    let productid=req.params.id
+    let productprice=await Products.findById(productid)
+    await Order.create({
+  user: userid,             
+  items: [
+    {
+      product: productid,    
+      quantity: 1,          
+      priceAtPurchase: productprice.price 
+    }
+  ],
+  totalPrice: productprice.price         
+});
+
+res.redirect("/order/"+productid)
+})
+
+router.get("/review/:id", async (req, res) => {
+
+        let productId = req.params.id;
+        let product = await Products.findById(productId).populate("review.user").lean();
+        res.render("user/review", { product });
+});
+router.post("/review/:id", async (req, res) => {
+        const productId = req.params.id;
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
+        let product = await Products.findById(productId)
+
+        product.review.push({
+            user: req.session.user.userid,
+            rating:req.body.rating,
+            content:req.body.content
+        });
+        await product.save();
+        res.redirect(`/review/${productId}`);
+});
+
+
+router.get("/logout",async(req,res)=>{
+    req.session.destroy(()=>{
+        res.redirect("/login")
+    })
+})
+
+module.exports = router;

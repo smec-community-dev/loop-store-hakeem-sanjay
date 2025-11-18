@@ -1,24 +1,23 @@
-const mongoose=require('mongoose')
+const mongoose = require('mongoose')
 
+let addressSchema = new mongoose.Schema({
 
-let addressSchema=new mongoose.Schema({
-    user:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Usercol",
-        require:[true,"user is required"]
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: [true, "user is required"]
     },
-    // Address: {
-      fullName: { type: String, required: true },
-      phone: { type: String, required: true },
-      addressLine1: { type: String, required: true },
-      city: { type: String, required: true },
-      state: { type: String, required: true },
-      postalCode: { type: String, required: true },
-      country: { type: String, default: "India",required: true },
-    // },
 
+    address: {
+        name: { type: String, required: true },
+        phone: { type: String, required: true },
+        house: { type: String, required: true },
+        street: { type: String, required: true },
+        city: { type: String, required: true },
+        state: { type: String, required: true },
+        pincode: { type: String, required: true }
+    },
 
+}, { timestamps: true });
 
-    
-})
-module.exports=mongoose.model('Address',addressSchema)
+module.exports = mongoose.model("Address", addressSchema);

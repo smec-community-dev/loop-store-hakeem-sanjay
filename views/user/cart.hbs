@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - LoopStore</title>
+    <link rel="stylesheet" href="/user/cart.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="container">
+        <a href="/" class="logo">LoopStore</a>
+        <ul class="nav-links">
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main class="cart-section">
+    <div class="container">
+
+        <h1>Your Shopping Cart</h1>
+
+        {{!-- If cart has items --}}
+        {{#if items.length}}
+
+        <div class="cart-wrapper">
+
+            <!-- CART ITEMS -->
+            <section class="cart-items">
+
+                <div class="cart-header">
+                    <span>{{items.length}} item(s) in your cart</span>
+                    <a href="/" class="continue">Continue Shopping</a>
+                </div>
+
+                {{!-- LOOP ALL ITEMS --}}
+                {{#each items}}
+                <div class="cart-item">
+
+                    <!-- PRODUCT IMAGE -->
+                    <div class="item-image">
+                        <img src="{{this.product.images.[0]}}" alt="{{this.product.name}}">
+                    </div>
+
+                    <!-- PRODUCT DETAILS -->
+                    <div class="item-details">
+                        <h3>{{this.product.name}}</h3>
+                        <p>{{this.product.description}}</p>
+
+                        {{#if this.product.seller}}
+                        <p class="seller">Seller: {{this.product.seller.name}}</p>
+                        {{/if}}
+                    </div>
+
+                    <!-- QUANTITY -->
+                    <div class="item-quantity">
+                        <label>Qty:</label>
+                        <div class="quantity-control">
+                            <button class="qty-btn">−</button>
+                            <input type="number" value="{{this.quantity}}" min="1">
+                            <button class="qty-btn">+</button>
+                        </div>
+                    </div>
+
+                    <!-- PRICE -->
+                    <div class="item-price">
+                        <p class="price">₹{{this.priceAtAddTime}}</p>
+                        <p class="subtotal">Subtotal: ₹{{multiply this.quantity this.priceAtAddTime}}</p>
+                    </div>
+
+                    <!-- REMOVE BUTTON -->
+                    <a href="/cart/remove/{{this.product._id}}" class="btn-remove">✕</a>
+
+                </div>
+                {{/each}}
+
+            </section>
+
+            <!-- SUMMARY -->
+            <aside class="cart-summary">
+                <div class="summary-card">
+                    <h2>Order Summary</h2>
+
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>₹{{totalPrice}}</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span>₹49</span>
+                    </div>
+
+                    <div class="summary-row summary-total">
+                        <span>Total:</span>
+                        <span>₹{{sum totalPrice 49}}</span>
+                    </div>
+
+                    <button class="btn-full btn-primary">Proceed to Checkout</button>
+                </div>
+            </aside>
+
+        </div>
+
+        {{!-- NO ITEMS --}}
+        {{else}}
+        <h2>Your cart is empty</h2>
+        <a href="/" class="btn-primary">Start Shopping</a>
+        {{/if}}
+
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2025 LoopStore. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
