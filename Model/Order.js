@@ -13,7 +13,7 @@ const orderSchema = new mongoose.Schema(
         product: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
-          required: [true, "Order item must reference a product"],
+          required: [true, "Order item must reference a product"],//[]
         },
         quantity: {
           type: Number,
@@ -24,9 +24,13 @@ const orderSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
+        seller: {             // ⭐ Each item belongs to a seller
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Seller"
+    },
       },
     ],
-
+ 
     
     totalPrice: {
       type: Number,
