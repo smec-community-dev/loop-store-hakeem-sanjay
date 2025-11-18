@@ -3,7 +3,7 @@ const hbs=require('hbs')
 const mongoose=require('mongoose')
 const sellerRouter=require('./Routes/sellerRouter')
 const userrouter=require("./Routes/userrouter")
-
+const adminrouter=require('./Routes/adminrouter')
 
 
 
@@ -26,7 +26,9 @@ mongoose
 
 
 app.use('/seller', sellerRouter)
+
 app.use("/",userrouter)
+app.use("/admin", adminrouter)
 
 
 
