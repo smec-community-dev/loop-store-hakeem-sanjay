@@ -725,9 +725,9 @@
                         <i class="fas fa-indian-rupee-sign"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>₹24,560</h3>
+                        <h3>{{total}}</h3>
                         <p>Revenue This Month</p>
-                        <span class="text-success small">+5.2% vs last month</span>
+                        {{!-- <span class="text-success small">+5.2% vs last month</span> --}}
                     </div>
                 </div>
 
@@ -928,7 +928,10 @@
                         <p><strong>Date:</strong> {{../createdAt}}</p>
                     </div>
                     <div class="order-actions">
-                        <button class="btn btn-sm btn-outline-secondary">View Details</button>
+                        <button class="btn btn-sm btn-outline-secondary view-order-btn" data-order-id="{{../id}}">
+                            View Details
+                        </button>
+
                         {{!-- <button class="btn btn-sm btn-outline-primary">Print Label</button> --}}
                     </div>
                 </div>
@@ -941,32 +944,36 @@
 
         <!-- REVIEWS SECTION -->
         <div id="reviews" class="section">
-            <div class="section-header">
-                <h2>Customer Reviews</h2>
+    <div class="section-header">
+        <h2>Customer Reviews</h2>
+    </div>
+
+    <div class="reviews-list">
+        {{#each datas}}
+        {{#each this.review}}
+        <div class="review-card">
+
+            {{!-- ⭐ SHOW PRODUCT IMAGE --}}
+            <img src="{{../images.[0]}}" 
+                 alt="Product Image"
+                 style="width:100px; border-radius:10px; margin-bottom:10px;">
+
+            <div class="review-header">
+                <h3>{{this.content_typing}}</h3>
+                <span class="review-rating">{{#times this.rating}}⭐{{/times}}</span>
             </div>
 
-            <div class="reviews-list">
-                <div class="review-card">
-                    <div class="review-header">
-                        <h3>Excellent Product Quality</h3>
-                        <span class="review-rating">⭐⭐⭐⭐⭐ 5/5</span>
-                    </div>
-                    <p>The laptop is amazing! Fast delivery and excellent packaging.</p>
-                    <p class="review-author">- John Smith (Verified Purchase)</p>
-                    <p class="review-date">Jan 10, 2025</p>
-                </div>
+            <p>{{this.content}}</p>
+            <p class="review-author" style="color: #7789da;">
+                {{this.user.name}}
+            </p>
 
-                <div class="review-card">
-                    <div class="review-header">
-                        <h3>Great Value for Money</h3>
-                        <span class="review-rating">⭐⭐⭐⭐ 4/5</span>
-                    </div>
-                    <p>Good quality products at reasonable prices. Will buy again!</p>
-                    <p class="review-author">- Emma Davis (Verified Purchase)</p>
-                    <p class="review-date">Jan 8, 2025</p>
-                </div>
-            </div>
         </div>
+        {{/each}}
+        {{/each}}
+    </div>
+</div>
+
     </div>
 
     <!-- ADD PRODUCT MODAL -->
@@ -1013,7 +1020,10 @@
                                 <option value="">Select category</option>
                                 {{#each categorys}}
 
+
                                 <option value="{{this.id}}" >{{this.name}}</option>
+
+                                <option value="{{this.id}}">{{this.name}}</option> 
                                 {{/each}}
 
 
@@ -1055,6 +1065,25 @@
             </div>
         </div>
     </div>
+    <!-- ORDER DETAILS MODAL -->
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content shadow">
+
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Order Details</h5>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body" id="orderDetailsBody">
+                    <!-- Content loads here via AJAX -->
+                    <p class="text-center text-muted">Loading...</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1130,7 +1159,81 @@
                 }
             });
         }
+
+
+
+
+        document.querySelectorAll('.view-order-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+
+                let orderId = this.getAttribute('data-order-id');
+
+                // Show loading text
+                document.getElementById('orderDetailsBody').innerHTML =
+                    '<p class="text-center text-muted">Loading...</p>';
+
+                // Open modal
+                let modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+                modal.show();
+
+                // Fetch single order
+                fetch(`/seller/order/details/${orderId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.success) {
+                            document.getElementById('orderDetailsBody').innerHTML =
+                                "<p class='text-danger'>Error loading order.</p>";
+                            return;
+                        }
+
+                        let order = data.order;
+
+                        // Build HTML inside modal
+                        let html = `
+                    <h5><strong>Order ID:</strong> ${order._id}</h5>
+
+                    <hr>
+
+                    <h6>Customer Info</h6>
+                    <p><strong>Name:</strong> ${order.user.name}</p>
+                    <p><strong>Email:</strong> ${order.user.email}</p>
+
+                    <hr>
+
+                    <h6>Items</h6>
+                `;
+
+                        order.items.forEach(item => {
+                            html += `
+                        <div class="d-flex mb-3 p-2 border rounded">
+                            <img src="${item.product.images?.[0]}" 
+                                 style="width:80px;height:80px;border-radius:8px;object-fit:cover;margin-right:10px;">
+                            <div>
+                                <p class="m-0"><strong>${item.product.name}</strong></p>
+                                <p class="m-0">Price: ₹${item.product.price}</p>
+                                <p class="m-0">Qty: ${item.quantity}</p>
+                            </div>
+                        </div>
+                    `;
+                        });
+
+                        html += `
+                    <hr>
+                    <h6>Total Price</h6>
+                    <p class="fw-bold text-success fs-5">₹${order.totalPrice}</p>
+
+                    <hr>
+                    <h6>Order Date</h6>
+                    <p>${new Date(order.createdAt).toLocaleString()}</p>
+                `;
+
+                        document.getElementById('orderDetailsBody').innerHTML = html;
+                    });
+            });
+        });
+
+
     </script>
 </body>
 
-</html>
+</html> 
