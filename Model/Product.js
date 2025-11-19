@@ -42,7 +42,9 @@ const productSchema = new mongoose.Schema({
       },
       content: {
         type: String,
-      },
+      }, content_typing: {
+        type: String,
+      },//neww addedd
       rating: { type: Number, min: 1, max: 5 },
 
     }

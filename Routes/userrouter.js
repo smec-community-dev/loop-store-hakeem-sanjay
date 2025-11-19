@@ -59,7 +59,7 @@ router.get("/register", (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-    let hashed = await bcrypt.hash(req.body.password, 10);
+    let hashed = await bcrypt.hash(req.body.password, 10);//firstname set
 
     await user.create({
         name: req.body.name,

@@ -8,16 +8,19 @@ let Seller=require('../Model/Seller')
 const Admin=require('../Model/Admin')
 const adminauth = require('../middleware/adminauth')
 let router=express.Router()
+const categorymulter=require('../multer/catogerymulter')
+
 
 const cookieParser=require('cookie-parser')
+const Category = require('../Model/Category')
 
 
-let ademail=process.env.ADMIN_EMAIL
-let password=process.env.ADMIN_PASSWORD
+// let ademail=process.env.ADMIN_EMAIL
+// let password=process.env.ADMIN_PASSWORD
 
 
 router.use(session({
-    secret:process.env.ADMIN_SESSION_SECRET,
+    secret:"ADMIN@123",
     resave:false,
     saveUninitialized:true,
         cookie: {
@@ -77,6 +80,7 @@ let {email,password}=req.body
 router.get('/profile',adminauth,async(req,res)=>{
     let userdata=await User.find()
     let sellerdata=await Seller.find()
+     let category= await Category.find()
     let totaluser=userdata.length
     let totalseller=sellerdata.length
     console.log(sellerdata);
@@ -85,9 +89,32 @@ router.get('/profile',adminauth,async(req,res)=>{
 console.log("userdata:"+userdata);
 
 
-    res.render('admin/adminprofile',{usercount:totaluser,sellercount:totalseller ,seller:sellerdata ,user:userdata})
+    res.render('admin/adminprofile',{usercount:totaluser,sellercount:totalseller ,seller:sellerdata ,user:userdata,category:category})
 })
+router.post('/category/add',categorymulter.single("image"),async(req,res)=>{
+    let {name,description}=req.body
+    // const image = req.file.filename(file => "/uploads/category/" + file.filename);
+    // console.log("req.body"+req.body);
+       // SAFELY GET IMAGE PATH
+        let imagePath = "";
+        if (req.file) {
+            imagePath = req.file.path; // FULL PATH → always string
+        }
 
+  try{
+    await Category.create({
+        name:name,
+        description:description,
+        image:imagePath
+        
+    })
+    console.log("catogery added to db");
+    return res.redirect("/admin/profile")
+  }catch(error){
+    console.error(error);
+    
+  }
+})
 
 
 module.exports=router
