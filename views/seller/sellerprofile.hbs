@@ -1011,8 +1011,15 @@
                             <label class="form-label">Category</label>
                             <select name="category" class="form-control" required>
                                 <option value="">Select category</option>
-                                <option value="electronics">Electronics</option>
-                                <option value="mobiles">Mobiles</option>
+                                {{#each categorys}}
+
+                                <option value="{{this.id}}" >{{this.name}}</option>
+                                {{/each}}
+
+
+
+
+                                {{!-- <option value="mobiles">Mobiles</option>
                                 <option value="laptops">Laptops</option>
                                 <option value="accessories">Accessories</option>
                                 <option value="audio">Headphones & Audio</option>
@@ -1024,7 +1031,7 @@
                                 <option value="toys">Toys</option>
                                 <option value="baby">Baby Products</option>
                                 <option value="stationary">Stationery</option>
-                                <option value="automotive">Automotive</option>
+                                <option value="automotive">Automotive</option> --}}
                             </select>
                         </div>
 

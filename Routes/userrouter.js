@@ -13,7 +13,8 @@ const Order = require("../Model/Order");
 const Address = require("../Model/Adress");
 const hbs = require("hbs");
 const { any } = require("../multer/multer");
-const userrauth=require('../middleware/userauth')
+const userrauth=require('../middleware/userauth');
+const sellerauth = require("../middleware/sellerauth");
 
 
 
@@ -103,6 +104,8 @@ router.get("/profile",userrauth, async (req, res) => {
         select: "name images price"
     })
     .lean();
+    console.log(orders);
+    
 
     
     
@@ -174,6 +177,7 @@ router.get("/singlepage/:id", async (req, res) => {
         if (!data){
             res.send("Product not found");
         } 
+        
         let related = await Products.find({category: data.category._id }).limit(3).lean();
         res.render("user/singlepage", { data, related });
 });
@@ -184,7 +188,6 @@ router.get("/cart/add/:id",userrauth, async (req, res) => {
 
     const product = await Products.findById(productId).lean();
     let userCart = await Cart.findOne({ user: userid });
-
     if (!userCart) {
         userCart = await Cart.create({
             user: userid,
@@ -195,16 +198,24 @@ router.get("/cart/add/:id",userrauth, async (req, res) => {
             }],
             totalPrice: product.price
         });
-    } else {
-             await userCart.items.push({
-                product: productId,
-                quantity: 1,
-                priceAtAddTime: product.price
-            });
-        userCart.totalPrice += product.price;
-        await userCart.save();
+        res.redirect("/cart")
+    } else{
+        let itemcheck=userCart.items.find(i=>i.product.toString()===productId)
+        if(itemcheck){
+            itemcheck.quantity+=1
+        }else{
+            userCart.items.push({
+                    product:productId,
+                    quantity:1,
+                    priceAtAddTime:product.price,
+            })
+        }
+        userCart.totalPrice=userCart.items.reduce((sum,item)=>{
+            return sum+(item.quantity*item.priceAtAddTime)
+        },0)
+        await userCart.save()
+         res.redirect("/cart");
     }
-    res.redirect("/cart");
 });
 router.get("/cart/remove/:id",async(req,res)=>{
     let productid=req.params.id
@@ -293,24 +304,79 @@ router.post("/order/:id", async (req, res) => {
 });
 
 
-router.get("/placeorder/:id",userrauth,async(req,res)=>{
-    let userid=req.session.user.userid
-    let productid=req.params.id
-    let productprice=await Products.findById(productid)
-    await Order.create({
-  user: userid,             
-  items: [
-    {
-      product: productid,    
-      quantity: 1,          
-      priceAtPurchase: productprice.price 
+router.get("/placeorder/:id", userrauth, async (req, res) => {
+    try {
+        const userid = req.session.user.userid;
+        const productid = req.params.id;
+
+        // ⭐ GET quantity from GET URL
+        const quantity = parseInt(req.query.qty) || 1;
+
+        const productdata = await Products.findById(productid).populate("seller");
+
+        let orderdata = await Order.findOne({ user: userid });
+
+        if (!orderdata) {
+            // ⭐ New order
+            await Order.create({
+                user: userid,
+                items: [
+                    {
+                        product: productid,
+                        quantity: quantity,   // ⭐ FIXED
+                        priceAtPurchase: productdata.price*quantity,
+                        seller: productdata.seller
+                    }
+                ],
+                totalPrice: productdata.price * quantity
+            });
+
+            return res.redirect("/ordersuccess");
+        }
+        else {
+            orderdata.items.push({
+                product: productid,
+                quantity: quantity,  // ⭐ FIXED
+                priceAtPurchase: productdata.price*quantity,
+                seller: productdata.seller
+            });
+        }
+
+        // ⭐ Recalculate total
+        orderdata.totalPrice = orderdata.items.reduce((sum, item) => {
+            return sum + (item.quantity * item.priceAtPurchase);
+        }, 0);
+
+        await orderdata.save();
+
+        res.redirect("/ordersuccess");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server Error");
     }
-  ],
-  totalPrice: productprice.price         
+});
+router.get("/ordersuccess", userrauth, async (req, res) => {
+  try {
+    const userid = req.session.user.userid;
+    let address=await Address.findOne({user:userid})
+    console.log(address);
+    
+
+    // Get latest order of the user
+    const lastOrder = await Order.findOne({ user: userid }).populate("items.product").populate("items.seller");
+   
+    const lastitem=lastOrder.items[lastOrder.items.length-1]
+    res.render("user/ordersuccess", {
+      order: lastitem,address
+    });
+
+  } catch (err) {
+    console.log("Order Success Error:", err);
+    res.status(500).send("Something went wrong");
+  }
 });
 
-res.redirect("/order/"+productid)
-})
+
 
 router.get("/review/:id", async (req, res) => {
 

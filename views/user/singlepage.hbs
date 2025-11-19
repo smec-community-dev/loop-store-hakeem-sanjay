@@ -24,15 +24,18 @@
 
       <div class="image-viewer">
 
-        <!-- THUMBNAILS -->
-        <div class="thumb-list">
+        <!-- MAIN IMAGE -->
+        <img id="mainImage" src="{{data.images.[0]}}" class="main-big-image">
+
+        <!-- THUMBNAILS UNDER MAIN IMAGE -->
+        <div class="thumb-row mt-3">
           {{#each data.images}}
-          <img src="/uploads/{{this}}" onclick="changeImage('/uploads/{{this}}')" id="thumb-{{@index}}">
+          <img src="{{this}}" 
+               class="thumb-img" 
+               onclick="changeImage('{{this}}')" 
+               id="thumb-{{@index}}">
           {{/each}}
         </div>
-
-        <!-- MAIN IMAGE -->
-        <img id="mainImage" src="/uploads/{{data.images.[0]}}" class="main-big-image">
 
       </div>
 
@@ -44,8 +47,8 @@
       <h2 class="product-title">{{data.name}}</h2>
 
       <!-- Category -->
-      <p class="text-muted mb-1">Category:
-        <strong>{{data.category.name}}</strong>
+      <p class="text-muted mb-1">
+        Category: <strong>{{data.category.name}}</strong>
       </p>
 
       <!-- PRICE -->
@@ -96,7 +99,7 @@
 
       <hr>
 
-      <!-- USER REVIEWS -->
+      <!-- REVIEWS -->
       <h4 class="mt-4">Customer Reviews</h4>
 
       {{#each data.review}}
@@ -104,12 +107,8 @@
 
         <div class="d-flex align-items-center gap-2">
           <span class="stars">
-            {{#times this.rating}}
-            <i class="fas fa-star"></i>
-            {{/times}}
-            {{#times (subtract 5 this.rating)}}
-            <i class="far fa-star"></i>
-            {{/times}}
+            {{#times this.rating}}<i class="fas fa-star"></i>{{/times}}
+            {{#times (subtract 5 this.rating)}}<i class="far fa-star"></i>{{/times}}
           </span>
           <strong>{{this.user.name}}</strong>
         </div>
@@ -122,7 +121,7 @@
   </div>
 </div>
 
-<!-- RELATED PRODUCTS SECTION -->
+<!-- RELATED PRODUCTS -->
 <div class="container mt-5">
   <h2 class="related-title">Related Products</h2>
 
@@ -132,7 +131,7 @@
     <div class="col-md-4">
       <a href="/singlepage/{{this._id}}" style="text-decoration:none;color:inherit;">
         <div class="related-card">
-          <img src="/uploads/{{this.images.[0]}}" alt="">
+          <img src="/uploads/products/{{this.images.[0]}}" alt="">
           <div class="related-name">{{this.name}}</div>
           <div class="related-price">₹{{this.price}}</div>
         </div>
@@ -147,16 +146,15 @@
   function changeImage(src) {
     document.getElementById("mainImage").src = src;
 
-    // Remove previous active
-    document.querySelectorAll(".thumb-list img")
+    document.querySelectorAll(".thumb-img")
       .forEach(img => img.classList.remove("active"));
 
-    // Add active to clicked
-    document.querySelectorAll(".thumb-list img")
-      .forEach(img => { if (img.src.includes(src)) img.classList.add("active"); });
+    document.querySelectorAll(".thumb-img")
+      .forEach(img => {
+        if (img.src.includes(src)) img.classList.add("active");
+      });
   }
 
-  // Set first thumb active
   if (document.getElementById("thumb-0")) {
     document.getElementById("thumb-0").classList.add("active");
   }

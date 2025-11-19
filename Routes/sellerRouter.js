@@ -8,6 +8,7 @@ const Seller = require('../Model/Seller')
 let Product = require('../Model/Product')
 const upload = require('../multer/multer')
 const Order = require('../Model/Order')
+const Category = require('../Model/Category')
 
 const router = express.Router()
 router.use(express.urlencoded({ extended: true }));
@@ -116,15 +117,15 @@ router.get('/profile', sellerauth, async (req, res) => {
       .populate("items.seller", "name email phone")
       .populate("user", "name email")
        .populate("items.quantity")
-
-    console.log("sellerOrders:" + sellerOrders)
+        const categorydata=await Category.find()
+    // console.log("sellerOrders:" + sellerOrders)
     // console.log("qnty:"+sellerOrders.items);
     
     const totalorder = sellerOrders.length;
     const sellerproduct = await Product.find({ seller: sellerID })
     const totalproduct = sellerproduct.length
     // console.log("sellerproduct:" + sellerproduct)
-    res.render('seller/sellerprofile',{seller:req.session.seller,products:totalproduct,datas:sellerproduct,orders:sellerOrders,totalorder:totalorder})
+    res.render('seller/sellerprofile',{seller:req.session.seller,products:totalproduct,datas:sellerproduct,orders:sellerOrders,totalorder:totalorder,categorys:categorydata})
 
 
   } catch (error) {
@@ -139,12 +140,14 @@ router.get('/profile', sellerauth, async (req, res) => {
 router.post('/profile', upload.array("productImages[]", 10), async (req, res) => {
   let { name, description, price, stock, category } = req.body;
   const sellerID = req.session.seller.id;
+console.log(req.body);
+console.log("category"+category);
 
-  console.log("Fetched Seller ID:", sellerID);
-  console.log(req.files);
-  console.log(req.body)
+  // console.log("Fetched Seller ID:", sellerID);
+  // console.log(req.files);
+  // console.log(req.body)
   const images = req.files.map(file => "/uploads/products/" + file.filename);
-
+ 
   try {
     await Product.create({
       name: name,
@@ -152,7 +155,7 @@ router.post('/profile', upload.array("productImages[]", 10), async (req, res) =>
       price: price,
       stock: stock,
       seller: sellerID,
-      //category:category,
+      category:category,
       images: images
 
     })

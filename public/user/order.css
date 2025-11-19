@@ -1,206 +1,173 @@
-/* ===========================
+/* ============================
+   GOOGLE FONTS
+============================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap');
+
+/* ============================
    GLOBAL
-=========================== */
+============================ */
 body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #f2f4f8;
-  margin: 0;
-  padding: 0;
-  color: #333;
+    margin: 0;
+    background: #f2f4f8;
+    font-family: "Inter", sans-serif;
+    color: #1a1a1a;
 }
 
-/* ===========================
-   NAVBAR (Homepage Style)
-=========================== */
+.container {
+    width: 90%;
+    max-width: 1250px;
+    margin: auto;
+}
+
+/* ============================
+   NAVBAR (Matches Homepage)
+============================ */
 .topbar {
-  background: #ff9f00;
-  padding: 12px 0;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    background: #ff9f00;
+    padding: 14px 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.1);
 }
 
 .navbar-brand {
-  font-weight: 700;
-  color: #fff !important;
-  font-size: 1.5rem;
+    color: white !important;
+    font-size: 1.7rem;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    text-decoration: none;
 }
 
 .navbar-brand span {
-  color: #172337;
-  font-weight: 700;
+    color: #fff;
 }
 
-.nav-link {
-  color: #fff !important;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.nav-link:hover {
-  color: #172337 !important;
-}
-
-/* ===========================
-   MAIN CONTAINER
-=========================== */
+/* ============================
+   CHECKOUT LAYOUT
+============================ */
 .checkout-container {
-  margin-top: 40px;
-  margin-bottom: 60px;
+    margin: 40px auto;
 }
 
-/* ===========================
-   SECTION BOXES
-=========================== */
 .section-box {
-  background: #fff;
-  border-radius: 14px;
-  padding: 25px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-  margin-bottom: 20px;
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
 }
 
 .section-title {
-  font-weight: 700;
-  color: #ff9f00;
-  border-bottom: 2px solid #ff9f00;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-  font-size: 1.2rem;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    font-family: "Poppins";
 }
 
-/* ===========================
-   ADDRESS AREA
-=========================== */
-#addressView p {
-  margin: 3px 0;
-  font-size: 0.95rem;
-  color: #444;
+/* ============================
+   ADDRESS VIEW FORM
+============================ */
+.section-box input {
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    font-size: 14px;
+    width: 100%;
 }
 
-.btn-outline-primary {
-  padding: 5px 14px;
-  font-size: 0.85rem;
-  border-radius: 8px;
-  border: 1.5px solid #ff9f00;
-  color: #ff9f00;
-  font-weight: 600;
+.section-box input:focus {
+    border-color: #ff9f00;
+    outline: none;
+    box-shadow: 0 0 4px rgba(255,159,0,0.4);
 }
 
-.btn-outline-primary:hover {
-  background: #ff9f00;
-  color: #fff;
-}
-
-/* Inputs */
-.form-control {
-  border-radius: 10px;
-  padding: 10px 12px;
-  border: 1.5px solid #ddd;
-  font-size: 0.95rem;
-}
-
-.form-control:focus {
-  border-color: #ff9f00;
-  box-shadow: 0 0 0 3px rgba(255,159,0,0.2);
-}
-
-.form-label {
-  font-weight: 600;
-  color: #333;
-}
-
-/* ===========================
-   ORDER SUMMARY
-=========================== */
+/* ============================
+   PRODUCT ITEM
+============================ */
 .product-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 15px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
 }
 
 .product-item img {
-  width: 80px;
-  height: 80px;
-  border-radius: 10px;
-  object-fit: contain;
-  background: #fff;
-  border: 2px solid #eee;
-  padding: 8px;
+    width: 110px;
+    height: 110px;
+    border-radius: 14px;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.product-item p {
-  margin: 0;
+/* ============================
+   QUANTITY BUTTONS
+============================ */
+.qty-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #bbb;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 600;
+    transition: 0.25s;
 }
 
+.qty-btn:hover {
+    background: #f0f0f0;
+}
+
+/* ============================
+   SUMMARY
+============================ */
 .summary-total {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #ff4d4d;
-  margin-top: 10px;
-  border-top: 1px solid #e2e2e2;
-  padding-top: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 10px;
 }
 
-/* ===========================
-   PRICE DETAILS
-=========================== */
-.section-box h6 {
-  font-weight: 700;
-  color: #333;
+.price-row {
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
 }
 
-/* ===========================
+#sideTotal {
+    color: #ff4d4d;
+    font-weight: 800;
+}
+
+/* ============================
    PLACE ORDER BUTTON
-   (Homepage Yellow Button)
-=========================== */
+============================ */
 .btn-place-order {
-  background-color: #ff9f00;
-  color: white !important;
-  border: none;
-  padding: 15px 40px;
-  border-radius: 10px;
-  font-size: 1.15rem;
-  font-weight: 700;
-  display: inline-block;
-  text-decoration: none;
-  box-shadow: 0 4px 12px rgba(255,159,0,0.25);
-  transition: 0.25s ease;
+    background: #ff9f00;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    transition: 0.25s;
 }
 
 .btn-place-order:hover {
-  background-color: #e68a00;
-  transform: translateY(-3px);
+    background: #e68a00;
+    transform: translateY(-2px);
 }
 
-/* Disabled */
-.btn-place-order.disabled {
-  opacity: 0.5;
-  background: #cccccc !important;
-  cursor: not-allowed;
-}
-
-/* ===========================
-   FOOTER (Homepage Style)
-=========================== */
+/* ============================
+   FOOTER
+============================ */
 footer {
-  background-color: #172337;
-  color: white;
-  padding: 40px 0;
-  text-align: center;
-  margin-top: 40px;
-  font-weight: 500;
-}
-
-/* ===========================
-   RESPONSIVE
-=========================== */
-@media (max-width: 768px) {
-  .product-item img {
-    width: 70px;
-    height: 70px;
-  }
-
-  .btn-place-order {
-    width: 100%;
-  }
+    background: #172337;
+    padding: 18px;
+    text-align: center;
+    color: white;
+    margin-top: 40px;
+    font-size: 13px;
 }

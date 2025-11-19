@@ -1,0 +1,108 @@
+/* ============================
+   GOOGLE FONTS
+============================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap');
+
+/* ============================
+   GLOBAL
+============================ */
+body {
+    background: #f2f4f8;
+    font-family: "Inter", sans-serif;
+    margin: 0;
+    color: #1a1a1a;
+}
+
+/* ============================
+   SUCCESS CONTAINER
+============================ */
+.success-box {
+    max-width: 550px;
+    margin: 60px auto;
+    background: #ffffff;
+    padding: 32px 28px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================
+   SUCCESS ICON
+============================ */
+.success-icon {
+    font-size: 75px;
+    color: #4bb543;
+    margin-bottom: 12px;
+}
+
+/* ============================
+   ORDER CARD
+============================ */
+.order-card {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 18px;
+    border-radius: 14px;
+    margin-top: 20px;
+    text-align: left;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+}
+
+.order-card h5 {
+    font-family: "Poppins";
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* ============================
+   ADDRESS BOX
+============================ */
+.address-box {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 17px;
+    border-radius: 14px;
+    margin-top: 18px;
+    text-align: left;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+}
+
+.address-box h5 {
+    font-family: "Poppins";
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* ============================
+   MAIN BUTTON
+============================ */
+.btn-home {
+    background: #ff9f00;
+    color: white;
+    padding: 13px 28px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    display: inline-block;
+    margin-top: 25px;
+    font-size: 1rem;
+    transition: 0.25s;
+}
+
+.btn-home:hover {
+    background: #e68a00;
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* ============================
+   FOOTER (Optional Matching)
+============================ */
+.success-footer {
+    text-align: center;
+    margin-top: 40px;
+    background: #172337;
+    padding: 18px;
+    color: white;
+    font-size: 14px;
+}
