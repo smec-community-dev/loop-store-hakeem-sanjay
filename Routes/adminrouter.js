@@ -6,6 +6,7 @@ const bcrypt=require('bcrypt')
 const User=require('../Model/user')
 let Seller=require('../Model/Seller')
 const Admin=require('../Model/Admin')
+let category=require('../Model/Category')
 const adminauth = require('../middleware/adminauth')
 let router=express.Router()
 const categorymulter=require('../multer/catogerymulter')
@@ -13,10 +14,11 @@ const categorymulter=require('../multer/catogerymulter')
 
 const cookieParser=require('cookie-parser')
 const Category = require('../Model/Category')
+const Order = require('../Model/Order')
 
-
-// let ademail=process.env.ADMIN_EMAIL
-// let password=process.env.ADMIN_PASSWORD
+hbs.registerHelper("inc",(value)=>{
+    return parseInt(value) + 1;
+})
 
 
 router.use(session({
@@ -79,17 +81,20 @@ let {email,password}=req.body
 
 router.get('/profile',adminauth,async(req,res)=>{
     let userdata=await User.find()
-    let sellerdata=await Seller.find()
-     let category= await Category.find()
+    let sellerdata=await Seller.find().populate('products')
+     let categoryy= await Category.find()
+     const orders=await Order.find()
+     let totalorder=orders.length
     let totaluser=userdata.length
     let totalseller=sellerdata.length
-    console.log(sellerdata);
+    let categorycount=categoryy.length
+    console.log(categoryy);
     
     
 console.log("userdata:"+userdata);
 
 
-    res.render('admin/adminprofile',{usercount:totaluser,sellercount:totalseller ,seller:sellerdata ,user:userdata,category:category})
+    res.render('admin/adminprofile',{usercount:totaluser,sellercount:totalseller ,totalorder:totalorder,seller:sellerdata ,user:userdata,category:categoryy,categorycount:categorycount})
 })
 router.post('/category/add',categorymulter.single("image"),async(req,res)=>{
     let {name,description}=req.body
@@ -114,6 +119,17 @@ router.post('/category/add',categorymulter.single("image"),async(req,res)=>{
     console.error(error);
     
   }
+})
+router.post('/catogery/delete/:id',async(req,res)=>{
+    let id =req.params.id
+
+    try{
+        await category.findByIdAndDelete(id)
+        console.log("data deleted success fully");
+        return res.redirect('/admin/profile')
+    }catch(error){
+        console.error(error)
+    }
 })
 
 

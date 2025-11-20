@@ -389,7 +389,7 @@
         </div>
     </div>
 
-    
+
     <!-- MAIN CONTENT -->
     <div class="main-content">
 
@@ -436,12 +436,12 @@
                         <i class="fas fa-shopping-cart"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>45890</h3>
+                        <h3>{{totalorder}}</h3>
                         <p>Total Orders</p>
                     </div>
                 </div>
 
-                <div class="stat-card">
+                {{!-- <div class="stat-card">
                     <div class="stat-icon">
                         <i class="fas fa-coins"></i>
                     </div>
@@ -449,7 +449,7 @@
                         <h3>$2.4M</h3>
                         <p>Total Revenue</p>
                     </div>
-                </div>
+                </div> --}}
                 <div class="stat-card">
                     <div class="stat-icon">
                         <i class="fas fa-tags"></i>
@@ -489,7 +489,7 @@
                     {{#if user}}
                     {{#each user}}
                     <tr>
-                        <td>U-{{@index}}</td>
+                        <td>U-{{inc @index}}</td>
                         <td>{{this.name}}</td>
                         <td>{{this.email}}</td>
                         <td>{{this.approvedAt}}</td>
@@ -530,9 +530,9 @@
                     {{#if this.phone}}
                     <p class="seller-info">📱 {{this.phone}}</p>
                     {{/if}}
-                    <p class="seller-info">⭐ 4.8/5 (1,245 reviews)</p>
-                    <p class="seller-info">📦 2,450 products</p>
-                    <p class="seller-info">💰 $18,000 revenue</p>
+                    {{!-- <p class="seller-info">⭐ 4.8/5 (1,245 reviews)</p> --}}
+                    <p class="seller-info">📦{{this.products.length}}  products</p>
+                    {{!-- <p class="seller-info">💰 $18,000 revenue</p> --}}
                     <span class="status active">Verified</span>
                 </div>
                 {{/each}}
@@ -566,19 +566,20 @@
                     {{#if category}}
                     {{#each category}}
                     <tr>
-                        <td>{{@index}}</td>
+                      <td>{{inc @index}}</td>
+
                         <td>{{this.name}}</td>
                         {{!-- <td>{{this.productCount}}</td> --}}
                         <td>
                             <span class="status active">Active</span>
                         </td>
                         <td>
-                            {{!-- <button class="admin-action-btn">
-                                <i class="fas fa-edit"></i>
-                            </button> --}}
-                            <button class="admin-action-btn suspend">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <form action="/admin/catogery/delete/{{this.id}}" method="POST" style="display:inline;">
+                                <button type="submit" class="admin-action-btn suspend"
+                                    onclick="return confirm('Delete this category?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     {{/each}}

@@ -191,7 +191,7 @@ router.post('/profile', upload.array("productImages[]", 10), async (req, res) =>
   const images = req.files.map(file => "/uploads/products/" + file.filename);
 
   try {
-    await Product.create({
+    let newProduct= await Product.create({
       name: name,
       description: description,
       price: price,
@@ -201,7 +201,12 @@ router.post('/profile', upload.array("productImages[]", 10), async (req, res) =>
       images: images
 
     })
-    console.log('the data saved in database');
+       await Seller.findByIdAndUpdate(
+      sellerID,
+      { $push: { products: newProduct._id } }  // <-- Add product here
+    );
+
+    console.log("Product created and added to seller");
     return res.redirect('/seller/profile')
 
   } catch (error) {
