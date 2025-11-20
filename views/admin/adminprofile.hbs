@@ -522,24 +522,44 @@
             </div>
 
             <div class="sellers-grid">
-                {{#if seller}}
-                {{#each seller}}
-                <div class="seller-card">
-                    <h3>{{this.name}}</h3>
-                    <p class="seller-info">📧 {{this.email}}</p>
-                    {{#if this.phone}}
-                    <p class="seller-info">📱 {{this.phone}}</p>
-                    {{/if}}
-                    <p class="seller-info">⭐ 4.8/5 (1,245 reviews)</p>
-                    <p class="seller-info">📦 2,450 products</p>
-                    <p class="seller-info">💰 $18,000 revenue</p>
-                    <span class="status active">Verified</span>
-                </div>
-                {{/each}}
-                {{else}}
-                <p class="text-muted">No sellers found.</p>
-                {{/if}}
-            </div>
+    {{#if seller}}
+    {{#each seller}}
+    <div class="seller-card">
+        <h3>{{this.name}}</h3>
+
+        <p class="seller-info">📧 {{this.email}}</p>
+
+        {{#if this.phone}}
+        <p class="seller-info">📱 {{this.phone}}</p>
+        {{/if}}
+
+        {{!-- Status --}}
+        {{#if this.isApproved}}
+        <span class="status active">Approved</span>
+        {{else}}
+        <span class="status suspended">Pending</span>
+        {{/if}}
+
+        <div style="margin-top:10px; display:flex; gap:10px;">
+
+            {{!-- Approve button visible only when pending --}}
+            {{#unless this.isApproved}}
+            <form action="/admin/seller/approve/{{this._id}}" method="POST">
+                <button class="btn btn-success btn-sm">Approve</button>
+            </form>
+            {{/unless}}
+
+            <form action="/admin/seller/reject/{{this._id}}" method="POST">
+                <button class="btn btn-danger btn-sm">Reject</button>
+            </form>
+        </div>
+    </div>
+    {{/each}}
+    {{else}}
+    <p class="text-muted">No sellers found.</p>
+    {{/if}}
+</div>
+
         </div>
         <!-- CATEGORIES SECTION -->
         <div id="categories" class="section">

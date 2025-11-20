@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Place Order - LookMe</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/user/cartorder.css">
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg topbar">
+    <div class="container">
+      <a class="navbar-brand" href="/">LookMe <span>Loopstore</span></a>
+
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item"><a class="nav-link" href="/"><i class="bi bi-house"></i> Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/cart"><i class="bi bi-cart3"></i> Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container checkout-container">
+    <div class="row">
+
+      <!-- LEFT SIDE -->
+      <div class="col-lg-8">
+
+        <!-- ADDRESS SECTION -->
+        <div class="section-box">
+          <h5 class="section-title"><i class="bi bi-geo-alt"></i> Delivery Address</h5>
+
+          <div id="addressView" style="display: {{#if address}} block {{else}} none {{/if}};">
+            {{#if address}}
+            <p><strong>{{address.address.name}}</strong></p>
+            <p>
+              {{address.address.house}}, {{address.address.street}},<br>
+              {{address.address.city}}, {{address.address.state}} - {{address.address.pincode}}
+            </p>
+            <p>Mobile: {{address.address.phone}}</p>
+
+            <button class="btn btn-outline-primary btn-sm" onclick="editAddress()">
+              <i class="bi bi-pencil"></i> Edit
+            </button>
+            {{/if}}
+          </div>
+
+          <form method="POST">
+            <div id="addressEdit" style="display: {{#if address}} none {{else}} block {{/if}};">
+              <div class="row">
+
+                <div class="col-md-6 mb-2">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" class="form-control" name="address[name]" value="{{address.address.name}}">
+                </div>
+
+                <div class="col-md-6 mb-2">
+                  <label class="form-label">Phone</label>
+                  <input type="text" class="form-control" name="address[phone]" value="{{address.address.phone}}">
+                </div>
+
+                <div class="col-md-6 mb-2">
+                  <label class="form-label">House</label>
+                  <input type="text" class="form-control" name="address[house]" value="{{address.address.house}}">
+                </div>
+
+                <div class="col-md-6 mb-2">
+                  <label class="form-label">Street</label>
+                  <input type="text" class="form-control" name="address[street]" value="{{address.address.street}}">
+                </div>
+
+                <div class="col-md-4 mb-2">
+                  <label class="form-label">City</label>
+                  <input type="text" class="form-control" name="address[city]" value="{{address.address.city}}">
+                </div>
+
+                <div class="col-md-4 mb-2">
+                  <label class="form-label">State</label>
+                  <input type="text" class="form-control" name="address[state]" value="{{address.address.state}}">
+                </div>
+
+                <div class="col-md-4 mb-2">
+                  <label class="form-label">Pincode</label>
+                  <input type="text" class="form-control" name="address[pincode]" value="{{address.address.pincode}}">
+                </div>
+
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-sm mt-2">Save Address</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ORDER SUMMARY -->
+        <div class="section-box">
+          <h5 class="section-title"><i class="bi bi-bag-check"></i> Order Summary</h5>
+
+          {{#each cartdata}}
+          <div class="product-item"
+            data-id="{{this._id}}"
+            data-price="{{this.price}}"
+            data-qty="{{this.quantity}}">
+
+            <img src="{{this.images.[0]}}" alt="product image" />
+
+            <div class="w-100">
+              <p class="fw-semibold">{{this.name}}</p>
+              <p class="text-muted">₹{{this.price}}</p>
+              <span class="qty fw-semibold" style="font-size: 1.1rem;">
+                {{this.quantity}}
+              </span>
+            </div>
+
+          </div>
+          {{/each}}
+
+          <p class="summary-total">Total: ₹<span id="total">0</span></p>
+        </div>
+
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="col-lg-4">
+
+        <div class="section-box">
+          <h5 class="section-title"><i class="bi bi-receipt"></i> Price Details</h5>
+
+          <p>Price: ₹<span id="sidePrice">0</span></p>
+          <p>Delivery: Free</p>
+          <hr>
+          <h6>Total Payable: ₹<span id="sideTotal">0</span></h6>
+        </div>
+
+        {{#if address}}
+        <div class="text-center mt-3">
+          <a id="placeOrderBtn" class="btn-place-order" href="/placemultiorder">
+            <i class="bi bi-check-circle"></i> Place Order
+          </a>
+        </div>
+        {{else}}
+        <div class="text-center mt-3">
+          <button onclick="editAddress()" class="btn-place-order"
+            style="opacity:0.5; background:#ccc; cursor:not-allowed;">
+            <i class="bi bi-x-circle"></i> Add Address to Continue
+          </button>
+        </div>
+        {{/if}}
+
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="text-center">
+    <p>© 2025 LookMe. All rights reserved.</p>
+  </footer>
+
+
+  <!-- JAVASCRIPT -->
+  <script>
+    function updateTotals() {
+      let total = 0;
+
+      document.querySelectorAll(".product-item").forEach(item => {
+        let price = Number(item.dataset.price);
+        let qty = Number(item.dataset.qty);
+
+        total += price * qty;
+
+        item.querySelector(".qty").textContent = qty;
+      });
+
+      document.getElementById("total").textContent = total;
+      document.getElementById("sidePrice").textContent = total;
+      document.getElementById("sideTotal").textContent = total;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+      updateTotals();
+
+      document.getElementById("placeOrderBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        window.location.href = "/placemultiorder";
+      });
+    });
+
+    function editAddress() {
+      document.getElementById("addressView").style.display = "none";
+      document.getElementById("addressEdit").style.display = "block";
+      scrollTo({ top: 0, behavior: "smooth" });
+    }
+  </script>
+
+</body>
+
+</html>

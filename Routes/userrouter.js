@@ -63,7 +63,7 @@ router.post("/register", async (req, res) => {
     let hashed = await bcrypt.hash(req.body.password, 10);//firstname set
 
     await user.create({
-        name: req.body.name,
+        name: req.body.firstname,
         email: req.body.email,
         phone: req.body.phone,
         password: hashed,
@@ -207,7 +207,7 @@ router.get("/cart/add/:id",userrauth, async (req, res) => {
             userCart.items.push({
                     product:productId,
                     quantity:1,
-                    priceAtAddTime:product.price,
+                    priceAtAddTime:product.price
             })
         }
         userCart.totalPrice=userCart.items.reduce((sum,item)=>{
@@ -217,7 +217,7 @@ router.get("/cart/add/:id",userrauth, async (req, res) => {
          res.redirect("/cart");
     }
 });
-router.get("/cart/remove/:id",async(req,res)=>{
+router.get("/cart/remove/:id",userrauth,async(req,res)=>{
     let productid=req.params.id
     let userid=req.session.user.userid
     await Cart.findOneAndUpdate({user:userid},{$pull:{items:{product:productid}}})
@@ -309,7 +309,7 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
         const userid = req.session.user.userid;
         const productid = req.params.id;
 
-        // ⭐ GET quantity from GET URL
+       
         const quantity = parseInt(req.query.qty) || 1;
 
         const productdata = await Products.findById(productid).populate("seller");
@@ -317,14 +317,14 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
         let orderdata = await Order.findOne({ user: userid });
 
         if (!orderdata) {
-            // ⭐ New order
+           
             await Order.create({
                 user: userid,
                 items: [
                     {
                         product: productid,
-                        quantity: quantity,   // ⭐ FIXED
-                        priceAtPurchase: productdata.price*quantity,
+                        quantity: quantity,  
+                        priceAtPurchase: productdata.price,
                         seller: productdata.seller
                     }
                 ],
@@ -336,13 +336,13 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
         else {
             orderdata.items.push({
                 product: productid,
-                quantity: quantity,  // ⭐ FIXED
-                priceAtPurchase: productdata.price*quantity,
+                quantity: quantity,  
+                priceAtPurchase: productdata.price,
                 seller: productdata.seller
             });
         }
 
-        // ⭐ Recalculate total
+       
         orderdata.totalPrice = orderdata.items.reduce((sum, item) => {
             return sum + (item.quantity * item.priceAtPurchase);
         }, 0);
@@ -362,7 +362,6 @@ router.get("/ordersuccess", userrauth, async (req, res) => {
     console.log(address);
     
 
-    // Get latest order of the user
     const lastOrder = await Order.findOne({ user: userid }).populate("items.product").populate("items.seller");
    
     const lastitem=lastOrder.items[lastOrder.items.length-1]
@@ -375,6 +374,144 @@ router.get("/ordersuccess", userrauth, async (req, res) => {
     res.status(500).send("Something went wrong");
   }
 });
+router.get("/cartorder", userrauth,async (req, res) => {
+  try {
+    const userid = req.session.user?.userid;
+    if (!userid) return res.redirect("/login");
+
+   
+    const cart = await Cart.findOne({ user: userid })
+      .populate("items.product")
+      .lean();
+
+
+    const address = await Address.findOne({ user: userid }).lean();
+
+    if (!cart) {
+      return res.render("user/cartorder", {
+        cartdata: [],
+        total: 0,
+        address
+      });
+    }
+
+   
+    const cartdata = cart.items.map((item) => ({
+      _id: item.product._id,
+      name: item.product.name,
+      images: item.product.images,
+      price: item.priceAtAddTime,
+      quantity: item.quantity
+    }));
+
+    res.render("user/cartorder", {
+      cartdata,
+      address,
+      total: cart.totalPrice
+    });
+
+  } catch (err) {
+    console.log("Cart order error:", err);
+    res.redirect("/error");
+  }
+});
+router.post("/cartorder", async (req, res) => {
+        const userid = req.session.user.userid;
+        let exists = await Address.findOne({ user: userid });
+        if (exists) {
+            await Address.updateOne(
+                { user: userid },
+                { address: req.body.address }
+            );
+        } else {
+            await Address.create({
+                user: userid,
+                address: req.body.address
+            });
+        }
+
+        res.redirect("/cartorder");
+});
+router.get("/placemultiorder",userrauth, async (req, res) => {
+  
+        const userId = req.session.user.userid;
+
+      
+        const cart = await Cart.findOne({ user: userId })
+            .populate("items.product");
+
+        if (!cart || cart.items.length === 0) {
+            return res.redirect("/cart");
+        }
+
+      
+        const orderItems = cart.items.map(item => ({
+            product: item.product._id,
+            quantity: item.quantity,
+            priceAtPurchase: item.priceAtAddTime,
+            seller: item.product.seller
+        }));
+
+       
+        const totalAmount = orderItems.reduce(
+            (sum, item) => sum + item.quantity * item.priceAtPurchase,
+            0
+        );
+
+    
+        let orderData = await Order.findOne({ user: userId });
+
+        let savedOrder;
+
+        if (!orderData) {
+         
+            savedOrder = await Order.create({
+                user: userId,
+                items: orderItems,
+                totalPrice: totalAmount
+            });
+        } else {
+            orderItems.forEach(i => orderData.items.push(i));
+
+            orderData.totalPrice += totalAmount;
+
+            
+            savedOrder = await orderData.save();
+        }
+
+        return res.redirect("/multipleordersuccess");
+});
+router.get("/multipleordersuccess",userrauth, async (req, res) => {
+   
+        const userId = req.session.user.userid;
+
+        let cart = await Cart.findOne({ user: userId })
+            .populate("items.product")
+            .lean();
+
+        if (!cart) return res.redirect("/cart");
+
+ 
+        const address = await Address.findOne({ user: userId }).lean();
+
+        res.render("user/multipleordersuccess", {
+            order: cart,
+            address
+        });
+        process.nextTick(async () => {
+                const userCart = await Cart.findOne({ user: userId });
+
+                if (userCart) {
+                    userCart.items = [];
+                    userCart.totalPrice = 0;
+                    await userCart.save();
+                }
+        });
+});
+
+
+
+
 
 
 
@@ -394,7 +531,8 @@ router.post("/review/:id", async (req, res) => {
         product.review.push({
             user: req.session.user.userid,
             rating:req.body.rating,
-            content:req.body.content
+            content:req.body.content,
+            content_typing:req.body.content_typing
         });
         await product.save();
         res.redirect(`/review/${productId}`);

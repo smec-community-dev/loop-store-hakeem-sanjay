@@ -59,12 +59,7 @@
 
                     <!-- QUANTITY -->
                     <div class="item-quantity">
-                        <label>Qty:</label>
-                        <div class="quantity-control">
-                            <button class="qty-btn">−</button>
-                            <input type="number" value="{{this.quantity}}" min="1">
-                            <button class="qty-btn">+</button>
-                        </div>
+                        <label>Qty:{{this.quantity}}</label>
                     </div>
 
                     <!-- PRICE -->
@@ -100,8 +95,10 @@
                         <span>Total:</span>
                         <span>₹{{sum totalPrice 49}}</span>
                     </div>
-
-                    <button class="btn-full btn-primary">Proceed to Checkout</button>
+                    <form action="/cartorder">
+                        <button type="subtn" class="btn-full btn-primary">Proceed to Checkout</button>
+                    </form>
+                    
                 </div>
             </aside>
 

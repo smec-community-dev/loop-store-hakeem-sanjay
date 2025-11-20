@@ -5,40 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{data.name}} - Product Details</title>
 
-  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
   <link rel="stylesheet" href="/user/singlepage.css">
 </head>
 
 <body>
 
+<!-- 🟦 PRODUCT DETAILS SECTION -->
 <div class="container mt-5 product-container">
   <div class="row g-4">
 
-    <!-- LEFT IMAGE SECTION -->
+    <!-- LEFT IMAGE -->
     <div class="col-md-5">
-
       <div class="image-viewer">
-
-        <!-- MAIN IMAGE -->
         <img id="mainImage" src="{{data.images.[0]}}" class="main-big-image">
 
-        <!-- THUMBNAILS UNDER MAIN IMAGE -->
         <div class="thumb-row mt-3">
           {{#each data.images}}
-          <img src="{{this}}" 
-               class="thumb-img" 
-               onclick="changeImage('{{this}}')" 
-               id="thumb-{{@index}}">
+            <img src="{{this}}" class="thumb-img" onclick="changeImage('{{this}}')" id="thumb-{{@index}}">
           {{/each}}
         </div>
 
       </div>
-
     </div>
 
     <!-- RIGHT PRODUCT INFO -->
@@ -46,41 +35,28 @@
 
       <h2 class="product-title">{{data.name}}</h2>
 
-      <!-- Category -->
       <p class="text-muted mb-1">
         Category: <strong>{{data.category.name}}</strong>
       </p>
 
-      <!-- PRICE -->
       <div class="price">₹{{data.price}}</div>
 
-      <!-- DESCRIPTION -->
       <div class="product-description mt-3">
         {{data.description}}
       </div>
 
-      <!-- BUTTONS -->
       <div class="d-flex gap-3 mt-3">
-
-        <a href="/cart/add/{{data._id}}">
-          <button class="btn-add">Add to Cart</button>
-        </a>
-
-        <a href="/order/{{data._id}}">
-          <button class="btn-buy">Buy Now</button>
-        </a>
-
+        <a href="/cart/add/{{data._id}}"><button class="btn-add">Add to Cart</button></a>
+        <a href="/order/{{data._id}}"><button class="btn-buy">Buy Now</button></a>
         <a href="/wishlist/add/{{data._id}}" class="btn-wishlist">
           <i class="fa-regular fa-heart"></i> Wishlist
         </a>
-
       </div>
 
       <hr class="my-4">
 
-      <!-- SELLER DETAILS -->
+      <!-- SELLER -->
       <h4>Seller</h4>
-
       {{#if data.seller}}
         <p><span class="seller-badge">Verified Seller: {{data.seller.name}}</span></p>
 
@@ -93,66 +69,78 @@
         <p><strong>Email:</strong> {{data.seller.email}}</p>
         <p><strong>Phone:</strong> {{data.seller.phone}}</p>
         <p><strong>Location:</strong> {{data.seller.location}}</p>
+
       {{else}}
         <p>No seller info available</p>
       {{/if}}
 
-      <hr>
-
-      <!-- REVIEWS -->
-      <h4 class="mt-4">Customer Reviews</h4>
-
-      {{#each data.review}}
-      <div class="review-box mt-3">
-
-        <div class="d-flex align-items-center gap-2">
-          <span class="stars">
-            {{#times this.rating}}<i class="fas fa-star"></i>{{/times}}
-            {{#times (subtract 5 this.rating)}}<i class="far fa-star"></i>{{/times}}
-          </span>
-          <strong>{{this.user.name}}</strong>
-        </div>
-
-        <p class="mt-2">{{this.content}}</p>
-      </div>
-      {{/each}}
-
     </div>
+
   </div>
 </div>
 
-<!-- RELATED PRODUCTS -->
+
+
+<!-- 🟩 SEPARATE CUSTOMER REVIEWS SECTION -->
+<div class="container mt-5 review-section">
+
+  <h2 class="section-title">Customer Reviews</h2>
+
+  {{#each data.review}}
+  <div class="review-box mt-3">
+
+    <div class="d-flex align-items-center gap-2">
+      <span class="stars">
+        {{#times this.rating}}<i class="fas fa-star"></i>{{/times}}
+        {{#times (subtract 5 this.rating)}}<i class="far fa-star"></i>{{/times}}
+      </span>
+      <strong>{{this.user.name}}</strong>
+    </div>
+
+    {{#if this.content_typing}}
+    <span class="review-tag">{{this.content_typing}}</span>
+    {{/if}}
+
+    <p class="mt-2">{{this.content}}</p>
+
+  </div>
+  {{/each}}
+
+</div>
+
+<!-- 🟧 RELATED PRODUCTS SECTION -->
 <div class="container mt-5">
-  <h2 class="related-title">Related Products</h2>
+
+  <h2 class="section-title">Related Products</h2>
 
   <div class="row g-4">
-
     {{#each related}}
     <div class="col-md-4">
-      <a href="/singlepage/{{this._id}}" style="text-decoration:none;color:inherit;">
+      <a href="/singlepage/{{this._id}}" class="related-link">
         <div class="related-card">
-          <img src="/uploads/products/{{this.images.[0]}}" alt="">
+          <img src="{{this.images.[0]}}" alt="">
           <div class="related-name">{{this.name}}</div>
           <div class="related-price">₹{{this.price}}</div>
         </div>
       </a>
     </div>
     {{/each}}
-
   </div>
+
 </div>
+
+
+
+
 
 <script>
   function changeImage(src) {
     document.getElementById("mainImage").src = src;
 
-    document.querySelectorAll(".thumb-img")
-      .forEach(img => img.classList.remove("active"));
-
-    document.querySelectorAll(".thumb-img")
-      .forEach(img => {
-        if (img.src.includes(src)) img.classList.add("active");
-      });
+    document.querySelectorAll(".thumb-img").forEach(img => img.classList.remove("active"));
+    document.querySelectorAll(".thumb-img").forEach(img => {
+      if (img.src.includes(src)) img.classList.add("active");
+    });
   }
 
   if (document.getElementById("thumb-0")) {

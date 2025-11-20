@@ -27,6 +27,15 @@
         <h3>Write a Review</h3>
 
         <form action="/review/{{product._id}}" method="POST">
+        <label>Review Type</label>
+    <select id="reviewType" name="content_typing" class="review-type">
+        <option value="Good Product">Good Product</option>
+        <option value="Bad Product">Bad Product</option>
+        <option value="Value for Money">Value for Money</option>
+        <option value="Poor Packaging">Poor Packaging</option>
+        <option value="Quality is Average">Quality is Average</option>
+    </select>
+
 
             <!-- ⭐ REVERSE STAR ORDER -->
             <div class="rating-stars">
@@ -55,18 +64,28 @@
     <h3 style="margin-top:25px;">Customer Reviews</h3>
 
     {{#each product.review}}
-        <div class="review-card">
-            <div class="review-header">
-                <h4>{{this.user.name}}</h4>
-                <p class="stars">
-                    {{#times this.rating}}★{{/times}}
-                </p>
-            </div>
+<div class="review-card">
 
-            <p class="comment">{{this.content}}</p>
-            <p class="date">{{this.createdAt}}</p>
-        </div>
-    {{/each}}
+    <div class="review-header">
+        <h4>{{this.user.name}}</h4>
+        <p class="stars">
+            {{#times this.rating}}★{{/times}}
+        </p>
+    </div>
+
+    <!-- Show content typing tag (Good, Bad, etc.) -->
+    {{#if this.content_typing}}
+    <span class="type-tag">{{this.content_typing}}</span>
+    {{/if}}
+
+    <!-- The user's main written comment -->
+    <p class="comment">{{this.content}}</p>
+
+    <p class="date">{{this.createdAt}}</p>
+
+</div>
+{{/each}}
+
 
 </div>
 

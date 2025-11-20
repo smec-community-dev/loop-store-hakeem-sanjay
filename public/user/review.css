@@ -170,3 +170,60 @@ textarea:focus {
     color: #888;
     margin-top: 6px;
 }
+/* Review Type Label */
+label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* Review Type Dropdown */
+.review-type {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 15px;
+    color: #444;
+    outline: none;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.review-type:hover {
+    border-color: #999;
+}
+
+/* When focused (clicked) */
+.review-type:focus {
+    border-color: #ff9f00;
+    box-shadow: 0 0 0 3px rgba(255, 159, 0, 0.25);
+}
+
+/* Style the dropdown arrow */
+.review-type::-ms-expand {
+    display: none;
+}
+
+.review-type {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' fill='%23444' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
+}
+.type-tag {
+    display: inline-block;
+    background: #ffe5b3;
+    color: #ff9500;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}

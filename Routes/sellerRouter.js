@@ -122,7 +122,9 @@ router.get('/profile', sellerauth, async (req, res) => {
     // console.log("qnty:"+sellerOrders.items);
     
     const totalorder = sellerOrders.length;
-    const sellerproduct = await Product.find({ seller: sellerID })
+    const sellerproduct = await Product.find({ seller: sellerID }).populate("review.user")
+    console.log(sellerproduct);
+    
     const totalproduct = sellerproduct.length
     // console.log("sellerproduct:" + sellerproduct)
     res.render('seller/sellerprofile',{seller:req.session.seller,products:totalproduct,datas:sellerproduct,orders:sellerOrders,totalorder:totalorder,categorys:categorydata})
