@@ -36,7 +36,6 @@
 
           <!-- SHOW SAVED ADDRESS -->
           <div id="addressView" style="display: {{#if address}} block {{else}} none {{/if}};">
-
             {{#if address}}
             <p><strong>{{address.address.name}}</strong></p>
             <p>{{address.address.house}}, {{address.address.street}}, {{address.address.city}},
@@ -47,7 +46,6 @@
               <i class="bi bi-pencil"></i> Edit
             </button>
             {{/if}}
-
           </div>
 
           <!-- ADD / EDIT ADDRESS FORM -->
@@ -102,14 +100,22 @@
           <h5 class="section-title"><i class="bi bi-bag-check"></i> Order Summary</h5>
 
           <div class="product-item">
-            <img src="{{data.images.[0]}}">
-            <div>
+            <img src="{{data.images.[0]}}" alt="product image" />
+
+            <div class="w-100">
               <p class="fw-semibold">{{data.name}}</p>
               <p class="text-muted">₹{{data.price}}</p>
+
+              <!-- QUANTITY SELECTOR -->
+              <div class="d-flex align-items-center gap-3 mt-2">
+                <button type="button" class="qty-btn" data-action="decrease">−</button>
+                <span id="qty" class="fw-semibold" style="font-size: 1.1rem;">1</span>
+                <button type="button" class="qty-btn" data-action="increase">+</button>
+              </div>
             </div>
           </div>
 
-          <p class="summary-total">Total: ₹{{data.price}}</p>
+          <p class="summary-total">Total: ₹<span id="total">{{data.price}}</span></p>
         </div>
 
       </div>
@@ -119,27 +125,22 @@
 
         <div class="section-box">
           <h5 class="section-title"><i class="bi bi-receipt"></i> Price Details</h5>
-          <p>Price: ₹{{data.price}}</p>
+          <p>Price: ₹<span id="sidePrice">{{data.price}}</span></p>
           <p>Delivery: Free</p>
           <hr>
-          <h6>Total Payable: ₹{{data.price}}</h6>
+          <h6>Total Payable: ₹<span id="sideTotal">{{data.price}}</span></h6>
         </div>
 
-        <!-- PLACE ORDER (SHOW ONLY IF ADDRESS EXISTS) -->
+        <!-- PLACE ORDER BUTTON -->
         {{#if address}}
         <div class="text-center mt-3">
-          <a href="/placeorder/{{data._id}}" 
-             class="btn-place-order"
-             onclick="return confirmOrder();">
-             <i class="bi bi-check-circle"></i> Place Order
+          <a id="placeOrderLink" class="btn-place-order" href="#">
+            <i class="bi bi-check-circle"></i> Place Order
           </a>
         </div>
-
         {{else}}
         <div class="text-center mt-3">
-          <button onclick="editAddress()" 
-                  class="btn-place-order" 
-                  style="opacity:0.5; cursor:not-allowed; background:#ccc;">
+          <button onclick="editAddress()" class="btn-place-order" style="opacity:0.5; cursor:not-allowed; background:#ccc;">
             <i class="bi bi-x-circle"></i> Add Address to Continue
           </button>
         </div>
@@ -154,18 +155,59 @@
     <p>© 2025 LookMe. All rights reserved.</p>
   </footer>
 
+
   <!-- JAVASCRIPT -->
   <script>
-    // Success Alert
-    function confirmOrder() {
-      alert("🎉 Your order has been placed successfully!");
-      return true;
+    const PRODUCT_ID = "{{data._id}}";
+    const PRICE = Number("{{data.price}}") || 0;
+
+    let qty = 1;
+
+    function updateTotals() {
+      const total = PRICE * qty;
+      document.getElementById("qty").textContent = qty;
+      document.getElementById("total").textContent = total;
+      document.getElementById("sideTotal").textContent = total;
     }
 
-    // Switch to Edit Mode
+    document.addEventListener("DOMContentLoaded", () => {
+
+      // Quantity Buttons
+      document.querySelectorAll(".qty-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const action = btn.getAttribute("data-action");
+          if (action === "increase") qty++;
+          else if (action === "decrease") qty = Math.max(1, qty - 1);
+
+          updateTotals();
+        });
+      });
+
+      // Place Order Button
+      const orderBtn = document.getElementById("placeOrderLink");
+      orderBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        if (!PRODUCT_ID) {
+          alert("Product ID missing");
+          return;
+        }
+
+        const safeQty = encodeURIComponent(qty);
+        const safeId = encodeURIComponent(PRODUCT_ID);
+
+        orderBtn.href = `/placeorder/${safeId}?qty=${safeQty}`;
+        window.location.href = orderBtn.href;
+      });
+
+      updateTotals();
+
+    });
+
     function editAddress() {
-      document.getElementById("addressEdit").style.display = "block";
       document.getElementById("addressView").style.display = "none";
+      document.getElementById("addressEdit").style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   </script>
 
