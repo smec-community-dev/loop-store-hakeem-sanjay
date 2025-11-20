@@ -40,8 +40,6 @@ router.use(
   })
 );
 
-
-//Hello ........................
 hbs.registerHelper("times", function(n, block) {
     let accum = "";
     for (let i = 0; i < n; ++i) {
@@ -121,19 +119,55 @@ router.get('/profile', sellerauth, async (req, res) => {
     const sellerOrders = await Order.find({
       "items.seller": sellerID
     })
-      .populate("items.product", "name price stock images")
+      .populate("items.product", "name price stock images ")
       .populate("items.seller", "name email phone")
       .populate("user", "name email")
-       .populate("items.quantity")
-        const categorydata=await Category.find()
-    // console.log("sellerOrders:" + sellerOrders)
+      .populate("items.quantity")
+    //  .populate("items.product.review","user content content_text")
+
+
+
+    let totalPrice = 0;
+
+    sellerOrders.forEach(order => {
+      order.items.forEach(item => {
+        totalPrice += item.quantity * item.product.price;
+      });
+    });
+
+    // console.log("Total Price:", totalPrice);
+
+    let totalProductsOrdered = 0;
+
+    const sellerOrderscount = await Order.find({ "items.seller": sellerID });
+
+    sellerOrderscount.forEach(order => {
+      order.items.forEach(item => {
+        if (item.seller.toString() === sellerID.toString()) {
+          totalProductsOrdered++;   // count product line 
+        }
+      });
+    });
+
+    console.log("Total products inside orders:", totalProductsOrdered);
+
+
+
+    const categorydata = await Category.find()
+    //  console.log("sellerOrders:" + sellerOrders)
     // console.log("qnty:"+sellerOrders.items);
-    
-    const totalorder = sellerOrders.length;
+
+    // const totalorder = sellerOrders.length;
+
+
     const sellerproduct = await Product.find({ seller: sellerID })
+      .populate("review", "user content content_typing rating")
+      .populate("review.user", "name email");
+
+
     const totalproduct = sellerproduct.length
     // console.log("sellerproduct:" + sellerproduct)
-    res.render('seller/sellerprofile',{seller:req.session.seller,products:totalproduct,datas:sellerproduct,orders:sellerOrders,totalorder:totalorder,categorys:categorydata})
+    res.render('seller/sellerprofile', { seller: req.session.seller, products: totalproduct, datas: sellerproduct, orders: sellerOrders, totalorder: totalProductsOrdered, categorys: categorydata, total: totalPrice })
 
 
   } catch (error) {
@@ -181,7 +215,6 @@ console.log("category"+category);
 
 
 })
-
 router.get('/profile/update', sellerauth, async (req, res) => {
   let id = req.query.id
   console.log("id:" + id);
@@ -238,6 +271,13 @@ router.get("/logout", (req, res) => {
     res.redirect("/seller/login");
   });
 });
+router.get('/order/details/:id', async (req, res) => {
+  const order = await Order.findById(req.params.id)
+    .populate("user", "name email")
+    .populate("items.product", "name price images");
+
+  res.json({ success: true, order });
+});
 
 //  {
 //     name:name,
@@ -251,3 +291,8 @@ router.get("/logout", (req, res) => {
 //loop123
 //specifications: specs
 module.exports = router;
+
+
+
+
+
