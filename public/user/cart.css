@@ -20,7 +20,7 @@ body {
 }
 
 /* ============================
-   NAVBAR (Matches Homepage)
+   NAVBAR
 ============================ */
 .navbar {
     background: #ff9f00;
@@ -55,7 +55,7 @@ body {
 }
 
 /* ============================
-   CART LAYOUT
+   CART SECTION
 ============================ */
 .cart-section {
     padding: 40px 0;
@@ -67,7 +67,7 @@ body {
 }
 
 /* ============================
-   CART ITEM LIST
+   CART ITEMS LIST
 ============================ */
 .cart-items {
     flex: 2;
@@ -88,6 +88,7 @@ body {
     font-weight: 600;
     text-decoration: none;
 }
+
 .continue:hover {
     text-decoration: underline;
 }
@@ -97,12 +98,14 @@ body {
 ============================ */
 .cart-item {
     display: flex;
-    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
     padding: 18px 0;
     border-bottom: 1px solid #eee;
-    align-items: center;
 }
 
+/* PRODUCT IMAGE */
 .item-image img {
     width: 140px;
     height: 140px;
@@ -113,7 +116,11 @@ body {
     border: 1px solid #eee;
 }
 
-/* Product Details */
+/* PRODUCT DETAILS */
+.item-details {
+    flex: 2;
+}
+
 .item-details h3 {
     margin: 0;
     font-size: 20px;
@@ -131,9 +138,10 @@ body {
    QUANTITY CONTROLS
 ============================ */
 .quantity-control {
+    margin-top: 12px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .qty-btn {
@@ -145,6 +153,9 @@ body {
     cursor: pointer;
     font-size: 18px;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: 0.25s;
 }
 
@@ -158,13 +169,15 @@ body {
     padding: 6px;
     border-radius: 6px;
     border: 1px solid #ccc;
+    font-weight: 600;
 }
 
 /* ============================
-   PRICE SECTION
+   RIGHT SIDE PRICE SECTION
 ============================ */
 .item-price {
     text-align: right;
+    min-width: 140px;
 }
 
 .price {
@@ -176,6 +189,7 @@ body {
 .subtotal {
     color: #777;
     font-size: 14px;
+    margin-top: 3px;
 }
 
 /* REMOVE BUTTON */
@@ -183,8 +197,11 @@ body {
     color: #e53935;
     font-size: 22px;
     text-decoration: none;
-    padding: 10px;
+    display: inline-block;
+    margin-top: 10px;
+    transition: 0.25s;
 }
+
 .btn-remove:hover {
     color: #b71c1c;
 }
@@ -223,7 +240,7 @@ body {
 }
 
 /* ============================
-   BUTTONS
+   BUTTON
 ============================ */
 .btn-primary {
     display: block;
@@ -255,4 +272,24 @@ body {
     color: white;
     margin-top: 40px;
     font-size: 14px;
+}
+
+/* ============================
+   RESPONSIVE FIXES
+============================ */
+@media (max-width: 768px) {
+    .cart-wrapper {
+        flex-direction: column;
+    }
+
+    .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .item-price {
+        width: 100%;
+        text-align: left;
+        margin-top: 10px;
+    }
 }
