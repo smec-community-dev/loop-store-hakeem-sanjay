@@ -9,6 +9,8 @@ let Product = require('../Model/Product')
 const upload = require('../multer/multer')
 const Order = require('../Model/Order')
 const Category = require('../Model/Category')
+let passport=require('passport')
+require("../config/sellerpassport")(passport);   
 
 const router = express.Router()
 router.use(express.urlencoded({ extended: true }));
@@ -19,26 +21,30 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')
 router.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Cookie parser
+
+
 router.use(cookieParser());
 
-// Session + MongoStore
 router.use(
   session({
-    secret: "Hakeem@123",    // Change this
+    secret: "Hakeem@123",  
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: "mongodb://localhost:27017/LiveProject", // your DB
-      collectionName: "seller_sessions", // Where sessions will be stored
-      ttl: 24 * 60 * 60, // Session lifetime (1 day)
+      mongoUrl: "mongodb://localhost:27017/LiveProject",
+      collectionName: "seller_sessions",
+      ttl: 24 * 60 * 60,
     }),
     cookie: {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // cookie lifetime (1 day)
+      maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
+
+router.use(passport.initialize());
+router.use(passport.session());
+
 
 hbs.registerHelper("times", function(n, block) {
     let accum = "";
@@ -88,13 +94,13 @@ router.post('/login', async (req, res) => {
   let data = await Seller.findOne({ email: email })
   if (!data) {
     console.log("the given email is incorrect");
-    //alert('the given email is Wrong')
+
     return res.redirect('/seller/login');
   }
   let match = await bcrypt.compare(password, data.password)
   if (!match) {
     console.log("the given password is Wrong");
-    //  alert('the given password is Wrong')
+
     return res.redirect('/seller/login')
 
   }
@@ -112,10 +118,11 @@ router.post('/login', async (req, res) => {
 })
 router.get('/profile', sellerauth, async (req, res) => {
   const sellerID = req.session.seller.id;
+let sellerdata=await Seller.findById(sellerID)
+console.log("sellerdata:"+sellerdata);
 
   try {
 
-    // 1️⃣ Correct: get only orders containing items sold by this seller
     const sellerOrders = await Order.find({
       "items.seller": sellerID
     })
@@ -123,7 +130,7 @@ router.get('/profile', sellerauth, async (req, res) => {
       .populate("items.seller", "name email phone")
       .populate("user", "name email")
       .populate("items.quantity")
-    //  .populate("items.product.review","user content content_text")
+ 
 
 
 
@@ -135,7 +142,7 @@ router.get('/profile', sellerauth, async (req, res) => {
       });
     });
 
-    // console.log("Total Price:", totalPrice);
+
 
     let totalProductsOrdered = 0;
 
@@ -144,7 +151,7 @@ router.get('/profile', sellerauth, async (req, res) => {
     sellerOrderscount.forEach(order => {
       order.items.forEach(item => {
         if (item.seller.toString() === sellerID.toString()) {
-          totalProductsOrdered++;   // count product line 
+          totalProductsOrdered++;  
         }
       });
     });
@@ -154,10 +161,7 @@ router.get('/profile', sellerauth, async (req, res) => {
 
 
     const categorydata = await Category.find()
-    //  console.log("sellerOrders:" + sellerOrders)
-    // console.log("qnty:"+sellerOrders.items);
-
-    // const totalorder = sellerOrders.length;
+  
 
 
     const sellerproduct = await Product.find({ seller: sellerID })
@@ -166,8 +170,8 @@ router.get('/profile', sellerauth, async (req, res) => {
 
 
     const totalproduct = sellerproduct.length
-    // console.log("sellerproduct:" + sellerproduct)
-    res.render('seller/sellerprofile', { seller: req.session.seller, products: totalproduct, datas: sellerproduct, orders: sellerOrders, totalorder: totalProductsOrdered, categorys: categorydata, total: totalPrice })
+
+    res.render('seller/sellerprofile', { seller: sellerdata, products: totalproduct, datas: sellerproduct, orders: sellerOrders, totalorder: totalProductsOrdered, categorys: categorydata, total: totalPrice })
 
 
   } catch (error) {
@@ -185,9 +189,6 @@ router.post('/profile', upload.array("productImages[]", 10), async (req, res) =>
 console.log(req.body);
 console.log("category"+category);
 
-  // console.log("Fetched Seller ID:", sellerID);
-  // console.log(req.files);
-  // console.log(req.body)
   const images = req.files.map(file => "/uploads/products/" + file.filename);
  
   try {
@@ -203,7 +204,7 @@ console.log("category"+category);
     })
        await Seller.findByIdAndUpdate(
       sellerID,
-      { $push: { products: newProduct._id } }  // <-- Add product here
+      { $push: { products: newProduct._id } }  
     );
 
     console.log("Product created and added to seller");
@@ -279,17 +280,68 @@ router.get('/order/details/:id', async (req, res) => {
   res.json({ success: true, order });
 });
 
-//  {
-//     name:name,
-//     description:description,
-//     price:price,
-//     stock:stock,
-//     category:category,
-//Images:productImages,
+router.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
 
-// }
-//loop123
-//specifications: specs
+router.get("/auth/google/callback",passport.authenticate("google", { failureRedirect: "/seller/login" }),
+  async (req, res) => {
+
+    try {
+      const user = req.user;
+
+      // 1️⃣ If seller already exists → direct login
+      if (!user.isNewGoogleUser) {
+        req.session.seller = {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          phone: user.phone
+        };
+        return res.redirect("/seller/profile");
+      }
+
+      // 2️⃣ New Google seller → create seller directly without form
+      const newSeller = await Seller.create({
+        googleId: user.googleId,
+        name: user.name,
+        email: user.email,
+        photo: user.photo,
+        phone: 999888777,              // default phone OR set null
+        location: "Not Provided",      // default location
+        seller_discription: "No description yet",
+      });
+
+      req.session.seller = {
+        id: newSeller._id.toString(),
+        name: newSeller.name,
+        email: newSeller.email,
+      };
+
+      return res.redirect("/seller/profile");
+
+    } catch (err) {
+      console.log("OAuth Auto Registration Error:", err);
+      return res.redirect("/seller/login");
+    }
+  }
+);
+
+router.post('/update-profile',async(req,res)=>{
+  let {name,email,phone,location,seller_discription}=req.body
+  let sellerID=req.session.seller.id
+  try{
+await Seller.findByIdAndUpdate(sellerID,{
+  name,email,phone,location,seller_discription
+})
+console.log("updated");
+return res.redirect('/seller/profile')
+ 
+}catch(error){
+  console.error(error)
+}
+
+})
 module.exports = router;
 
 

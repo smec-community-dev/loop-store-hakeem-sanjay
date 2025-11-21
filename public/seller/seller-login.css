@@ -261,3 +261,33 @@ h1, h2, h3, h4 {
     margin-bottom: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
+
+
+    .google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px;
+    margin-top: 18px;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    color: #3c4043;
+    transition: 0.2s ease-in-out;
+    text-decoration: none;
+}
+
+.google-btn:hover {
+    background: #f8f9fa;
+    border-color: #c6c6c6;
+}
+
+.google-icon {
+    width: 20px;
+    height: 20px;
+}

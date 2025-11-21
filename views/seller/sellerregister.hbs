@@ -27,48 +27,54 @@
             <h1>Seller Registration</h1>
             <p class="auth-subtitle">Create your account to continue</p>
 
-            <form method="post" action="/seller/register" >
+           <form method="post" action="/seller/register">
 
-                <div class="form-group" >
-                    <label for="firstName">Business  Name</label>
-                    <input type="text" id="firstName" name="businessname" placeholder="John" required>
-                </div>
+    <div class="form-group">
+        <label for="firstName">Business Name</label>
+        <input type="text" id="firstName" name="businessname" placeholder="John" required>
+    </div>
 
-                <div class="form-group">
-                    <label for="regEmail">Email Address</label>
-                    <input type="email" id="regEmail" name="email" placeholder="you@example.com" required>
-                </div>
+    <div class="form-group">
+        <label for="regEmail">Email Address</label>
+        <input type="email" id="regEmail" name="email" placeholder="you@example.com" required>
+    </div>
 
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" placeholder="9876543210" required>
-                </div>
+    <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="9876543210" >
+    </div>
 
-                <!-- NEW: LOCATION FIELD -->
-                <div class="form-group">
-                    <label for="location">Business Location</label>
-                    <input type="text" id="location" name="location" placeholder="City, State" required>
-                </div>
+    <div class="form-group">
+        <label for="location">Business Location</label>
+        <input type="text" id="location" name="location" placeholder="City, State" required>
+    </div>
 
-                <!-- NEW: SELLER DESCRIPTION FIELD -->
-                <div class="form-group">
-                    <label for="seller_description">Seller Description</label>
-                    <textarea id="seller_description" name="seller_description" placeholder="Tell us about your shop..." required></textarea>
-                </div>
+    <div class="form-group">
+        <label for="seller_description">Seller Description</label>
+        <textarea id="seller_description" name="seller_description" placeholder="Tell us about your shop..." required></textarea>
+    </div>
 
-                <div class="form-group">
-                    <label for="regPassword">Password</label>
-                    <input type="password" id="regPassword" name="password" placeholder="Enter password" required>
-                </div>
+    <div class="form-group">
+        <label for="regPassword">Password</label>
+        <input type="password" id="regPassword" name="password" placeholder="Enter password" required>
+    </div>
 
-                <button type="submit" class="btn-primary btn-full">Create Account</button>
+    <!-- ⭐ GOOGLE LOGIN BUTTON -->
+    <a href="/seller/auth/google" class="google-btn">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" 
+             alt="Google Logo">
+        Continue with Google
+    </a>
 
-                <p class="auth-bottom-text">
-                    Already have an account?
-                    <a href="/seller/login">Login</a>
-                </p>
+    <button type="submit" class="btn-primary btn-full">Create Account</button>
 
-            </form>
+    <p class="auth-bottom-text">
+        Already have an account?
+        <a href="/seller/login">Login</a>
+    </p>
+
+</form>
+
         </div>
 
         <!-- Right Side Image -->

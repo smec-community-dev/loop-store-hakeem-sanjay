@@ -669,6 +669,10 @@
                 <li data-section="reviews">
                     <i class="fas fa-star"></i> <span>Reviews</span>
                 </li>
+                <li data-section="Update">
+                    <i class="fas fa-user-edit"></i> <span>Update Profile</span>
+                </li>
+
             </ul>
         </div>
 
@@ -731,7 +735,7 @@
                     </div>
                 </div>
 
-                
+
             </div>
 
             <!-- Lower dashboard: chart + tables/cards -->
@@ -935,35 +939,56 @@
 
         <!-- REVIEWS SECTION -->
         <div id="reviews" class="section">
-    <div class="section-header">
-        <h2>Customer Reviews</h2>
-    </div>
-
-    <div class="reviews-list">
-        {{#each datas}}
-        {{#each this.review}}
-        <div class="review-card">
-
-            {{!-- ⭐ SHOW PRODUCT IMAGE --}}
-            <img src="{{../images.[0]}}" 
-                 alt="Product Image"
-                 style="width:100px; border-radius:10px; margin-bottom:10px;">
-
-            <div class="review-header">
-                <h3>{{this.content_typing}}</h3>
-                <span class="review-rating">{{#times this.rating}}⭐{{/times}}</span>
+            <div class="section-header">
+                <h2>Customer Reviews</h2>
             </div>
 
-            <p>{{this.content}}</p>
-            <p class="review-author" style="color: #7789da;">
-                {{this.user.name}}
-            </p>
+            <div class="reviews-list">
+                {{#each datas}}
+                {{#each this.review}}
+                <div class="review-card">
 
+                    {{!-- ⭐ SHOW PRODUCT IMAGE --}}
+                    <img src="{{../images.[0]}}" alt="Product Image"
+                        style="width:100px; border-radius:10px; margin-bottom:10px;">
+
+                    <div class="review-header">
+                        <h3>{{this.content_typing}}</h3>
+                        <span class="review-rating">{{#times this.rating}}⭐{{/times}}</span>
+                    </div>
+
+                    <p>{{this.content}}</p>
+                    <p class="review-author" style="color: #7789da;">
+                        {{this.user.name}}
+                    </p>
+
+                </div>
+                {{/each}}
+                {{/each}}
+            </div>
         </div>
-        {{/each}}
-        {{/each}}
+        <!-- UPDATE PROFILE SECTION -->
+<div id="Update" class="section">
+    <div class="section-header">
+        <h2>Update Profile</h2>
+        <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#updateProfileModal">
+            <i class="fas fa-user-edit"></i> Edit Profile
+        </button>
+    </div>
+
+    <div class="card mt-3 shadow-sm">
+        <div class="card-body">
+            <h5 class="mb-3">Your Profile Details</h5>
+
+            <p><strong>Name:</strong> {{seller.name}}</p>
+            <p><strong>Email:</strong> {{seller.email}}</p>
+            <p><strong>Phone:</strong> {{seller.phone}}</p>
+            <p><strong>Location:</strong> {{seller.location}}</p>
+            <p><strong>Description:</strong> {{seller.seller_discription}}</p>
+        </div>
     </div>
 </div>
+
 
     </div>
 
@@ -1010,11 +1035,7 @@
                             <select name="category" class="form-control" required>
                                 <option value="">Select category</option>
                                 {{#each categorys}}
-
-
-                                <option value="{{this.id}}" >{{this.name}}</option>
-
-                                <option value="{{this.id}}">{{this.name}}</option> 
+                                <option value="{{this.id}}">{{this.name}}</option>
                                 {{/each}}
 
 
@@ -1074,6 +1095,64 @@
             </div>
         </div>
     </div>
+   
+
+<!-- UPDATE PROFILE MODAL -->
+<div class="modal fade" id="updateProfileModal" tabindex="-1" aria-labelledby="updateProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+
+            <form action="/seller/update-profile" method="POST" >
+
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="updateProfileModalLabel">Update Profile</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label class="form-label">Business Name</label>
+                        <input type="text" name="name" class="form-control" value="{{seller.name}}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" value="{{seller.email}}" required readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="phone" class="form-control" value="{{seller.phone}}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Location</label>
+                        <input type="text" name="location" class="form-control" value="{{seller.location}}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Seller Description</label>
+                        <textarea name="seller_discription" class="form-control" rows="3">{{seller.seller_discription}}</textarea>
+                    </div>
+
+                    {{!-- <div class="mb-3">
+                        <label class="form-label">Profile Picture (optional)</label>
+                        <input type="file" name="photo" class="form-control" accept="image/*">
+                    </div> --}}
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" type="submit">Save Changes</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
 
 
     <!-- SCRIPTS -->
@@ -1227,4 +1306,4 @@
     </script>
 </body>
 
-</html> 
+</html>
