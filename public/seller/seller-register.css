@@ -242,3 +242,30 @@ textarea:focus {
     box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
     outline: none;
 }
+.google-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid #dadce0;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 15px 0;
+    text-decoration: none;
+    color: #444;
+    font-size: 15px;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.google-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+.google-btn:hover {
+    background: #f7f7f7;
+}

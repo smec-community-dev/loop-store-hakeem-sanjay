@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Login - ShopHub</title>
     <link rel="stylesheet" href="/seller/seller-login.css">
+
+ 
+
 </head>
+
 <body>
 
     <!-- Navbar -->
@@ -27,8 +32,7 @@
                 <h1 class="auth-heading">Seller Login</h1>
                 <p class="auth-subtitle">Access your ShopHub account</p>
 
-                <form class="auth-form"  method="post" action="/seller/login">
-{{!-- id="loginForm" --}}
+                <form class="auth-form" method="post" action="/seller/login">
                     <div class="form-group">
                         <label for="email">Email Address</label>
                         <input type="email" id="email" name="email" placeholder="you@example.com" required>
@@ -38,9 +42,17 @@
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" placeholder="Enter your password" required>
                     </div>
+
                     <button type="submit" class="btn btn-primary btn-full">Login</button>
 
-                    <!-- Added Register Button -->
+                    <!-- Google Login Button -->
+                    <a href="/seller/auth/google" class="google-btn" >
+                        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo"
+                            class="google-icon">
+                        Continue with Google
+                    </a>
+
+
                     <p class="auth-bottom-text">
                         Don't have an account?
                         <a href="/seller/register">Register</a>
@@ -50,19 +62,16 @@
             </div>
 
             <!-- Right Side Illustration -->
-          <div class="seller-image">
-    <div class="seller-illustration">
+            <div class="seller-image">
+                <div class="seller-illustration">
 
-        <img 
-            src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0"
-            class="seller-img"
-            alt="Online Shopping"
-        >
+                    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0" class="seller-img"
+                        alt="Online Shopping">
 
-        <h2>Sell to Millions</h2>
-        <p>Join ShopHub Seller Center and grow your business</p>
-    </div>
-</div>
+                    <h2>Sell to Millions</h2>
+                    <p>Join ShopHub Seller Center and grow your business</p>
+                </div>
+            </div>
 
         </div>
     </main>
@@ -75,4 +84,5 @@
     </footer>
 
 </body>
+
 </html>
