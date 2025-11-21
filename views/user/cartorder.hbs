@@ -110,7 +110,13 @@
 
             <div class="w-100">
               <p class="fw-semibold">{{this.name}}</p>
+
+              <!-- ⭐ PRODUCT DESCRIPTION -->
+              <p class="text-muted small">{{this.description}}</p>
+
               <p class="text-muted">₹{{this.price}}</p>
+
+              <!-- QUANTITY DISPLAY -->
               <span class="qty fw-semibold" style="font-size: 1.1rem;">
                 {{this.quantity}}
               </span>
@@ -160,7 +166,6 @@
     <p>© 2025 LookMe. All rights reserved.</p>
   </footer>
 
-
   <!-- JAVASCRIPT -->
   <script>
     function updateTotals() {
@@ -181,7 +186,6 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-
       updateTotals();
 
       document.getElementById("placeOrderBtn").addEventListener("click", (e) => {

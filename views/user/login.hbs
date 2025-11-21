@@ -5,14 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Login - ShopHub</title>
     <link rel="stylesheet" href="/user/login.css">
+
+    <style>
+        /* Google Button Styling */
+        .google-btn {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: background 0.2s ease-in-out;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .google-btn:hover {
+            background-color: #f1f1f1;
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
 </head>
+
 <body>
 
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container">
             <div class="navbar-brand">
-                <a href="index.html" class="logo">Loopstore</a>
+                <a href="/" class="logo">Loopstore</a>
             </div>
         </div>
     </nav>
@@ -38,18 +70,26 @@
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" placeholder="Enter your password" required>
                     </div>
+
                     <button type="submit" class="btn btn-primary btn-full">Login</button>
 
-                    <!-- Added Register Button -->
+                    <!-- Register -->
                     <p class="auth-bottom-text">
                         Don't have an account?
-                        <a href="register">Register</a>
+                        <a href="/register">Register</a>
                     </p>
 
                 </form>
+
+                <!-- 🔥 GOOGLE LOGIN BUTTON -->
+                <a href="/auth/google" class="google-btn">
+                    <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg">
+                    Continue with Google
+                </a>
+
             </div>
 
-            <!-- Right Side Illustration -->
+            <!-- Right Illustration -->
             <div class="auth-image">
                 <div class="auth-illustration">
                     <div class="illustration-circle"></div>

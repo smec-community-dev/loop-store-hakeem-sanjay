@@ -155,7 +155,6 @@
     <p>© 2025 LookMe. All rights reserved.</p>
   </footer>
 
-
   <!-- JAVASCRIPT -->
   <script>
     const PRODUCT_ID = "{{data._id}}";
@@ -165,8 +164,13 @@
 
     function updateTotals() {
       const total = PRICE * qty;
+
+      // Left (main summary)
       document.getElementById("qty").textContent = qty;
       document.getElementById("total").textContent = total;
+
+      // Right (price box)
+      document.getElementById("sidePrice").textContent = total;
       document.getElementById("sideTotal").textContent = total;
     }
 
@@ -188,20 +192,13 @@
       orderBtn.addEventListener("click", (e) => {
         e.preventDefault();
 
-        if (!PRODUCT_ID) {
-          alert("Product ID missing");
-          return;
-        }
-
         const safeQty = encodeURIComponent(qty);
         const safeId = encodeURIComponent(PRODUCT_ID);
 
-        orderBtn.href = `/placeorder/${safeId}?qty=${safeQty}`;
-        window.location.href = orderBtn.href;
+        window.location.href = `/placeorder/${safeId}?qty=${safeQty}`;
       });
 
       updateTotals();
-
     });
 
     function editAddress() {

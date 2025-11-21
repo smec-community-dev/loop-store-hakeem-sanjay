@@ -21,14 +21,13 @@
 
       <ul class="nav-links">
         <li><a href="/">Home</a></li>
-
+        <li><a href="/products">Products</a></li>
         <li>
           <a href="/cart" class="cart-icon">
             <i class="bi bi-cart3"></i>
             <span class="badge">{{cartCount}}</span>
           </a>
         </li>
-
         <li>
           <a href="/logout" class="logout-btn">Logout</a>
         </li>
@@ -45,13 +44,37 @@
           <div class="avatar">{{data.name.[0]}}</div>
           <h3>{{data.name}}</h3>
           <p class="email">{{data.email}}</p>
+          <div class="user-stats">
+            <div class="stat-item">
+              <span class="stat-number">{{wishlistCount}}</span>
+              <span class="stat-label">Wishlist</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">{{orderCount}}</span>
+              <span class="stat-label">Orders</span>
+            </div>
+          </div>
         </div>
 
         <nav class="side-nav">
-          <a href="#profile" class="tab-link active"><i class="bi bi-person"></i> Profile</a>
-          <a href="#wishlist" class="tab-link"><i class="bi bi-heart"></i> Wishlist</a>
-          <a href="#orders" class="tab-link"><i class="bi bi-box"></i> My Orders</a>
-          <a href="#editProfile" class="tab-link"><i class="bi bi-pencil"></i> Edit Profile</a>
+          <a href="#profile" class="tab-link active">
+            <i class="bi bi-person"></i> 
+            <span>Profile</span>
+          </a>
+          <a href="#wishlist" class="tab-link">
+            <i class="bi bi-heart"></i> 
+            <span>Wishlist</span>
+            {{#if wishlistCount}}<span class="nav-badge">{{wishlistCount}}</span>{{/if}}
+          </a>
+          <a href="#orders" class="tab-link">
+            <i class="bi bi-box"></i> 
+            <span>My Orders</span>
+            {{#if orderCount}}<span class="nav-badge">{{orderCount}}</span>{{/if}}
+          </a>
+          <a href="#editProfile" class="tab-link">
+            <i class="bi bi-pencil"></i> 
+            <span>Edit Profile</span>
+          </a>
         </nav>
       </aside>
 
@@ -59,90 +82,183 @@
       <section class="content-area">
         <!-- PROFILE TAB -->
         <div class="tab-content active" id="profile">
-          <h2>Personal Information</h2>
-          <div class="info-box">
-            <p><strong>Name:</strong>{{data.name}}</p>
-            <p><strong>Email:</strong>{{data.email}}</p>
-            <p><strong>Phone:</strong>{{data.phone}}</p>
+          <div class="tab-header">
+            <h2>Personal Information</h2>
+            <p>Manage your personal details and account information</p>
+          </div>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-icon">
+                <i class="bi bi-person-circle"></i>
+              </div>
+              <div class="info-content">
+                <h4>Full Name</h4>
+                <p>{{data.name}}</p>
+              </div>
+            </div>
+            <div class="info-card">
+              <div class="info-icon">
+                <i class="bi bi-envelope"></i>
+              </div>
+              <div class="info-content">
+                <h4>Email Address</h4>
+                <p>{{data.email}}</p>
+              </div>
+            </div>
+            <div class="info-card">
+              <div class="info-icon">
+                <i class="bi bi-telephone"></i>
+              </div>
+              <div class="info-content">
+                <h4>Phone Number</h4>
+                <p>{{#if data.phone}}{{data.phone}}{{else}}Not provided{{/if}}</p>
+              </div>
+            </div>
+            <div class="info-card">
+              <div class="info-icon">
+                <i class="bi bi-calendar"></i>
+              </div>
+              <div class="info-content">
+                <h4>Member Since</h4>
+                <p>{{joinDate}}</p>
+              </div>
+            </div>
           </div>
         </div>
+
         <!-- WISHLIST TAB -->
         <div class="tab-content" id="wishlist">
-          <h2>My Wishlist</h2>
-          <div class="product-grid">
-            {{#if items}}
-              {{#each items}}
-              <div class="product-card">
-                <img src="{{this.product.images.[0]}}" alt="" />
-
-                <p class="category">{{this.product.category.name}}</p>
-                <h3>{{this.product.name}}</h3>
-                <p class="price">₹{{this.product.price}}</p>
-
-                <div class="card-actions">
-                  <a href="/cart/add/{{this.product._id}}" class="btn-primary">Add to Cart</a>
-                  <a href="/wishlist/remove/{{this.product._id}}" class="btn-danger">Remove</a>
-                </div>
-              </div>
-              {{/each}}
-            {{else}}
-              <p>Your wishlist is empty.</p>
-            {{/if}}
+          <div class="tab-header">
+            <h2>My Wishlist</h2>
+            <p>Your favorite products saved for later</p>
           </div>
+          {{#if items}}
+          <div class="product-grid">
+            {{#each items}}
+            <div class="product-card">
+              <div class="product-image">
+                <img src="{{this.product.images.[0]}}" alt="{{this.product.name}}" />
+                <button class="wishlist-remove" data-product-id="{{this.product._id}}" title="Remove from wishlist">
+                  <i class="bi bi-heart-fill"></i>
+                </button>
+              </div>
+              <p class="category">{{this.product.category.name}}</p>
+              <h3 class="product-title">{{this.product.name}}</h3>
+              <div class="price-section">
+                <span class="price">₹{{this.product.price}}</span>
+                {{#if this.product.originalPrice}}
+                <span class="original-price">₹{{this.product.originalPrice}}</span>
+                {{/if}}
+              </div>
+              <div class="card-actions">
+                <a href="/cart/add/{{this.product._id}}" class="btn-primary">
+                  <i class="bi bi-cart-plus"></i> Add to Cart
+                </a>
+                <a href="/singlepage/{{this.product._id}}" class="btn-secondary">View Details</a>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+          {{else}}
+          <div class="empty-state">
+            <i class="bi bi-heart"></i>
+            <h3>Your wishlist is empty</h3>
+            <p>Start adding products you love to your wishlist</p>
+            <a href="/products" class="btn-primary">Browse Products</a>
+          </div>
+          {{/if}}
         </div>
 
         <!-- ORDERS TAB -->
         <div class="tab-content" id="orders">
-          <h2>My Orders</h2>
-
-          <div class="product-grid">
-            {{#if orders}}
-              {{#each orders}}
+          <div class="tab-header">
+            <h2>My Orders</h2>
+            <p>Track and manage your orders</p>
+          </div>
+          {{#if orders}}
+          <div class="orders-container">
+            {{#each orders}}
+            <div class="order-card">
+              <div class="order-header">
+                <div class="order-info">
+                  <h4>Order #{{this.orderNumber}}</h4>
+                  <p class="order-date">Placed on {{formatDate this.createdAt}}</p>
+                </div>
+                <div class="order-status {{this.status}}">
+                  <span>{{this.status}}</span>
+                </div>
+              </div>
+              
+              <div class="order-items">
                 {{#each this.items}}
-                  <div class="product-card">
-                    <img src="{{this.product.images.[0]}}" alt="" />
-
-                    <p class="category">{{this.product.category.name}}</p>
-                    <h3>{{this.product.name}}</h3>
-
-                    <!-- PRICE -->
-                    <p class="price">Price: ₹{{this.product.price}}</p>
-
-                    <!-- QUANTITY -->
-                    <p class="qty">Quantity: {{this.quantity}}</p>
-
-                    <!-- TOTAL PRICE PER ITEM -->
-                    <p class="total">
-                      Total: ₹{{multiply this.quantity this.priceAtPurchase}}
-                    </p>
-
-                    <div class="card-actions">
-                      <a href="/review/{{this.product._id}}" class="btn-primary">Review</a>
+                <div class="order-item">
+                  <img src="{{this.product.images.[0]}}" alt="{{this.product.name}}" />
+                  <div class="item-details">
+                    <h5>{{this.product.name}}</h5>
+                    <p class="item-category">{{this.product.category.name}}</p>
+                    <div class="item-meta">
+                      <span>Qty: {{this.quantity}}</span>
+                      <span class="item-price">₹{{this.priceAtPurchase}} each</span>
                     </div>
                   </div>
+                  <div class="item-total">
+                    <span>₹{{multiply this.quantity this.priceAtPurchase}}</span>
+                    <a href="/review/{{this.product._id}}" class="btn-outline">Write Review</a>
+                  </div>
+                </div>
                 {{/each}}
-              {{/each}}
-            {{else}}
-              <p>You have no orders yet.</p>
-            {{/if}}
+              </div>
+              
+              <div class="order-footer">
+                <div class="order-total">
+                  <strong>Total: ₹{{this.totalPrice}}</strong>
+                </div>
+
+              </div>
+            </div>
+            {{/each}}
           </div>
+          {{else}}
+          <div class="empty-state">
+            <i class="bi bi-box"></i>
+            <h3>No orders yet</h3>
+            <p>Your order history will appear here</p>
+            <a href="/products" class="btn-primary">Start Shopping</a>
+          </div>
+          {{/if}}
         </div>
 
         <!-- EDIT PROFILE TAB -->
         <div class="tab-content" id="editProfile">
-          <h2>Edit Your Profile</h2>
-
-          <form method="POST"  class="edit-form">
-            <label>Name</label>
-            <input type="text" name="name" value="{{data.name}}" />
-
-            <label>Email</label>
-            <input type="email" name="email" value="{{data.email}}" />
-
-            <label>Phone</label>
-            <input type="text" name="phone" value="{{data.phone}}" />
-
-            <button type="submit" class="btn-primary">Save Changes</button>
+          <div class="tab-header">
+            <h2>Edit Profile</h2>
+            <p>Update your personal information</p>
+          </div>
+          <form method="POST" class="edit-form">
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" value="{{data.name}}" required />
+              <i class="bi bi-person input-icon"></i>
+            </div>
+            
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" value="{{data.email}}" required />
+              <i class="bi bi-envelope input-icon"></i>
+            </div>
+            
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" value="{{data.phone}}" />
+              <i class="bi bi-telephone input-icon"></i>
+            </div>
+            
+            <div class="form-actions">
+              <button type="reset" class="btn-secondary">Cancel</button>
+              <button type="submit" class="btn-primary">
+                <i class="bi bi-check-lg"></i> Save Changes
+              </button>
+            </div>
           </form>
         </div>
       </section>
@@ -159,6 +275,16 @@
 
         this.classList.add("active");
         document.querySelector(this.getAttribute("href")).classList.add("active");
+      });
+    });
+
+    // Wishlist remove functionality
+    document.querySelectorAll('.wishlist-remove').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const productId = this.getAttribute('data-product-id');
+        if (confirm('Remove this item from your wishlist?')) {
+          window.location.href = `/wishlist/remove/${productId}`;
+        }
       });
     });
   </script>

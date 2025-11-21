@@ -31,7 +31,8 @@
             <hr>
             <div class="d-flex justify-content-between fw-bold">
                 <span>Total Paid</span>
-                <span>₹{{order.priceAtPurchase}}</span>
+                <span>₹{{multiply order.priceAtPurchase order.quantity}}</span>
+
             </div>
         </div>
 

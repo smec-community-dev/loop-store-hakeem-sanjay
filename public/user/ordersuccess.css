@@ -77,7 +77,7 @@ body {
    MAIN BUTTON
 ============================ */
 .btn-home {
-    background: #ff9f00;
+    background: #3917e4;
     color: white;
     padding: 13px 28px;
     border-radius: 12px;
@@ -90,7 +90,7 @@ body {
 }
 
 .btn-home:hover {
-    background: #e68a00;
+    background: #3917e4;
     transform: translateY(-2px);
     color: white;
 }

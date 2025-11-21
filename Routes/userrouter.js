@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const session = require("express-session");
 const mongostore = require("connect-mongo");
-
+const mongoose=require('mongoose')
 const Products = require("../Model/Product");
 const Category = require("../Model/Category");
 const user = require("../Model/user");
@@ -37,6 +37,64 @@ hbs.registerHelper("times", function(n, block) {
     }
     return accum;
 });
+hbs.registerHelper("arrayify", function(value) {
+  return Array.isArray(value) ? value : [value];
+});
+
+hbs.handlebars.registerHelper("substr", function (text, start, length) {
+    if (!text) return "";
+    return text.substring(start, start + length);
+});
+
+hbs.handlebars.registerHelper("truncate", function (text, length) {
+  if (!text) return "";
+  return text.length > length ? text.substring(0, length) + "..." : text;
+});
+hbs.handlebars.registerHelper("eq", function (a, b) {
+    return a == b;
+});
+
+
+hbs.registerHelper("uppercase", function (str) {
+  return str.toUpperCase();
+});
+
+hbs.handlebars.registerHelper("formatDate", function (date, format) {
+    if (!date) return "";
+
+    const d = new Date(date);
+
+    const options = {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    };
+
+    // Default format = "DD MMM YYYY"
+    if (!format || format === "default") {
+        return d.toLocaleDateString("en-US", options); 
+    }
+
+    // Custom formats
+    switch (format) {
+        case "dd-mm-yyyy":
+            return d.toLocaleDateString("en-GB"); 
+        case "mm-dd-yyyy":
+            return d.toLocaleDateString("en-US"); 
+        case "full":
+            return d.toLocaleDateString("en-US", { 
+                weekday: "long", 
+                year: "numeric", 
+                month: "long", 
+                day: "numeric" 
+            });
+        case "yyyy-mm-dd":
+            return d.toISOString().split("T")[0];
+        default:
+            return d;
+    }
+});
+
 
 
 router.use(session({
@@ -139,36 +197,95 @@ router.post("/profile", async (req, res) => {
 router.get("/", async (req, res) => {
     const categories = await Category.find();
     const topOffers = await Products.find().skip(0).limit(4).populate("category");
-    const dealsOfDay = await Products.find().skip(4).limit(4).populate("category");
-    const topPicks = await Products.find().skip(8).limit(4).populate("category");
+    const topPicks = await Products.find().skip(4).limit(4).populate("category");
+    const dealsOfDay = await Products.find().skip(8).limit(4).populate("category");
     res.render("user/homepage", {user,categories,topOffers,dealsOfDay,topPicks});
 });
 
 
 router.post("/", async (req, res) => {
-    let search = req.body.search.trim().toLowerCase();
+    let search = (req.body.search || "").trim();
+
+    if (!search) {
+        return res.redirect("/");
+    }
     let matchedProducts = await Products.find({
         name: { $regex: search, $options: "i" }
-    })
+    }).populate("category");
+
+    const categories = await Category.find();
+
     if (matchedProducts.length === 0) {
-        return res.render("user/usercategorypage", {data: []});
+        return res.render("user/usercategorypage", {
+            data: [],
+            categories,
+            message: "No products found for '" + search + "'",
+            search
+        });
     }
     res.render("user/usercategorypage", {
-        data:matchedProducts
+        data: matchedProducts,
+        categories,
+        search
+    });
+});
+
+router.get("/allproducts", async (req, res) => {
+    const { brand, price } = req.query;  
+    const page = Number(req.query.page) || 1;
+    const perPage = 3;
+
+    let filter = {};
+
+
+    if (brand) {
+        filter.category = { $in: Array.isArray(brand) ? brand : [brand] };
+    }
+    if (price && Number(price) > 0) {
+        filter.price = { $lte: Number(price) };
+    }
+
+    const totalProducts = await Products.countDocuments(filter);
+    const totalPages = Math.ceil(totalProducts / perPage);
+
+    const data = await Products.find(filter)
+        .skip((page - 1) * perPage)
+        .limit(perPage)
+        .populate("category");
+
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    res.render("user/usercategorypage", {
+        data,
+        categories: await Category.find(),
+        page,
+        totalPages,
+        prevPage: page > 1 ? page - 1 : null,
+        nextPage: page < totalPages ? page + 1 : null,
+        pages,
+        brand,
+        price
     });
 });
 
 
+
+
+
 router.get("/usercategorypage", async (req, res) => {
     let catName = req.query.cat;
+     const categories = await Category.find();
     let category = await Category.findOne({
         name: catName
     });
     let data = [];
     if (category) {
-        data = await Products.find({ category: category._id });
+        data = await Products.find({ category: category._id}).populate("category")
     }
-    res.render("user/usercategorypage",{data});
+    console.log(data,categories,catName);
+    
+    
+    res.render("user/usercategorypage",{data,categories,catName});
 });
 
 router.get("/singlepage/:id", async (req, res) => {

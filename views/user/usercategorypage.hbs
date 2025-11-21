@@ -8,13 +8,573 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   
-  <link rel="stylesheet" href="/user/usercategorypage.css">
+  <style>
+    /* ============================
+       GOOGLE FONTS
+    ============================ */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap');
+
+    /* ============================
+       GLOBAL
+    ============================ */
+    :root {
+        --primary: #111;
+        --secondary: #555;
+        --accent: #ff4d4d;
+        --highlight: #3917e4;
+        --bg-light: #f9f9f9;
+        --radius: 12px;
+        --shadow: 0 4px 18px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: #f5f7fa;
+      color: #111;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1, h2, h3, h4, h5 {
+      font-family: "Poppins", sans-serif;
+    }
+
+    /* ============================
+       TOP HEADER
+    ============================ */
+    .top-header {
+        background: #f8f8f8;
+        padding: 6px 0;
+        border-bottom: 1px solid #ddd;
+    }
+    .top-header p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    /* ============================
+       NAVBAR
+    ============================ */
+    .main-nav {
+      background: var(--highlight);
+      padding: 12px 0;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .main-nav.scrolled {
+        background: #3917e4;
+        padding: 8px 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .logo-text {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .logo-yellow {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #222;
+    }
+
+    .logo-icon {
+      font-size: 1.6rem;
+      color: white;
+    }
+
+    /* Search Bar */
+    .search-bar {
+      display: flex;
+      width: 50%;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 9px 12px;
+      border: none;
+      border-radius: 20px 0 0 20px;
+    }
+    .search-bar button {
+      background: #fff;
+      border: none;
+      padding: 9px 15px;
+      border-radius: 0 20px 20px 0;
+    }
+
+    .navbar .nav-link {
+      font-weight: 600;
+      color: #fff !important;
+      transition: color 0.3s ease;
+    }
+    
+    .navbar .nav-link:hover {
+      color: #fff !important;
+      transform: translateY(-2px);
+    }
+
+    /* ============================
+       HEADER INFO SECTION
+    ============================ */
+    .header-info {
+        background: var(--bg-light);
+        padding: 12px 0;
+        border-bottom: 1px solid #e5e5e5;
+    }
+    .header-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: transform 0.3s ease;
+    }
+    
+    .header-item:hover {
+        transform: translateY(-3px);
+    }
+    
+    .header-item img {
+        width: 26px;
+        height: 26px;
+    }
+    .header-item p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--secondary);
+        font-weight: 500;
+    }
+
+    /* ============================
+       CATEGORY TITLE & CONTROLS
+    ============================ */
+    .category-header {
+        background: white;
+        padding: 20px 0;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        margin-bottom: 25px;
+    }
+
+    .category-title {
+        font-family: "Poppins", sans-serif;
+        font-size: 2rem;
+        color: #222;
+        margin-bottom: 5px;
+    }
+
+    .category-subtitle {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .filter-toggle {
+        background: var(--highlight);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .filter-toggle:hover {
+        background: #3917e4;
+        transform: translateY(-2px);
+    }
+
+    .sort-dropdown .btn {
+        background: white;
+        color: #333;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 10px 20px;
+    }
+
+    /* ============================
+       FILTER SIDEBAR
+    ============================ */
+    .filter-sidebar {
+        background: white;
+        border-radius: var(--radius);
+        padding: 25px;
+        box-shadow: var(--shadow);
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+
+    .filter-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 15px;
+    }
+
+    .filter-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #222;
+        margin: 0;
+    }
+
+    .filter-clear {
+        background: none;
+        border: none;
+        color: var(--accent);
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .filter-section {
+        margin-bottom: 25px;
+    }
+
+    .filter-section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .filter-options {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .filter-options li {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+
+    .filter-options input[type="checkbox"] {
+        margin-right: 10px;
+        accent-color: var(--highlight);
+    }
+
+    .filter-options label {
+        cursor: pointer;
+        color: #555;
+        transition: 0.2s;
+    }
+
+    .filter-options label:hover {
+        color: #222;
+    }
+
+    .price-range {
+        width: 100%;
+    }
+
+    .price-inputs {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .price-inputs input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+    }
+
+    .rating-stars {
+        color: #3917e4;
+        margin-right: 8px;
+    }
+
+    .apply-filters {
+        background: var(--highlight);
+        color: white;
+        border: none;
+        padding: 12px 0;
+        width: 100%;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: 0.3s;
+        margin-top: 10px;
+    }
+
+    .apply-filters:hover {
+        background: #3917e4;
+        transform: translateY(-2px);
+    }
+
+    /* ============================
+       PRODUCT CARD GRID
+    ============================ */
+    .product-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      transition: 0.3s;
+      height: 100%;
+    }
+
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    /* Product Image Box */
+    .img-box {
+      position: relative;
+      width: 100%;
+      height: 210px;
+      overflow: hidden;
+      border-radius: 15px;
+    }
+
+    .product-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: 0.3s;
+    }
+
+    .product-card:hover .product-img {
+      transform: scale(1.05);
+    }
+
+    /* ============================
+       BADGES
+    ============================ */
+    .badge-new,
+    .badge-sale {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      color: white;
+      border-radius: 8px;
+      font-family: "Poppins", sans-serif;
+      font-weight: 600;
+    }
+
+    .badge-new {
+      background: #16a34a; /* green */
+    }
+
+    .badge-sale {
+      background: #e11d48; /* pink-red */
+    }
+
+    /* ============================
+       PRODUCT TEXT
+    ============================ */
+    .product-title {
+      margin: 12px 0 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #222;
+      height: 40px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .category-text {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    /* ============================
+       PRICE SECTION
+    ============================ */
+    .price-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .old-price {
+      text-decoration: line-through;
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    .new-price {
+      color: #ff4d4d;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    /* ============================
+       BUTTON
+    ============================ */
+    .view-btn {
+      display: inline-block;
+      margin-top: 12px;
+      background: #3917e4;
+      color: white;
+      padding: 10px 0;
+      width: 100%;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.25s;
+    }
+
+    .view-btn:hover {
+      background: #e68a00;
+      transform: translateY(-2px);
+    }
+
+    /* ============================
+       PAGINATION
+    ============================ */
+    .pagination-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .pagination {
+      display: flex;
+      gap: 10px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .page-item .page-link {
+      background: white;
+      border: 2px solid #3917e4;
+      color: #3917e4;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.25s;
+    }
+
+    .page-item .page-link:hover {
+      background: #3917e4;
+      color: white;
+    }
+
+    .page-item.active .page-link {
+      background: #3917e4;
+      color: white;
+      border-color: #3917e4;
+    }
+
+    /* ============================
+       MOBILE FILTER MODAL
+    ============================ */
+    .mobile-filter-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1050;
+        display: none;
+    }
+
+    .mobile-filter-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 85%;
+        height: 100%;
+        background: white;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .close-filter {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    /* ============================
+       SCROLL ANIMATIONS
+    ============================ */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* ============================
+       RESPONSIVE
+    ============================ */
+    @media (max-width: 992px) {
+      .search-bar {
+        width: 100%;
+        margin: 10px 0;
+      }
+      
+      .filter-sidebar {
+          display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .category-header {
+          padding: 15px;
+      }
+      
+      .category-title {
+          font-size: 1.6rem;
+      }
+      
+      .sort-dropdown .btn {
+          padding: 8px 15px;
+          font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .product-card {
+        padding: 13px;
+      }
+      .img-box {
+        height: 180px;
+      }
+      
+      .product-title {
+          height: auto;
+          -webkit-line-clamp: 3;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
+
+
 <!-- ================= NAVBAR ================= -->
-<nav class="navbar navbar-expand-lg main-nav shadow-sm">
+<nav class="navbar navbar-expand-lg main-nav">
   <div class="container">
 
     <!-- LOGO -->
@@ -30,25 +590,33 @@
     <div class="collapse navbar-collapse" id="navMenu">
 
       <!-- SEARCH BAR -->
-      <form class="search-bar d-flex mx-auto" method="POST" action="/">
+      <form class="search-bar mx-auto" method="POST" action="/">
         <input name="search" class="form-control" type="text" placeholder="Search for products...">
         <button class="btn"><i class="bi bi-search"></i></button>
       </form>
 
       <!-- RIGHT LINKS -->
       <ul class="navbar-nav ms-auto">
+        <!-- Products Dropdown -->
+         <li class="nav-item">
+  <a class="nav-link" href="/allproducts">
+    <i class="bi bi-grid"></i> Products
+  </a>
+</li>
 
-        {{#if user}}
+
         <li class="nav-item">
-          <a class="nav-link" href="/profile">
-            <i class="bi bi-person-circle"></i> {{user.name}}
-          </a>
+          <a class="nav-link" href="/about"><i class="bi bi-info-circle"></i> About</a>
         </li>
-        {{else}}
+
         <li class="nav-item">
-          <a class="nav-link" href="/profile"><i class="bi bi-person-circle"></i> Profile</a>
+          <a class="nav-link" href="/contact"><i class="bi bi-envelope"></i> Contact</a>
         </li>
-        {{/if}}
+
+         <li class="nav-item">
+          <a class="nav-link" href="/profile"><i class="bi bi-person"></i> Profile</a>
+        </li>
+    
 
         <li class="nav-item">
           <a class="nav-link" href="/cart"><i class="bi bi-cart3"></i></a>
@@ -60,30 +628,109 @@
   </div>
 </nav>
 
-<!-- CATEGORY TITLE -->
-<div class="container mt-4">
-  <h2 class="fw-bold text-capitalize">{{data.category}}</h2>
-  <hr>
+<!-- ================= HEADER INFO STRIP ================= -->
+<div class="header-info">
+  <div class="container-fluid">
+    <div class="row">
+
+      <div class="col-md-4">
+        <div class="header-item">
+          <i class="bi bi-truck" style="font-size: 1.5rem; color: #ff9f00;"></i>
+          <p>Free shipping on orders over $30 in USA</p>
+        </div>
+      </div>
+
+      <div class="col-md-4 text-center">
+        <div class="header-item">
+          <i class="bi bi-tag" style="font-size: 1.5rem; color: #ff9f00;"></i>
+          <p>20% Student Discount</p>
+        </div>
+      </div>
+
+      <div class="col-md-4 text-end">
+        <div class="header-item">
+          <i class="bi bi-percent" style="font-size: 1.5rem; color: #ff9f00;"></i>
+          <p>30% off on dresses – Use code: 30OFF</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
-<!-- PRODUCTS GRID -->
+
+<!-- MAIN CONTENT WITH FILTERS AND PRODUCTS -->
 <div class="container mt-4">
+  <div class="row">
+    
+    <!-- FILTER SIDEBAR -->
+    <div class="col-lg-3 d-none d-lg-block">
+      <div class="filter-sidebar">
+
+       <!-- START FORM -->
+<form method="GET" action="/allproducts">
+
+  <div class="filter-header">
+    <h3 class="filter-title">Filters</h3>
+    <button type="reset" class="filter-clear">Clear All</button>
+  </div>
+
+  <!-- PRICE FILTER -->
+  <div class="filter-section">
+    <h4 class="filter-section-title">Price Range</h4>
+
+    <input 
+      type="range"
+      class="price-range"
+      name="price"
+      min="0"
+      max="100000"
+      value="{{price}}"
+    >
+
+    <div class="price-value">
+      <span id="priceCurrent">{{price}}</span> / <span id="priceMax">100000</span>
+    </div>
+  </div>
+
+  <!-- BRAND FILTER -->
+  <div class="filter-section">
+    <h4 class="filter-section-title">Brand</h4>
+
+    <ul class="filter-options">
+      {{#each categories}}
+      <li>
+        <input 
+          type="checkbox" 
+          name="brand" 
+          value="{{this._id}}" 
+          id="brand_{{@index}}"
+
+          {{#if (eq ../brand this._id)}}checked{{/if}}
+        >
+        <label for="brand_{{@index}}">{{this.name}}</label>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+
+  <button type="submit" class="apply-filters">Apply Filters</button>
+</form>
+
+<!-- END FORM -->
+</div>
+    </div> 
+
+<!-- PRODUCTS GRID -->
+<div class="col-lg-9">
   <div class="row g-4">
 
     {{#each data}}
-    <div class="col-6 col-md-4 col-lg-3">
+    <div class="col-6 col-md-4 col-lg-4 fade-in">
       <div class="product-card">
 
         <div class="img-box">
           <img src="{{this.images.[0]}}" class="product-img">
-
-          {{#if this.isNew}}
-          <span class="badge-new">NEW</span>
-          {{/if}}
-
-          {{#if this.isSale}}
-          <span class="badge-sale">SALE</span>
-          {{/if}}
         </div>
 
         <h6 class="product-title">{{this.name}}</h6>
@@ -91,9 +738,6 @@
         <p class="category-text">{{this.category.name}}</p>
 
         <div class="price-wrap">
-          {{#if this.oldPrice}}
-          <span class="old-price">₹{{this.oldPrice}}</span>
-          {{/if}}
           <span class="new-price">₹{{this.price}}</span>
         </div>
 
@@ -106,7 +750,142 @@
   </div>
 </div>
 
+
+      <!-- PAGINATION -->
+<div class="pagination-wrapper">
+  <ul class="pagination">
+
+    <!-- Previous Button -->
+    <li class="page-item {{#unless prevPage}}disabled{{/unless}}">
+      <a class="page-link" 
+         href="?page={{prevPage}}&price={{price}}{{#if brand}}{{#each (arrayify brand)}}&brand={{this}}{{/each}}{{/if}}">
+        Previous
+      </a>
+    </li>
+
+    <!-- Page Numbers -->
+    {{#each pages}}
+      <li class="page-item {{#if (eq this ../page)}}active{{/if}}">
+        <a 
+          class="page-link" 
+          href="?page={{this}}&price={{../price}}{{#if ../brand}}{{#each (arrayify ../brand)}}&brand={{this}}{{/each}}{{/if}}">
+          {{this}}
+        </a>
+      </li>
+    {{/each}}
+
+    <!-- Next Button -->
+    <li class="page-item {{#unless nextPage}}disabled{{/unless}}">
+      <a class="page-link" 
+         href="?page={{nextPage}}&price={{price}}{{#if brand}}{{#each (arrayify brand)}}&brand={{this}}{{/each}}{{/if}}">
+        Next
+      </a>
+    </li>
+
+  </ul>
+</div>
+
+
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE FILTER MODAL -->
+<div class="mobile-filter-modal" id="mobileFilterModal">
+  <div class="mobile-filter-content">
+    <button class="close-filter" id="closeFilterModal">
+      <i class="bi bi-x-lg"></i>
+    </button>
+    
+    <div class="filter-header mt-4">
+      <h3 class="filter-title">Filters</h3>
+      <button class="filter-clear">Clear All</button>
+    </div>
+
+    <!-- Mobile filter content would go here (same as desktop filters) -->
+    
+    <div class="filter-section">
+      <h4 class="filter-section-title">Price Range</h4>
+      <input type="range" class="price-range" min="0" max="100000" value="50000">
+      <div class="price-inputs">
+        <input type="number" placeholder="Min" value="0">
+        <input type="number" placeholder="Max" value="100000">
+      </div>
+    </div>
+
+    <button class="apply-filters">Apply Filters</button>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Navbar scroll effect
+  window.addEventListener('scroll', function() {
+    const navbar = document.querySelector('.main-nav');
+    if (window.scrollY > 100) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+
+  // Scroll animations
+  document.addEventListener('DOMContentLoaded', function() {
+    const fadeElements = document.querySelectorAll('.fade-in');
+    
+    const fadeInOnScroll = function() {
+      fadeElements.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const elementVisible = 150;
+        
+        if (elementTop < window.innerHeight - elementVisible) {
+          element.classList.add('visible');
+        }
+      });
+    };
+    
+    // Check on load
+    fadeInOnScroll();
+    
+    // Check on scroll
+    window.addEventListener('scroll', fadeInOnScroll);
+  });
+
+  // Mobile filter toggle
+  document.addEventListener('DOMContentLoaded', function() {
+    const filterToggle = document.getElementById('mobileFilterToggle');
+    const filterModal = document.getElementById('mobileFilterModal');
+    const closeFilter = document.getElementById('closeFilterModal');
+    
+    if (filterToggle && filterModal) {
+      filterToggle.addEventListener('click', function() {
+        filterModal.style.display = 'block';
+      });
+      
+      closeFilter.addEventListener('click', function() {
+        filterModal.style.display = 'none';
+      });
+      
+      // Close modal when clicking outside
+      filterModal.addEventListener('click', function(e) {
+        if (e.target === filterModal) {
+          filterModal.style.display = 'none';
+        }
+      });
+    }
+  });
+  {{!-- PRICE RANGE SCRIPT --}}
+  const priceRange = document.querySelector('.price-range');
+  const priceCurrent = document.getElementById('priceCurrent');
+
+  // Set initial value on page load
+  priceCurrent.textContent = priceRange.value;
+
+  // Update live when sliding
+  priceRange.addEventListener('input', function () {
+    priceCurrent.textContent = this.value;
+  });
+</script>
 
 </body>
 </html>

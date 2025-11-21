@@ -22,7 +22,7 @@ h1, h2, h3, h4 {
    NAVBAR
 ============================ */
 .navbar {
-    background: #ff9f00;
+    background: #3917e4;
     padding: 16px 0;
     box-shadow: 0 4px 16px rgba(0,0,0,0.08);
 }
@@ -114,7 +114,7 @@ h1, h2, h3, h4 {
 }
 
 .form-group input:focus {
-    border-color: #ff9f00;
+    border-color: #3917e4;
     box-shadow: 0 0 0 4px rgba(255,159,0,0.15);
     outline: none;
 }
@@ -123,7 +123,7 @@ h1, h2, h3, h4 {
    BUTTON
 ============================ */
 .btn-primary {
-    background: #ff9f00;
+    background: #3917e4;
     color: white;
     padding: 15px;
     width: 100%;
@@ -136,7 +136,7 @@ h1, h2, h3, h4 {
 }
 
 .btn-primary:hover {
-    background: #e68a00;
+    background: #3917e4;
     transform: translateY(-2px);
 }
 

@@ -91,7 +91,7 @@ body {
    BUTTON
 ============================ */
 .btn-home {
-    background: #ff9f00;
+    background: #3917e4;
     color: white !important;
     padding: 14px 20px;
     border-radius: 12px;
@@ -103,7 +103,7 @@ body {
 }
 
 .btn-home:hover {
-    background: #e68a00;
+    background: #3917e4;
     transform: translateY(-2px);
 }
 

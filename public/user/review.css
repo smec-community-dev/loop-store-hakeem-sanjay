@@ -78,13 +78,13 @@ body {
 
 /* Fill stars on click */
 .rating-stars input:checked ~ label {
-    color: #ff9f00;
+    color: #3917e4;
 }
 
 /* Hover effect */
 .rating-stars label:hover,
 .rating-stars label:hover ~ label {
-    color: #ff9f00;
+    color: #3917e4;
 }
 
 /* ================= REVIEW TEXTAREA ================= */
@@ -100,14 +100,14 @@ textarea {
 }
 
 textarea:focus {
-    border-color: #ff9f00;
+    border-color: #3917e4;
     box-shadow: 0 0 0 4px rgba(255,159,0,0.2);
     outline: none;
 }
 
 /* ================= BUTTON ================= */
 .btn {
-    background: #ff9f00;
+    background: #3917e4;
     color: white;
     padding: 14px 30px;
     border: none;
@@ -121,7 +121,7 @@ textarea:focus {
 }
 
 .btn:hover {
-    background: #e68a00;
+    background: #3917e4;
     transform: translateY(-2px);
 }
 
@@ -154,7 +154,7 @@ textarea:focus {
 }
 
 .stars {
-    color: #ff9f00;
+    color: #3917e4;
     font-size: 20px;
 }
 
@@ -201,7 +201,7 @@ label {
 
 /* When focused (clicked) */
 .review-type:focus {
-    border-color: #ff9f00;
+    border-color: #3917e4;
     box-shadow: 0 0 0 3px rgba(255, 159, 0, 0.25);
 }
 
@@ -220,7 +220,7 @@ label {
 .type-tag {
     display: inline-block;
     background: #ffe5b3;
-    color: #ff9500;
+    color: #3917e4;
     padding: 5px 12px;
     border-radius: 20px;
     font-size: 13px;
