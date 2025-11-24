@@ -294,9 +294,11 @@ router.get("/singlepage/:id", async (req, res) => {
         if (!data){
             res.send("Product not found");
         } 
+        console.log(data);
+        
         
         let related = await Products.find({category: data.category._id }).limit(3).lean();
-        res.render("user/singlepage", { data, related });
+        res.render("user/singlepage", { data, related });///related is not working
 });
 
 router.get("/cart/add/:id",userrauth, async (req, res) => {
@@ -425,53 +427,75 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
     try {
         const userid = req.session.user.userid;
         const productid = req.params.id;
-
-       
         const quantity = parseInt(req.query.qty) || 1;
 
         const productdata = await Products.findById(productid).populate("seller");
+        const { notifySellerFor } = require("../websocket/sellerws");
 
         let orderdata = await Order.findOne({ user: userid });
 
+        // Extract seller ID correctly
+        let sellerId = productdata.seller._id || productdata.seller;
+
+        // DEBUG LOG — very important
+        console.log("SELLER WHO SHOULD RECEIVE:", sellerId);
+
         if (!orderdata) {
-           
-            await Order.create({
+
+            let newOrder = await Order.create({
                 user: userid,
                 items: [
                     {
                         product: productid,
-                        quantity: quantity,  
+                        quantity: quantity,
                         priceAtPurchase: productdata.price,
-                        seller: productdata.seller
+                        seller: sellerId
                     }
                 ],
                 totalPrice: productdata.price * quantity
             });
 
+            // Notify ONLY that seller
+            notifySellerFor(sellerId.toString(), {
+                type: "new_order",
+                orderId: newOrder._id,
+                total: productdata.price,
+                user: userid
+            });
+
             return res.redirect("/ordersuccess");
         }
-        else {
-            orderdata.items.push({
-                product: productid,
-                quantity: quantity,  
-                priceAtPurchase: productdata.price,
-                seller: productdata.seller
-            });
-        }
 
-       
+        // Existing order add item
+        orderdata.items.push({
+            product: productid,
+            quantity: quantity,
+            priceAtPurchase: productdata.price,
+            seller: sellerId
+        });
+
         orderdata.totalPrice = orderdata.items.reduce((sum, item) => {
-            return sum + (item.quantity * item.priceAtPurchase);
+            return sum + item.quantity * item.priceAtPurchase;
         }, 0);
 
         await orderdata.save();
 
+        // Notify seller for existing order
+        notifySellerFor(sellerId.toString(), {
+            type: "new_order",      
+            orderId: orderdata._id,
+            total: orderdata.totalPrice,
+            user: userid
+        });
+
         res.redirect("/ordersuccess");
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Server Error");
     }
 });
+
 router.get("/ordersuccess", userrauth, async (req, res) => {
   try {
     const userid = req.session.user.userid;
