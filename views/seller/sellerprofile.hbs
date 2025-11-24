@@ -630,6 +630,98 @@
             background-color: rgba(220, 53, 69, 0.15);
             color: #dc3545;
         }
+        /* Notification Drawer */
+.notif-drawer {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 320px;
+    height: 100%;
+    background: #fff;
+    box-shadow: -3px 0 12px rgba(0,0,0,0.2);
+    z-index: 3000;
+    transition: 0.3s ease;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.notif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.notif-mark-all {
+    background: #4361ee;
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.notif-list {
+    margin-top: 10px;
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 5px;
+}
+
+.notif-item {
+    padding: 10px;
+    border-radius: 8px;
+    border-left: 4px solid transparent;
+    background: #fafafa;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.notif-item.unread {
+    border-left-color: #4361ee;
+    background: #eef1ff;
+}
+
+.notif-item:hover {
+    background: #f1f1f1;
+}
+
+.notif-message {
+    font-size: 0.9rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.notif-time {
+    font-size: 0.75rem;
+    color: gray;
+}
+
+.delete-notif {
+    float: right;
+    color: red;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.notif-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #fff;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border-left: 4px solid #4361ee;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 4000;
+    min-width: 260px;
+}
+
     </style>
 </head>
 
@@ -637,37 +729,22 @@
 
 <!-- REAL-TIME NOTIFICATION POPUP -->
 
-<div id="notificationBox" style="
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: white;
-    padding: 12px 18px;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-    display: none;
-    z-index: 2000;
-    border-left: 5px solid #4361ee;
-    min-width: 260px;
-">
-    <strong id="notificationTitle" style="color:#4361ee;">New Order Received!</strong>
-    <p id="notificationMessage" style="margin: 0; font-size: 0.9rem; color:#444;"></p>
+<!-- Notification Drawer -->
+<div id="notificationPanel" class="notif-drawer">
+
+    <div class="notif-header">
+        <h4>Notifications</h4>
+        <button id="markAllRead" class="notif-mark-all">Mark all as read</button>
+    </div>
+
+    <div id="notificationList" class="notif-list"></div>
+
 </div>
-<!-- 🔔 NOTIFICATION PANEL -->
-<div id="notificationPanel" style="
-    position: fixed;
-    top: 0;
-    right: -350px;
-    width: 320px;
-    height: 100%;
-    background: white;
-    box-shadow: -3px 0 12px rgba(0,0,0,0.25);
-    z-index: 2500;
-    transition: right 0.3s ease;
-    padding: 20px;
-">
-    <h4 style="margin-bottom:10px;">Notifications</h4>
-    <div id="notificationList"></div>
+
+<!-- Notification Popup (Quick Alert) -->
+<div id="notificationBox" class="notif-popup">
+    <strong id="notificationTitle"></strong>
+    <p id="notificationMessage"></p>
 </div>
 
     <!-- SIDEBAR -->
@@ -1218,7 +1295,8 @@
 </script>
 
 <script>
- const ws = new WebSocket("ws://localhost:4000/?sellerId={{sellerId}}");
+const ws = new WebSocket("ws://localhost:4000/?sellerId={{seller._id}}");
+
 
 
     ws.onopen = () => console.log("WS Connected");
@@ -1284,11 +1362,87 @@ function addNewOrderToTable(data) {
 
 
     <script>
-// Show / Hide notification panel
-document.getElementById("notificationBell").addEventListener("click", () => {
-    let panel = document.getElementById("notificationPanel");
+document.getElementById("notificationBell").addEventListener("click", function () {
+    const panel = document.getElementById("notificationPanel");
     panel.style.right = panel.style.right === "0px" ? "-350px" : "0px";
+
+    loadNotifications(); // load DB notifications
 });
+
+
+// Fetch and display notifications
+document.getElementById("notificationBell").addEventListener("click", loadNotifications);
+
+function timeAgo(date) {
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+    const intervals = {
+        year: 31536000, month: 2592000, day: 86400,
+        hour: 3600, minute: 60, second: 1
+    };
+    for (let i in intervals) {
+        const count = Math.floor(seconds / intervals[i]);
+        if (count > 0) return `${count} ${i}${count > 1 ? "s" : ""} ago`;
+    }
+    return "just now";
+}
+
+function loadNotifications() {
+    fetch("/seller/notifications")
+        .then(res => res.json())
+        .then(notifs => {
+            const container = document.getElementById("notificationList");
+            container.innerHTML = "";
+
+            notifs.forEach(n => {
+                container.innerHTML += `
+                    <div class="notif-item ${n.read ? "" : "unread"}" data-id="${n._id}">
+                        <span class="delete-notif" onclick="deleteNotification('${n._id}')">&times;</span>
+                        <p class="notif-message">${n.message}</p>
+                        <p class="notif-time">${timeAgo(n.createdAt)}</p>
+                        <p class="notif-time">Order: ${n.orderId}</p>
+                    </div>
+                `;
+            });
+        });
+}
+
+// Mark item as read when clicked
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("notif-item")) {
+        let id = e.target.getAttribute("data-id");
+
+        fetch(`/seller/notifications/read/${id}`, { method: "POST" })
+            .then(() => {
+                e.target.classList.remove("unread");
+            });
+    }
+});
+
+// Mark all read
+document.getElementById("markAllRead").addEventListener("click", () => {
+    fetch("/seller/notifications/read-all", { method: "POST" })
+        .then(() => loadNotifications());
+});
+
+// Delete notification
+function deleteNotification(id) {
+    fetch(`/seller/notifications/${id}`, { method: "DELETE" })
+        .then(() => loadNotifications());
+}
+
+
+
+        fetch("/seller/notifications/unread-count")
+  .then(res => res.json())
+  .then(data => {
+      if (data.count > 0) {
+          let count = document.getElementById("notificationCount");
+          count.textContent = data.count;
+          count.style.display = "inline-block";
+      }
+  });
+
+
 
 // Fetch notifications when bell is clicked
 document.getElementById("notificationBell").addEventListener("click", loadNotifications);
@@ -1476,7 +1630,9 @@ function showNotification(title, message) {
     }, 4000);
 }
 
+
     </script>
+    
 </body>
 
 </html>

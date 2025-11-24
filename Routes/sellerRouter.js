@@ -11,6 +11,8 @@ const Order = require('../Model/Order')
 const Category = require('../Model/Category')
 let passport=require('passport')
 require("../config/sellerpassport")(passport);   
+const Notification = require("../Model/sellerNotification");
+
 
 
 const router = express.Router()
@@ -54,6 +56,7 @@ hbs.registerHelper("times", function(n, block) {
     }
     return accum;
 });
+
 
 
 
@@ -331,10 +334,10 @@ router.get('/order/details/:id', async (req, res) => {
 
 
 router.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
+  passport.authenticate('google-seller', { scope: ['profile', 'email'] })
 );
 
-router.get("/auth/google/callback",passport.authenticate("google", { failureRedirect: "/seller/login" }),
+router.get("/auth/google/callback",passport.authenticate("google-seller", { failureRedirect: "/seller/login" }),
   async (req, res) => {
 
     try {
@@ -392,6 +395,43 @@ return res.redirect('/seller/profile')
 }
 
 })
+router.get("/notifications", async (req, res) => {
+    const sellerId = req.session.seller.id;
+
+    const notifications = await Notification.find({ sellerId })
+        .sort({ createdAt: -1 });
+
+    res.json({ notifications });
+});
+
+router.post("/notifications/read/:id", async (req, res) => {
+    await Notification.findByIdAndUpdate(req.params.id, { read: true });
+    res.json({ success: true });
+});
+
+
+router.get("/notifications/unread-count", async (req, res) => {
+    const sellerId = req.session.seller.id;
+
+    const count = await Notification.countDocuments({
+        sellerId,
+        read: false
+    });
+
+    res.json({ count });
+});
+router.post("/notifications/read-all", async (req, res) => {
+    const sellerId = req.session.seller.id;
+    await Notification.updateMany({ sellerId, read: false }, { read: true });
+    res.json({ success: true });
+});
+router.delete("/notifications/:id", async (req, res) => {
+    await Notification.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+});
+
+
+
 module.exports = router;
 
 

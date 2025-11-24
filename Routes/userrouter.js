@@ -535,12 +535,14 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
             });
 
             // Notify ONLY that seller
-            notifySellerFor(sellerId.toString(), {
-                type: "new_order",
-                orderId: newOrder._id,
-                total: productdata.price,
-                user: userid
-            });
+ notifySellerFor({
+    sellerId: sellerId.toString(),
+    type: "new_order",
+    orderId:orderdata._id,
+    total: productdata.price,
+});
+
+
 
             return res.redirect("/ordersuccess");
         }
@@ -562,13 +564,14 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
         if (productdata.stock < 0) productdata.stock = 0;
         await productdata.save();
         
-        // Notify seller for existing order
-        notifySellerFor(sellerId.toString(), {
-            type: "new_order",      
-            orderId: orderdata._id,
-            total: orderdata.totalPrice,
-            user: userid
-        });
+notifySellerFor({
+    sellerId: sellerId.toString(),
+    type: "new_order",
+    orderId:orderdata._id,
+    total: productdata.price,
+});
+
+
 
         res.redirect("/ordersuccess");
 
