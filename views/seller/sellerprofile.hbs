@@ -635,6 +635,41 @@
 
 <body>
 
+<!-- REAL-TIME NOTIFICATION POPUP -->
+
+<div id="notificationBox" style="
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    display: none;
+    z-index: 2000;
+    border-left: 5px solid #4361ee;
+    min-width: 260px;
+">
+    <strong id="notificationTitle" style="color:#4361ee;">New Order Received!</strong>
+    <p id="notificationMessage" style="margin: 0; font-size: 0.9rem; color:#444;"></p>
+</div>
+<!-- 🔔 NOTIFICATION PANEL -->
+<div id="notificationPanel" style="
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 320px;
+    height: 100%;
+    background: white;
+    box-shadow: -3px 0 12px rgba(0,0,0,0.25);
+    z-index: 2500;
+    transition: right 0.3s ease;
+    padding: 20px;
+">
+    <h4 style="margin-bottom:10px;">Notifications</h4>
+    <div id="notificationList"></div>
+</div>
+
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -683,22 +718,46 @@
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
-        <div class="header">
-            <h1 id="pageTitle">Dashboard</h1>
-            <div class="user-info">
-                <div class="user-avatar">
-                    {{#if seller.name}}
-                    {{seller.name.[0]}}
-                    {{else}}
-                    S
-                    {{/if}}
-                </div>
-                <div>
-                    <h4>{{seller.name}}</h4>
-                    <p>Seller</p>
-                </div>
+       <div class="header">
+    <h1 id="pageTitle">Dashboard</h1>
+
+    <div class="header-actions" style="display:flex; align-items:center; gap:16px;">
+
+        <!-- 🔔 Notification Bell -->
+        <div style="position: relative;">
+            <i class="fas fa-bell" id="notificationBell" 
+               style="font-size:1.4rem; cursor:pointer; color:#4361ee;"></i>
+
+            <!-- Counter -->
+            <span id="notificationCount" 
+                  style="
+                     position:absolute;
+                     top:-5px;
+                     right:-8px;
+                     background:red;
+                     color:white;
+                     font-size:0.7rem;
+                     padding:2px 6px;
+                     border-radius:50%;
+                     display:none;
+                   ">
+            </span>
+        </div>
+
+        <!-- User Info -->
+        <div class="user-info">
+            <div class="user-avatar">
+                {{seller.name.[0]}}
+            </div>
+            <div>
+                <h4>{{seller.name}}</h4>
+                <p>Seller</p>
             </div>
         </div>
+    </div>
+</div>
+
+        
 
         <!-- DASHBOARD SECTION -->
         <div id="dashboard" class="section active">
@@ -909,29 +968,25 @@
 
             <div class="orders-list">
 
-                {{#each orders}}
-                {{#each this.items}}
-                <div class="order-card">
-                    <div class="order-header">
-                        <h3>Order #{{../id}}</h3>
-                        <span class="order-status status-shipped">Shipped</span>
-                    </div>
-                    <div class="order-details">
-                        <p><strong>Customer:</strong> {{../user.name}}</p>
-                        <p><strong>Items:</strong> {{this.product.name}}</p>
-                        <p><strong>Total:</strong> {{this.product.price}}</p>
-                        <p><strong>Date:</strong> {{../createdAt}}</p>
-                    </div>
-                    <div class="order-actions">
-                        <button class="btn btn-sm btn-outline-secondary view-order-btn" data-order-id="{{../id}}">
-                            View Details
-                        </button>
-
-                        {{!-- <button class="btn btn-sm btn-outline-primary">Print Label</button> --}}
-                    </div>
-                </div>
-                {{/each}}
-                {{/each}}
+              {{#each orders}}
+<div class="order-card">
+    <div class="order-header">
+        <h3>Order #{{this._id}}</h3>
+        <span class="order-status status-shipped">Shipped</span>
+    </div>
+    <div class="order-details">
+        <p><strong>Customer:</strong> {{this.user.name}}</p>
+        <p><strong>Items:</strong> {{this.items.length}} item(s)</p>
+        <p><strong>Total:</strong> ₹{{this.totalPrice}}</p>
+        <p><strong>Date:</strong> {{this.createdAt}}</p>
+    </div>
+    <div class="order-actions">
+        <button class="btn btn-sm btn-outline-secondary view-order-btn" data-order-id="{{this._id}}">
+            View Details
+        </button>
+    </div>
+</div>
+{{/each}}
 
 
             </div>
@@ -1158,8 +1213,108 @@
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    console.log("SELLER ID:", "{{seller._id}}");
+</script>
+
+<script>
+ const ws = new WebSocket("ws://localhost:4000/?sellerId={{sellerId}}");
+
+
+    ws.onopen = () => console.log("WS Connected");
+
+ws.onmessage = (event) => {
+    let data = JSON.parse(event.data);
+    console.log("WS DATA RECEIVED:", data);
+
+    if (data.type === "new_order") {
+
+        // Update UI counts
+        let orderCount = document.querySelector(".orders-stat h3");
+        if (orderCount) {
+            orderCount.textContent = parseInt(orderCount.textContent) + 1;
+        }
+
+        let revenueElement = document.querySelector(".revenue-stat h3");
+        if (revenueElement) {
+            let cur = parseFloat(revenueElement.textContent) || 0;
+            revenueElement.textContent = cur + data.total;
+        }
+
+        // 🔔 SHOW Dashboard Notification
+        showNotification(
+            "New Order #" + data.orderId,
+            "A new order has been placed. Total: ₹" + data.total
+        );
+
+        // Add to table
+        addNewOrderToTable(data);
+    }
+};
+
+
+    ws.onerror = (err) => console.log("WS ERROR:", err);
+
+function addNewOrderToTable(data) {
+    const tableBody = document.querySelector(".orders-table tbody");
+    if (!tableBody) return;
+
+    const newRow = document.createElement("tr");
+    newRow.innerHTML = `
+        <td>#${data.orderId}</td>
+        <td>${data.user}</td>
+        <td class="product-col">
+            <strong>New Order</strong><br>
+            <span class="text-muted small">ID: ${data.orderId}</span>
+        </td>
+        <td>₹${data.total}</td>
+        <td>
+            <span class="status-badge status-pending">Pending</span>
+        </td>
+    `;
+
+    // Add row at the top
+    tableBody.prepend(newRow);
+}
+
+
+</script>
+
+
+
 
     <script>
+// Show / Hide notification panel
+document.getElementById("notificationBell").addEventListener("click", () => {
+    let panel = document.getElementById("notificationPanel");
+    panel.style.right = panel.style.right === "0px" ? "-350px" : "0px";
+});
+
+// Fetch notifications when bell is clicked
+document.getElementById("notificationBell").addEventListener("click", loadNotifications);
+
+function loadNotifications() {
+    fetch("/seller/notifications")
+        .then(res => res.json())
+        .then(data => {
+            let list = document.getElementById("notificationList");
+            list.innerHTML = "";
+
+            data.notifications.forEach(n => {
+                list.innerHTML += `
+                    <div style="padding:10px; border-bottom:1px solid #eee;">
+                        <strong>${n.message}</strong>
+                        <p style="margin:0; font-size:0.8rem;">Order: ${n.orderId}</p>
+                        <span style="font-size:0.75rem; color:gray;">
+                            ${new Date(n.createdAt).toLocaleString()}
+                        </span>
+                    </div>
+                `;
+            });
+        });
+}
+
+
         // Sidebar nav section switching
         document.querySelectorAll('.sidebar-menu li').forEach(item => {
             item.addEventListener('click', function () {
@@ -1233,75 +1388,93 @@
 
 
 
-        document.querySelectorAll('.view-order-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
+       document.querySelectorAll('.view-order-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+        let orderId = this.getAttribute('data-order-id');
 
-                let orderId = this.getAttribute('data-order-id');
+        // Show loading text
+        document.getElementById('orderDetailsBody').innerHTML =
+            '<p class="text-center text-muted">Loading...</p>';
 
-                // Show loading text
-                document.getElementById('orderDetailsBody').innerHTML =
-                    '<p class="text-center text-muted">Loading...</p>';
+        // Open modal
+        let modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+        modal.show();
 
-                // Open modal
-                let modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
-                modal.show();
+        // Fetch single order
+        fetch(`/seller/order/details/${orderId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    document.getElementById('orderDetailsBody').innerHTML =
+                        "<p class='text-danger'>Error loading order.</p>";
+                    return;
+                }
 
-                // Fetch single order
-                fetch(`/seller/order/details/${orderId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (!data.success) {
-                            document.getElementById('orderDetailsBody').innerHTML =
-                                "<p class='text-danger'>Error loading order.</p>";
-                            return;
-                        }
+                let order = data.order;
 
-                        let order = data.order;
-
-                        // Build HTML inside modal
-                        let html = `
+                // Build HTML inside modal - ALL ITEMS IN ONE ORDER
+                let html = `
                     <h5><strong>Order ID:</strong> ${order._id}</h5>
-
                     <hr>
-
                     <h6>Customer Info</h6>
                     <p><strong>Name:</strong> ${order.user.name}</p>
                     <p><strong>Email:</strong> ${order.user.email}</p>
-
                     <hr>
-
-                    <h6>Items</h6>
+                    <h6>Order Items</h6>
                 `;
 
-                        order.items.forEach(item => {
-                            html += `
+                // Display all items belonging to this order
+                order.items.forEach(item => {
+                    html += `
                         <div class="d-flex mb-3 p-2 border rounded">
-                            <img src="${item.product.images?.[0]}" 
+                            <img src="${item.product.images?.[0] || '/images/placeholder.jpg'}" 
                                  style="width:80px;height:80px;border-radius:8px;object-fit:cover;margin-right:10px;">
                             <div>
                                 <p class="m-0"><strong>${item.product.name}</strong></p>
                                 <p class="m-0">Price: ₹${item.product.price}</p>
                                 <p class="m-0">Qty: ${item.quantity}</p>
+                                <p class="m-0 text-success">Subtotal: ₹${item.quantity * item.product.price}</p>
                             </div>
                         </div>
                     `;
-                        });
+                });
 
-                        html += `
+                html += `
                     <hr>
-                    <h6>Total Price</h6>
-                    <p class="fw-bold text-success fs-5">₹${order.totalPrice}</p>
-
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="m-0">Total Price</h6>
+                        <p class="fw-bold text-success fs-5 m-0">₹${order.totalPrice}</p>
+                    </div>
                     <hr>
                     <h6>Order Date</h6>
                     <p>${new Date(order.createdAt).toLocaleString()}</p>
                 `;
 
-                        document.getElementById('orderDetailsBody').innerHTML = html;
-                    });
+                document.getElementById('orderDetailsBody').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error fetching order:', error);
+                document.getElementById('orderDetailsBody').innerHTML =
+                    "<p class='text-danger'>Failed to load order details.</p>";
             });
-        });
+    });
+});
 
+function showNotification(title, message) {
+    const box = document.getElementById("notificationBox");
+    document.getElementById("notificationTitle").textContent = title;
+    document.getElementById("notificationMessage").textContent = message;
+
+    box.style.display = "block";
+    box.style.opacity = "1";
+
+    // Auto hide after 4 seconds
+    setTimeout(() => {
+        box.style.transition = "opacity 0.5s";
+        box.style.opacity = "0";
+        setTimeout(() => box.style.display = "none", 500);
+    }, 4000);
+}
 
     </script>
 </body>

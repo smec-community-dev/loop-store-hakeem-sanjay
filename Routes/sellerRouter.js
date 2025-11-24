@@ -12,6 +12,7 @@ const Category = require('../Model/Category')
 let passport=require('passport')
 require("../config/sellerpassport")(passport);   
 
+
 const router = express.Router()
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
@@ -53,6 +54,10 @@ hbs.registerHelper("times", function(n, block) {
     }
     return accum;
 });
+
+
+
+
 
 
 router.get('/register', (req, res) => {
@@ -118,67 +123,66 @@ router.post('/login', async (req, res) => {
 })
 router.get('/profile', sellerauth, async (req, res) => {
   const sellerID = req.session.seller.id;
-let sellerdata=await Seller.findById(sellerID)
-console.log("sellerdata:"+sellerdata);
+  let sellerdata = await Seller.findById(sellerID);
 
   try {
 
     const sellerOrders = await Order.find({
       "items.seller": sellerID
     })
-      .populate("items.product", "name price stock images ")
+      .populate("items.product", "name price stock images seller")
       .populate("items.seller", "name email phone")
-      .populate("user", "name email")
-      .populate("items.quantity")
- 
+      .populate("user", "name email");
 
+    // Filter items belonging to this seller
+    const finalOrders = sellerOrders
+      .map(order => {
+        const matchedItems = order.items.filter(item =>
+          item.product &&
+          item.product.seller &&
+          item.product.seller.toString() === sellerID.toString()
+        );
+        order.items = matchedItems;
+        return order;
+      })
+      .filter(order => order.items.length > 0);
 
+    // Total products sold
+    let totalProductsOrdered = 0;
+    finalOrders.forEach(order => {
+      totalProductsOrdered += order.items.length;
+    });
 
+    // Total revenue
     let totalPrice = 0;
-
-    sellerOrders.forEach(order => {
+    finalOrders.forEach(order => {
       order.items.forEach(item => {
         totalPrice += item.quantity * item.product.price;
       });
     });
-
-
-
-    let totalProductsOrdered = 0;
-
-    const sellerOrderscount = await Order.find({ "items.seller": sellerID });
-
-    sellerOrderscount.forEach(order => {
-      order.items.forEach(item => {
-        if (item.seller.toString() === sellerID.toString()) {
-          totalProductsOrdered++;  
-        }
-      });
-    });
-
-    console.log("Total products inside orders:", totalProductsOrdered);
-
-
-
-    const categorydata = await Category.find()
-  
-
+// console.log("finalOrders:"+finalOrders)
+    const categorydata = await Category.find();
 
     const sellerproduct = await Product.find({ seller: sellerID })
-      .populate("review", "user content content_typing rating")
-      .populate("review.user", "name email");
+      .populate("review")
+      .populate("review.user");
 
+    const totalproduct = sellerproduct.length;
 
-    const totalproduct = sellerproduct.length
-
-    res.render('seller/sellerprofile', { seller: sellerdata, products: totalproduct, datas: sellerproduct, orders: sellerOrders, totalorder: totalProductsOrdered, categorys: categorydata, total: totalPrice })
-
+    return res.render("seller/sellerprofile", {
+      seller: sellerdata,
+      sellerId: req.session.seller.id,
+      products: totalproduct,
+      datas: sellerproduct,
+      orders: finalOrders,   
+      totalorder: totalProductsOrdered,
+      categorys: categorydata,
+      total: totalPrice
+    });
 
   } catch (error) {
     console.error("eroor on fetching seller datas on order:" + error)
   }
-
-
 });
 
 
@@ -288,12 +292,43 @@ router.get("/logout", (req, res) => {
   });
 });
 router.get('/order/details/:id', async (req, res) => {
-  const order = await Order.findById(req.params.id)
-    .populate("user", "name email")
-    .populate("items.product", "name price images");
+  try {
+    const sellerID = req.session.seller.id;
 
-  res.json({ success: true, order });
+    const order = await Order.findById(req.params.id)
+      .populate("user", "name email")
+      .populate("items.product", "name price images seller");
+
+    if (!order) {
+      return res.json({ success: false, message: "Order not found" });
+    }
+
+    // Filter only this seller's items
+    const sellerItems = order.items.filter(item =>
+      item.product &&
+      item.product.seller &&
+      item.product.seller.toString() === sellerID.toString()
+    );
+
+    const filteredOrder = {
+      _id: order._id,
+      user: order.user,
+      createdAt: order.createdAt,
+      items: sellerItems,
+      totalPrice: sellerItems.reduce(
+        (sum, item) => sum + (item.quantity * item.product.price),
+        0
+      )
+    };
+
+    res.json({ success: true, order: filteredOrder });
+
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: "Error fetching order" });
+  }
 });
+
 
 router.get('/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })

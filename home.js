@@ -9,52 +9,35 @@ const http = require("http");
 
 require("dotenv").config();
 
-// ✅ Correct WebSocket import
-const initWebSocket = require("./websocket/websocket");
+
 
 let app = express();
+const { initSellerWebSocket } = require("./websocket/sellerws");
 
-// =========================
-// MIDDLEWARE
-// =========================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.set('view engine', 'hbs');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
 app.use('/uploads', express.static('uploads'));
 
-
-// =========================
-// MONGO CONNECTION
-// =========================
 mongoose
   .connect("mongodb://localhost:27017/LiveProject")
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.log("❌ Connection error:", err));
 
-
-// =========================
-// ROUTES
-// =========================
+// Routes
 app.use('/seller', sellerRouter);
 app.use("/", userrouter);
 app.use("/admin", adminrouter);
 
 
-// =========================
-// CREATE HTTP SERVER + WEBSOCKET
-// =========================
 const server = http.createServer(app);
 
-initWebSocket(server);  // ⭐ Works now
+initSellerWebSocket(server);
 
-
-// =========================
-// START SERVER
-// =========================
 server.listen(4000, () => {
-  console.log("🚀 Server running at http://localhost:4000");
-  console.log("🔌 WebSocket active on same port");
+    console.log("🚀 HTTP Server http://localhost:4000");
+    console.log("💬 Seller WS at ws://localhost:4000/seller-ws");
+
 });

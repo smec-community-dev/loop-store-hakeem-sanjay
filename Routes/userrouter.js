@@ -370,9 +370,11 @@ router.get("/singlepage/:id", async (req, res) => {
         if (!data){
             res.send("Product not found");
         } 
+        console.log(data);
+        
         
         let related = await Products.find({category: data.category._id }).limit(3).lean();
-        res.render("user/singlepage", { data, related });
+        res.render("user/singlepage", { data, related });///related is not working
 });
 
 router.get("/cart/add/:id",userrauth, async (req, res) => {
@@ -500,10 +502,10 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
     try {
         const userid = req.session.user.userid;
         const productid = req.params.id;
-
         const quantity = parseInt(req.query.qty) || 1;
 
         const productdata = await Products.findById(productid).populate("seller");
+        const { notifySellerFor } = require("../websocket/sellerws");
 
         if (productdata.stock < quantity) {
             return res.send("Not enough stock available!");
@@ -511,40 +513,64 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
 
         let orderdata = await Order.findOne({ user: userid });
 
-      
+        // Extract seller ID correctly
+        let sellerId = productdata.seller._id || productdata.seller;
+
+        // DEBUG LOG — very important
+        console.log("SELLER WHO SHOULD RECEIVE:", sellerId);
+
         if (!orderdata) {
 
-            await Order.create({
+            let newOrder = await Order.create({
                 user: userid,
                 items: [
                     {
                         product: productid,
                         quantity: quantity,
                         priceAtPurchase: productdata.price,
-                        seller: productdata.seller
+                        seller: sellerId
                     }
                 ],
                 totalPrice: productdata.price * quantity
             });
 
-        } else {
-            orderdata.items.push({
-                product: productid,
-                quantity: quantity,
-                priceAtPurchase: productdata.price,
-                seller: productdata.seller
+            // Notify ONLY that seller
+            notifySellerFor(sellerId.toString(), {
+                type: "new_order",
+                orderId: newOrder._id,
+                total: productdata.price,
+                user: userid
             });
 
-            orderdata.totalPrice = orderdata.items.reduce((sum, item) => {
-                return sum + item.quantity * item.priceAtPurchase;
-            }, 0);
-
-            await orderdata.save();
+            return res.redirect("/ordersuccess");
         }
-        productdata.stock = productdata.stock - quantity;
+
+        // Existing order add item
+        orderdata.items.push({
+            product: productid,
+            quantity: quantity,
+            priceAtPurchase: productdata.price,
+            seller: sellerId
+        });
+
+        orderdata.totalPrice = orderdata.items.reduce((sum, item) => {
+            return sum + item.quantity * item.priceAtPurchase;
+        }, 0);
+
+        await orderdata.save();
+         productdata.stock = productdata.stock - quantity;
         if (productdata.stock < 0) productdata.stock = 0;
         await productdata.save();
-        return res.redirect("/ordersuccess");
+        
+        // Notify seller for existing order
+        notifySellerFor(sellerId.toString(), {
+            type: "new_order",      
+            orderId: orderdata._id,
+            total: orderdata.totalPrice,
+            user: userid
+        });
+
+        res.redirect("/ordersuccess");
 
     } catch (err) {
         console.error(err);
