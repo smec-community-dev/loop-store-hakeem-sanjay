@@ -44,9 +44,7 @@
   </a>
 </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="/about"><i class="bi bi-info-circle"></i> About</a>
-        </li>
+       
 
         <li class="nav-item">
           <a class="nav-link" href="/contact"><i class="bi bi-envelope"></i> Contact</a>
@@ -126,7 +124,7 @@
     <div class="category-slider" id="catSlider">
 
       {{#each categories}}
-      <div class="category-item" onclick="window.location.href='/usercategorypage?cat={{this.name}}'">
+      <div class="category-item">
         <img src="{{this.image}}" alt="{{this.name}}">
         <p>{{this.name}}</p>
       </div>

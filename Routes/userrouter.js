@@ -11,11 +11,12 @@ const Cart = require("../Model/Cart");
 const Wishlist = require("../Model/wishlist");
 const Order = require("../Model/Order");
 const Address = require("../Model/Adress");
+const Contact = require("../Model/contact");
 const hbs = require("hbs");
 const { any } = require("../multer/multer");
 const userrauth=require('../middleware/userauth');
-const sellerauth = require("../middleware/sellerauth");
-
+let passport=require('passport')
+require("../config/userpassport")(passport); 
 
 
 hbs.registerHelper("multiply", function (a, b) {
@@ -64,35 +65,35 @@ hbs.handlebars.registerHelper("formatDate", function (date, format) {
 
     const d = new Date(date);
 
-    const options = {
-        day: "2-digit",
-        month: "short",
-        year: "numeric"
-    };
-
-    // Default format = "DD MMM YYYY"
     if (!format || format === "default") {
-        return d.toLocaleDateString("en-US", options); 
+        return d.toLocaleDateString("en-US", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+        });
     }
 
-    // Custom formats
     switch (format) {
         case "dd-mm-yyyy":
-            return d.toLocaleDateString("en-GB"); 
-        case "mm-dd-yyyy":
-            return d.toLocaleDateString("en-US"); 
-        case "full":
-            return d.toLocaleDateString("en-US", { 
-                weekday: "long", 
-                year: "numeric", 
-                month: "long", 
-                day: "numeric" 
-            });
+            return d.toLocaleDateString("en-GB");
         case "yyyy-mm-dd":
             return d.toISOString().split("T")[0];
+        case "full":
+            return d.toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            });
         default:
             return d;
     }
+});
+
+
+
+hbs.registerHelper("eq", function(a, b) {
+  return a === b;
 });
 
 
@@ -112,6 +113,9 @@ router.use(session({
         secure: false,
     }
 }));
+
+router.use(passport.initialize());
+router.use(passport.session());
 
 router.get("/register", (req, res) => {
     res.render("user/register");
@@ -150,6 +154,48 @@ router.post("/login", async (req, res) => {
 
     res.redirect("/");
 });
+
+
+router.get(
+  '/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+router.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  async (req, res) => {
+
+      const googleUser = req.user;
+   
+      if (!googleUser.isNewGoogleUser) {
+        req.session.user = {
+          userid: googleUser._id.toString(),
+          name: googleUser.name,
+          email: googleUser.email,
+          phone: googleUser.phone
+        };
+        return res.redirect("/profile");
+      }
+
+      // 2️⃣ New Google user → save in MongoDB
+      const newUser = await user.create({
+        googleId: googleUser.googleId,
+        name: googleUser.name,
+        email: googleUser.email,
+        phone: googleUser.phone,
+        password: null, // Google users don't have password
+      });
+
+      req.session.user = {
+        userid: newUser._id.toString(),
+        name: newUser.name,
+        email: newUser.email
+      };
+
+      return res.redirect("/profile");
+  }
+);
 
 
 router.get("/profile",userrauth, async (req, res) => {
@@ -230,6 +276,36 @@ router.post("/", async (req, res) => {
     });
 });
 
+router.get("/contact",(req,res)=>{
+    res.render("user/contact")
+})
+
+
+router.post("/contact",async (req, res) => {
+
+    const { name, email, subject, message } = req.body;
+
+
+    if (!name || !email || !message) {
+      return res.redirect("/contact?error=1");
+    }
+
+
+    const userId = req.session?.user?.userid || req.session?.user?.id || null;
+
+    await Contact.create({
+      fullName: name,
+      email,
+      subject: subject || "Other",
+      message,
+      user: userId
+    });
+
+    return res.redirect("/");
+});
+
+
+
 router.get("/allproducts", async (req, res) => {
     const { brand, price } = req.query;  
     const page = Number(req.query.page) || 1;
@@ -302,7 +378,6 @@ router.get("/singlepage/:id", async (req, res) => {
 router.get("/cart/add/:id",userrauth, async (req, res) => {
     const userid = req.session.user.userid;
     const productId = req.params.id;
-
     const product = await Products.findById(productId).lean();
     let userCart = await Cart.findOne({ user: userid });
     if (!userCart) {
@@ -426,21 +501,25 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
         const userid = req.session.user.userid;
         const productid = req.params.id;
 
-       
         const quantity = parseInt(req.query.qty) || 1;
 
         const productdata = await Products.findById(productid).populate("seller");
 
+        if (productdata.stock < quantity) {
+            return res.send("Not enough stock available!");
+        }
+
         let orderdata = await Order.findOne({ user: userid });
 
+      
         if (!orderdata) {
-           
+
             await Order.create({
                 user: userid,
                 items: [
                     {
                         product: productid,
-                        quantity: quantity,  
+                        quantity: quantity,
                         priceAtPurchase: productdata.price,
                         seller: productdata.seller
                     }
@@ -448,32 +527,33 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
                 totalPrice: productdata.price * quantity
             });
 
-            return res.redirect("/ordersuccess");
-        }
-        else {
+        } else {
             orderdata.items.push({
                 product: productid,
-                quantity: quantity,  
+                quantity: quantity,
                 priceAtPurchase: productdata.price,
                 seller: productdata.seller
             });
+
+            orderdata.totalPrice = orderdata.items.reduce((sum, item) => {
+                return sum + item.quantity * item.priceAtPurchase;
+            }, 0);
+
+            await orderdata.save();
         }
+        productdata.stock = productdata.stock - quantity;
+        if (productdata.stock < 0) productdata.stock = 0;
+        await productdata.save();
+        return res.redirect("/ordersuccess");
 
-       
-        orderdata.totalPrice = orderdata.items.reduce((sum, item) => {
-            return sum + (item.quantity * item.priceAtPurchase);
-        }, 0);
-
-        await orderdata.save();
-
-        res.redirect("/ordersuccess");
     } catch (err) {
         console.error(err);
         res.status(500).send("Server Error");
     }
 });
+
 router.get("/ordersuccess", userrauth, async (req, res) => {
-  try {
+ 
     const userid = req.session.user.userid;
     let address=await Address.findOne({user:userid})
     console.log(address);
@@ -485,14 +565,9 @@ router.get("/ordersuccess", userrauth, async (req, res) => {
     res.render("user/ordersuccess", {
       order: lastitem,address
     });
-
-  } catch (err) {
-    console.log("Order Success Error:", err);
-    res.status(500).send("Something went wrong");
-  }
 });
 router.get("/cartorder", userrauth,async (req, res) => {
-  try {
+ 
     const userid = req.session.user?.userid;
     if (!userid) return res.redirect("/login");
 
@@ -526,11 +601,6 @@ router.get("/cartorder", userrauth,async (req, res) => {
       address,
       total: cart.totalPrice
     });
-
-  } catch (err) {
-    console.log("Cart order error:", err);
-    res.redirect("/error");
-  }
 });
 router.post("/cartorder", async (req, res) => {
         const userid = req.session.user.userid;
@@ -552,8 +622,6 @@ router.post("/cartorder", async (req, res) => {
 router.get("/placemultiorder",userrauth, async (req, res) => {
   
         const userId = req.session.user.userid;
-
-      
         const cart = await Cart.findOne({ user: userId })
             .populate("items.product");
 
@@ -595,6 +663,16 @@ router.get("/placemultiorder",userrauth, async (req, res) => {
             
             savedOrder = await orderData.save();
         }
+        for (let item of cart.items) {
+        const product = item.product;
+
+        product.stock-=item.quantity; 
+
+        if (product.stock < 0) product.stock = 0;      
+
+        await product.save();
+    }
+
 
         return res.redirect("/multipleordersuccess");
 });

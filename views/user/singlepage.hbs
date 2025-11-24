@@ -46,12 +46,23 @@
       </div>
 
       <div class="d-flex gap-3 mt-3">
-        <a href="/cart/add/{{data._id}}"><button class="btn-add">Add to Cart</button></a>
-        <a href="/order/{{data._id}}"><button class="btn-buy">Buy Now</button></a>
-        <a href="/wishlist/add/{{data._id}}" class="btn-wishlist">
-          <i class="fa-regular fa-heart"></i> Wishlist
+    {{#if (eq data.stock 0)}}
+        <button class="btn btn-danger" disabled>Out of Stock</button>
+    {{else}}
+        <a href="/cart/add/{{data._id}}">
+            <button class="btn-add">Add to Cart</button>
         </a>
-      </div>
+
+        <a href="/order/{{data._id}}">
+            <button class="btn-buy">Buy Now</button>
+        </a>
+    {{/if}}
+
+    <a href="/wishlist/add/{{data._id}}" class="btn-wishlist">
+        <i class="fa-regular fa-heart"></i> Wishlist
+    </a>
+</div>
+
 
       <hr class="my-4">
 

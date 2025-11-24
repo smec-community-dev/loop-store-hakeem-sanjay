@@ -47,6 +47,8 @@ body {
 /* ============================
    NAVBAR IMPROVEMENTS
 ============================ */
+/* ================= NAVBAR ================= */
+
 .main-nav {
   background: var(--primary);
   padding: 16px 0;
@@ -58,10 +60,12 @@ body {
 
 .main-nav .container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 30px; /* prevents layout break */
 }
 
+/* LOGO */
 .navbar-brand {
   display: flex;
   align-items: center;
@@ -81,6 +85,7 @@ body {
   margin-right: 8px;
 }
 
+/* CENTER NAV LINKS */
 .nav-links {
   display: flex;
   list-style: none;
@@ -88,6 +93,9 @@ body {
   align-items: center;
   margin: 0;
   padding: 0;
+
+  flex: 1;                 /* <-- FIX: allow center links to shrink */
+  justify-content: right; /* <-- FIX: always center */
 }
 
 .nav-links li a {
@@ -105,26 +113,40 @@ body {
   transform: translateY(-1px);
 }
 
+/* RIGHT SIDE (CART & LOGOUT) */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  white-space: nowrap; /* <-- prevents breaking */
+}
+
+/* CART ICON */
 .cart-icon {
   position: relative;
   display: flex;
   align-items: center;
+  font-size: 1.4rem;
+  color: var(--white);
 }
 
 .cart-icon .badge {
   background: var(--danger);
   color: var(--white);
   border-radius: 50%;
-  padding: 4px 8px;
+  padding: 4px 7px;
   font-size: 0.75rem;
   font-weight: 700;
+
   position: absolute;
   top: -8px;
   right: -8px;
+
   min-width: 20px;
   text-align: center;
 }
 
+/* LOGOUT BUTTON */
 .logout-btn {
   background: rgba(255,255,255,0.2);
   padding: 10px 20px;
@@ -139,6 +161,7 @@ body {
   background: rgba(255,255,255,0.3);
   transform: translateY(-2px);
 }
+
 
 /* ============================
    PROFILE LAYOUT IMPROVEMENTS
@@ -363,6 +386,11 @@ body {
   margin: 0 0 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+
+  /* Word Wrap FIX */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .info-content p {
@@ -370,7 +398,13 @@ body {
   font-weight: 600;
   color: var(--gray-900);
   margin: 0;
+
+  /* Word Wrap FIX */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
+
 
 /* ============================
    PRODUCT GRID IMPROVEMENTS
@@ -851,4 +885,44 @@ body {
     width: 100%;
     justify-content: center;
   }
+  .notification-icon {
+  position: relative;
+  margin-right: 15px;
+  font-size: 22px;
+  color: var(--white);
+}
+
+.notification-icon .badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ff3b3b;
+  color: #fff;
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 50%;
+}
+
+.notification-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-item {
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notification-item i {
+  font-size: 20px;
+  color: var(--highlight);
+}
+
 }

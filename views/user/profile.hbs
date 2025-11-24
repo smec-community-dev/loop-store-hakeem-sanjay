@@ -11,29 +11,39 @@
 </head>
 
 <body>
-  <!-- ================= NAVBAR ================= -->
-  <nav class="main-nav">
-    <div class="container">
-      <a href="/" class="navbar-brand">
-        <i class="bi bi-bag-fill logo-icon"></i>
-        <span class="logo-text">LoopStore</span>
+<!-- ================= NAVBAR ================= -->
+<nav class="main-nav">
+  <div class="container">
+      
+    <!-- LOGO -->
+    <a href="/" class="navbar-brand">
+      <i class="bi bi-bag-fill logo-icon"></i>
+      <span class="logo-text">LoopStore</span>
+    </a>
+
+    <!-- NAV LINKS -->
+    <ul class="nav-links">
+      <li><a href="/"><i class="bi bi-house-door"></i> Home</a></li>
+      <li><a href="/allproducts"><i class="bi bi-grid"></i> Products</a></li>
+      <li><a href="/contact"><i class="bi bi-envelope"></i> Contact</a></li>
+    </ul>
+
+    <!-- RIGHT SIDE -->
+    <div class="nav-right">
+
+      <a href="/cart" class="cart-icon">
+        <i class="bi bi-cart3"></i>
+        <span class="badge">{{cartCount}}</span>
       </a>
 
-      <ul class="nav-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/products">Products</a></li>
-        <li>
-          <a href="/cart" class="cart-icon">
-            <i class="bi bi-cart3"></i>
-            <span class="badge">{{cartCount}}</span>
-          </a>
-        </li>
-        <li>
-          <a href="/logout" class="logout-btn">Logout</a>
-        </li>
-      </ul>
+      <a href="/logout" class="logout-btn">Logout</a>
+
     </div>
-  </nav>
+
+  </div>
+</nav>
+
+
 
   <!-- ================= PROFILE SECTION ================= -->
   <main class="profile-section">
@@ -120,7 +130,9 @@
               </div>
               <div class="info-content">
                 <h4>Member Since</h4>
-                <p>{{joinDate}}</p>
+         <p>{{formatDate data.createdAt "dd-mm-yyyy"}}</p>
+
+
               </div>
             </div>
           </div>
@@ -287,6 +299,27 @@
         }
       });
     });
+
+  </script>
+  <script>
+     const ws = new WebSocket(`ws://${window.location.host}`);
+
+ws.onopen = () => {
+    console.log("🟢 Connected to WebSocket");
+};
+
+ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if (data.type === "new_product") {
+        alert("🔥 " + data.text);
+    }
+};
+
+ws.onclose = () => {
+    console.log("🔴 WebSocket disconnected");
+};
+
   </script>
 
 </body>

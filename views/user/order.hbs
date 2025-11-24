@@ -109,9 +109,13 @@
               <!-- QUANTITY SELECTOR -->
               <div class="d-flex align-items-center gap-3 mt-2">
                 <button type="button" class="qty-btn" data-action="decrease">−</button>
-                <span id="qty" class="fw-semibold" style="font-size: 1.1rem;">1</span>
+
+                <span id="qty" class="fw-semibold" style="font-size: 1.1rem;"
+                  data-stock="{{data.stock}}" data-price="{{data.price}}">1</span>
+
                 <button type="button" class="qty-btn" data-action="increase">+</button>
               </div>
+
             </div>
           </div>
 
@@ -140,7 +144,8 @@
         </div>
         {{else}}
         <div class="text-center mt-3">
-          <button onclick="editAddress()" class="btn-place-order" style="opacity:0.5; cursor:not-allowed; background:#ccc;">
+          <button onclick="editAddress()" class="btn-place-order"
+            style="opacity:0.5; cursor:not-allowed; background:#ccc;">
             <i class="bi bi-x-circle"></i> Add Address to Continue
           </button>
         </div>
@@ -155,50 +160,51 @@
     <p>© 2025 LookMe. All rights reserved.</p>
   </footer>
 
-  <!-- JAVASCRIPT -->
+  <!-- CLEAN FINAL SCRIPT -->
   <script>
-    const PRODUCT_ID = "{{data._id}}";
-    const PRICE = Number("{{data.price}}") || 0;
-
-    let qty = 1;
-
-    function updateTotals() {
-      const total = PRICE * qty;
-
-      // Left (main summary)
-      document.getElementById("qty").textContent = qty;
-      document.getElementById("total").textContent = total;
-
-      // Right (price box)
-      document.getElementById("sidePrice").textContent = total;
-      document.getElementById("sideTotal").textContent = total;
-    }
-
     document.addEventListener("DOMContentLoaded", () => {
+
+      const qtySpan = document.getElementById("qty");
+      const maxStock = parseInt(qtySpan.getAttribute("data-stock"));
+      const price = parseInt(qtySpan.getAttribute("data-price"));
+
+      let qty = 1;
+
+      const totalEl = document.getElementById("total");
+      const sidePrice = document.getElementById("sidePrice");
+      const sideTotal = document.getElementById("sideTotal");
+
+      function updatePrices() {
+        let total = price * qty;
+        qtySpan.textContent = qty;
+        totalEl.textContent = total;
+        sidePrice.textContent = total;
+        sideTotal.textContent = total;
+      }
 
       // Quantity Buttons
       document.querySelectorAll(".qty-btn").forEach(btn => {
         btn.addEventListener("click", () => {
           const action = btn.getAttribute("data-action");
-          if (action === "increase") qty++;
-          else if (action === "decrease") qty = Math.max(1, qty - 1);
 
-          updateTotals();
+          if (action === "increase" && qty < maxStock) qty++;
+          if (action === "decrease" && qty > 1) qty--;
+
+          updatePrices();
         });
       });
 
-      // Place Order Button
+      // Place Order
       const orderBtn = document.getElementById("placeOrderLink");
-      orderBtn.addEventListener("click", (e) => {
-        e.preventDefault();
+      if (orderBtn) {
+        orderBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          const id = "{{data._id}}";
+          window.location.href = `/placeorder/${id}?qty=${qty}`;
+        });
+      }
 
-        const safeQty = encodeURIComponent(qty);
-        const safeId = encodeURIComponent(PRODUCT_ID);
-
-        window.location.href = `/placeorder/${safeId}?qty=${safeQty}`;
-      });
-
-      updateTotals();
+      updatePrices();
     });
 
     function editAddress() {

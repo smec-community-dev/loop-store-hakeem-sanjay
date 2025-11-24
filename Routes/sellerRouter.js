@@ -184,38 +184,53 @@ console.log("sellerdata:"+sellerdata);
 
 
 router.post('/profile', upload.array("productImages[]", 10), async (req, res) => {
-  let { name, description, price, stock, category } = req.body;
-  const sellerID = req.session.seller.id;
-console.log(req.body);
-console.log("category"+category);
+    let { name, description, price, stock, category } = req.body;
+    const sellerID = req.session.seller.id;
 
-  const images = req.files.map(file => "/uploads/products/" + file.filename);
- 
-  try {
-    let newProduct= await Product.create({
-      name: name,
-      description: description,
-      price: price,
-      stock: stock,
-      seller: sellerID,
-      category:category,
-      images: images
+    const images = req.files.map(file => "/uploads/products/" + file.filename);
 
-    })
-       await Seller.findByIdAndUpdate(
-      sellerID,
-      { $push: { products: newProduct._id } }  
-    );
+    try {
+        let newProduct = await Product.create({
+            name,
+            description,
+            price,
+            stock,
+            seller: sellerID,
+            category,
+            images
+        });
 
-    console.log("Product created and added to seller");
-    return res.redirect('/seller/profile')
+        await Seller.findByIdAndUpdate(
+            sellerID,
+            { $push: { products: newProduct._id } }
+        );
 
-  } catch (error) {
-    console.error("data not saved in data base:" + error)
-  }
+        console.log("Product created");
 
+        // 🔔 Send notification to all WS clients
+        if (global.wss) {
+            const message = {
+                type: "new_product",
+                text: `New product added: ${newProduct.name}`,
+                productId: newProduct._id
+            };
 
-})
+            global.wss.clients.forEach(client => {
+                if (client.readyState === 1) {
+                    client.send(JSON.stringify(message));
+                }
+            });
+
+            console.log("🔔 Notification sent to all WebSocket users");
+        }
+
+        return res.redirect('/seller/profile');
+
+    } catch (error) {
+        console.error("Product save error:", error);
+    }
+});
+
 router.get('/profile/update', sellerauth, async (req, res) => {
   let id = req.query.id
   console.log("id:" + id);

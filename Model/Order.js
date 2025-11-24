@@ -13,25 +13,42 @@ const orderSchema = new mongoose.Schema(
         product: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
-          required: [true, "Order item must reference a product"],//[]
+          required: [true, "Order item must reference a product"],
         },
+
         quantity: {
           type: Number,
           required: true,
           min: [1, "Quantity cannot be less than 1"],
         },
+
         priceAtPurchase: {
           type: Number,
           required: true,
         },
-        seller: {             // ⭐ Each item belongs to a seller
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Seller"
-    },
+
+        seller: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Seller",
+          required: true
+        },
+
+        status: {
+          type: String,
+          enum: [
+            "Pending",
+            "Confirmed",
+            "Packed",
+            "Shipped",
+            "Out for Delivery",
+            "Delivered",
+            "Cancelled"
+          ],
+          default: "Pending"
+        }
       },
     ],
- 
-    
+
     totalPrice: {
       type: Number,
       required: true,
@@ -42,6 +59,7 @@ const orderSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Order", orderSchema);
+
 
 
 
