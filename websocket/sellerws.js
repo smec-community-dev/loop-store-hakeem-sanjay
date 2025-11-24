@@ -16,12 +16,13 @@ function initSellerWebSocket(server) {
 
     }
 
-    if( ws.userId = url.searchParams.get("userId")){
+     if( url.searchParams.get("userId")){
          ws.userId = url.searchParams.get("userId");
+
     }
 
 
-    if (!ws.sellerId  || !ws.userId) {
+    if (!ws.sellerId  && !ws.userId) {
         console.log("❌ Ignoring connection without sellerId or userID");
         return;
     }

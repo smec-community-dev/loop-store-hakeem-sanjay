@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Notifications – LoopStore</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #eef2ff;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .notification-header {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-content h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-content h1 i {
+            color: var(--primary);
+        }
+
+        .header-content p {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .notification-stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px 15px;
+            background: var(--primary-light);
+            border-radius: 10px;
+            min-width: 100px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d11467;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+        }
+
+        .notification-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            border-left: 4px solid var(--primary);
+            position: relative;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-card.unread {
+            background: var(--primary-light);
+            border-left-color: var(--success);
+        }
+
+        .notification-card.unread::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            top: 25px;
+            left: 8px;
+        }
+
+        .notification-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .notification-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .icon-order {
+            background: var(--primary);
+        }
+
+        .icon-shipping {
+            background: var(--success);
+        }
+
+        .icon-promo {
+            background: var(--warning);
+        }
+
+        .icon-security {
+            background: var(--danger);
+        }
+
+        .notification-time {
+            font-size: 0.85rem;
+            color: var(--gray);
+            white-space: nowrap;
+        }
+
+        .notification-message {
+            color: var(--dark);
+            margin-bottom: 5px;
+            padding-left: 46px;
+        }
+
+        .notification-actions-row {
+            display: flex;
+            gap: 10px;
+            padding-left: 46px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: none;
+            background: var(--gray-light);
+            color: var(--dark);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--gray-light);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .empty-state p {
+            color: var(--gray);
+            max-width: 400px;
+            margin: 0 auto 25px;
+        }
+
+        .footer-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .notification-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .notification-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .footer-actions {
+                flex-direction: column;
+            }
+            
+            .footer-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .notification-actions {
+                flex-direction: column;
+            }
+            
+            .notification-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .notification-stats {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="notification-header">
+            <div class="header-content">
+                <h1><i class="bi bi-bell-fill"></i> Notifications</h1>
+                <p>Stay updated with your recent activities and alerts</p>
+            </div>
+            <div class="notification-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="unreadCount">0</div>
+                    <div class="stat-label">Unread</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notification-actions">
+            <button class="btn btn-primary" onclick="markAllAsRead()">
+                <i class="bi bi-check-all"></i> Mark All as Read
+            </button>
+            <button class="btn btn-outline" onclick="filterUnread()">
+                <i class="bi bi-filter"></i> Show Unread Only
+            </button>
+            <button class="btn btn-danger" onclick="clearAll()">
+                <i class="bi bi-trash"></i> Clear All
+            </button>
+        </div>
+
+        <div id="allNotifications"></div>
+
+        <div class="footer-actions">
+            <button class="btn btn-outline" onclick="window.location.href='/profile'">
+                <i class="bi bi-arrow-left"></i> Back to Profile
+            </button>
+            <button class="btn btn-primary" onclick="window.location.href='/settings'">
+                <i class="bi bi-gear"></i> Notification Settings
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Sample notifications data
+        let notifications = JSON.parse(localStorage.getItem('userNotifications')) || [
+            {
+                id: 1,
+                title: "Order Shipped",
+                message: "Your order #LOOP-2023-4582 has been shipped and is on its way.",
+                timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).getTime(), // 2 hours ago
+                read: false,
+                type: "shipping"
+            },
+            {
+                id: 2,
+                title: "Special Offer",
+                message: "Get 20% off on all electronics this weekend. Use code: WEEKEND20",
+                timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).getTime(), // 5 hours ago
+                read: true,
+                type: "promo"
+            },
+            {
+                id: 3,
+                title: "Order Confirmed",
+                message: "Your order #LOOP-2023-4581 has been confirmed and is being processed.",
+                timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).getTime(), // 1 day ago
+                read: false,
+                type: "order"
+            },
+            {
+                id: 4,
+                title: "Security Alert",
+                message: "A new device has logged into your account. Please verify if it was you.",
+                timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).getTime(), // 2 days ago
+                read: true,
+                type: "security"
+            },
+            {
+                id: 5,
+                title: "Payment Received",
+                message: "Your payment of $129.99 for order #LOOP-2023-4579 has been received.",
+                timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).getTime(), // 3 days ago
+                read: true,
+                type: "order"
+            }
+        ];
+
+        let showUnreadOnly = false;
+
+        function loadNotifications() {
+            const container = document.getElementById("allNotifications");
+            const filteredNotifications = showUnreadOnly 
+                ? notifications.filter(n => !n.read) 
+                : notifications;
+
+            // Update stats
+            document.getElementById('totalCount').textContent = notifications.length;
+            document.getElementById('unreadCount').textContent = notifications.filter(n => !n.read).length;
+
+            if (filteredNotifications.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-bell-slash"></i>
+                        <h3>No notifications found</h3>
+                        <p>${showUnreadOnly ? 'You have no unread notifications.' : 'All caught up! You have no notifications at the moment.'}</p>
+                        ${showUnreadOnly ? '<button class="btn btn-primary" onclick="showUnreadOnly = false; loadNotifications()">Show All Notifications</button>' : ''}
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredNotifications.map(n => `
+                <div class="notification-card ${!n.read ? "unread" : ""}" onclick="markAsRead(${n.id})">
+                    <div class="notification-header-row">
+                        <div class="notification-title">
+                            <div class="notification-icon icon-${n.type}">
+                                ${getIconForType(n.type)}
+                            </div>
+                            ${n.title}
+                        </div>
+                        <div class="notification-time">${formatTime(n.timestamp)}</div>
+                    </div>
+                    <div class="notification-message">${n.message}</div>
+                    <div class="notification-actions-row">
+                        <button class="action-btn" onclick="event.stopPropagation(); markAsRead(${n.id})">
+                            <i class="bi bi-check-lg"></i> Mark Read
+                        </button>
+                        <button class="action-btn" onclick="event.stopPropagation(); deleteNotification(${n.id})">
+                            <i class="bi bi-x-lg"></i> Dismiss
+                        </button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function getIconForType(type) {
+            const icons = {
+                'order': '<i class="bi bi-bag-check"></i>',
+                'shipping': '<i class="bi bi-truck"></i>',
+                'promo': '<i class="bi bi-tag"></i>',
+                'security': '<i class="bi bi-shield-exclamation"></i>'
+            };
+            return icons[type] || '<i class="bi bi-bell"></i>';
+        }
+
+        function markAllAsRead() {
+            notifications.forEach(n => n.read = true);
+            save();
+            loadNotifications();
+        }
+
+        function markAsRead(id) {
+            const notification = notifications.find(n => n.id === id);
+            if (notification) {
+                notification.read = true;
+                save();
+                loadNotifications();
+            }
+        }
+
+        function deleteNotification(id) {
+            notifications = notifications.filter(n => n.id !== id);
+            save();
+            loadNotifications();
+        }
+
+        function filterUnread() {
+            showUnreadOnly = !showUnreadOnly;
+            loadNotifications();
+            
+            // Update button text
+            const filterBtn = document.querySelector('.btn-outline');
+            if (showUnreadOnly) {
+                filterBtn.innerHTML = '<i class="bi bi-filter"></i> Show All';
+            } else {
+                filterBtn.innerHTML = '<i class="bi bi-filter"></i> Show Unread Only';
+            }
+        }
+
+        function clearAll() {
+            if (notifications.length === 0) {
+                alert("There are no notifications to clear.");
+                return;
+            }
+            
+            if (confirm("Are you sure you want to clear all notifications? This action cannot be undone.")) {
+                notifications = [];
+                save();
+                loadNotifications();
+            }
+        }
+
+        function save() {
+            localStorage.setItem("userNotifications", JSON.stringify(notifications));
+        }
+
+        function formatTime(timestamp) {
+            const now = new Date();
+            const time = new Date(timestamp);
+            const diffInMs = now - time;
+            const diffInHours = diffInMs / (1000 * 60 * 60);
+            const diffInDays = diffInHours / 24;
+            
+            if (diffInHours < 1) {
+                const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+                return `${diffInMinutes} min ago`;
+            } else if (diffInHours < 24) {
+                return `${Math.floor(diffInHours)} hours ago`;
+            } else if (diffInDays < 7) {
+                return `${Math.floor(diffInDays)} days ago`;
+            } else {
+                return time.toLocaleDateString();
+            }
+        }
+
+        // Initialize the page
+        loadNotifications();
+    </script>
+</body>
+</html>

@@ -630,6 +630,22 @@
             background-color: rgba(220, 53, 69, 0.15);
             color: #dc3545;
         }
+        .order-status-form {
+    background: #f8f9fa;
+}
+
+.stylish-select {
+    border-radius: 6px;
+    font-size: 13px;
+    padding: 5px;
+}
+
+.beautify-btn {
+    font-size: 13px;
+    border-radius: 6px;
+    padding: 6px 10px;
+}
+
     </style>
 </head>
 
@@ -826,24 +842,69 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{#each orders}}
-                                    {{#each this.items}}
-                                    <tr>
-                                        <td>#{{../id}}</td>
-                                        <td>{{../user.name}}</td>
-                                        <td class="product-col">
-                                            <strong>{{this.product.name}}</strong><br>
-                                            <span class="text-muted small">ID: {{this.product._id}}</span>
-                                        </td>
+                                   {{#each orders}}
+<tr>
+    <td>#{{this._id}}</td>
+    <td>{{this.user.name}}</td>
 
-                                        <td>₹{{this.product.price}}</td>
+    {{#each this.items}}
+        <td class="product-col">
+            <strong>{{this.product.name}}</strong><br>
+            <span class="text-muted small">ID: {{this.product._id}}</span>
+        </td>
 
-                                        <td>
-                                            <span class="status-badge status-pending">Pending</span>
-                                        </td>
-                                    </tr>
-                                    {{/each}}
-                                    {{/each}}
+        <td>₹{{this.product.price}}</td>
+    {{/each}}
+
+    <td>
+        <form class="order-status-form p-2 rounded shadow-sm border">
+
+            <!-- CURRENT STATUS DISPLAY -->
+            <div class="mb-1">
+                <span class="badge bg-secondary px-2 py-1">
+                    Current: {{this.status}}
+                </span>
+            </div>
+
+            <!-- DROPDOWN -->
+            <select class="form-select form-select-sm order-status-select stylish-select"
+        data-item-id="{{this._id}}">
+
+    <option disabled>Select</option>
+
+    <option value="Pending" 
+        {{#if (eq this.status "Pending")}}selected{{/if}}>Pending</option>
+
+    <option value="Confirmed" 
+        {{#if (eq this.status "Confirmed")}}selected{{/if}}>Confirmed</option>
+
+    <option value="Packed" 
+        {{#if (eq this.status "Packed")}}selected{{/if}}>Packed</option>
+
+    <option value="Shipped" 
+        {{#if (eq this.status "Shipped")}}selected{{/if}}>Shipped</option>
+
+    <option value="Out for Delivery" 
+        {{#if (eq this.status "Out for Delivery")}}selected{{/if}}>Out for Delivery</option>
+
+    <option value="Delivered" 
+        {{#if (eq this.status "Delivered")}}selected{{/if}}>Delivered</option>
+
+    <option value="Cancelled" 
+        {{#if (eq this.status "Cancelled")}}selected{{/if}}>Cancelled</option>
+</select>
+
+
+            <!-- BUTTON -->
+            <a class="btn btn-sm btn-primary mt-2 update-status-btn w-100 beautify-btn"
+               data-item-id="{{this._id}}">
+                Update
+            </a>
+        </form>
+    </td>
+</tr>
+{{/each}}
+
                                 </tbody>
                             </table>
 
@@ -1475,6 +1536,26 @@ function showNotification(title, message) {
         setTimeout(() => box.style.display = "none", 500);
     }, 4000);
 }
+document.addEventListener("DOMContentLoaded", () => {
+
+    document.querySelectorAll(".update-status-btn").forEach(btn => {
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            const itemId = this.dataset.itemId;
+
+            // get the select inside the same <td>
+            const select = this.closest("td").querySelector(".order-status-select");
+            const status = select.value;
+
+            // final URL
+            const url = `orderupdate/?id=${itemId}&&status=${encodeURIComponent(status)}`;
+
+            window.location.href = url;
+        });
+    });
+
+});
 
     </script>
 </body>

@@ -98,7 +98,6 @@
         <!-- ORDER SUMMARY -->
         <div class="section-box">
           <h5 class="section-title"><i class="bi bi-bag-check"></i> Order Summary</h5>
-
           <div class="product-item">
             <img src="{{data.images.[0]}}" alt="product image" />
 
@@ -118,7 +117,6 @@
 
             </div>
           </div>
-
           <p class="summary-total">Total: ₹<span id="total">{{data.price}}</span></p>
         </div>
 
@@ -134,7 +132,7 @@
           <hr>
           <h6>Total Payable: ₹<span id="sideTotal">{{data.price}}</span></h6>
         </div>
-
+    
         <!-- PLACE ORDER BUTTON -->
         {{#if address}}
         <div class="text-center mt-3">

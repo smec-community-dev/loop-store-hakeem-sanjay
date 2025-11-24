@@ -8,6 +8,140 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
   <link rel="stylesheet" href="/user/profile.css" />
+  <style>
+    /* Notification Styles */
+    .notification-container {
+      position: relative;
+      margin-right: 15px;
+    }
+
+    .notification-icon {
+      position: relative;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: #333;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .notification-icon:hover {
+      background-color: #f5f5f5;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #e74c3c;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .notification-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      width: 350px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      display: none;
+    }
+
+    .notification-dropdown.active {
+      display: block;
+    }
+
+    .notification-header {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: between;
+      align-items: center;
+    }
+
+    .notification-header h4 {
+      margin: 0;
+      flex: 1;
+    }
+
+    .notification-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      padding: 12px 15px;
+      border-bottom: 1px solid #f5f5f5;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .notification-item:hover {
+      background-color: #f9f9f9;
+    }
+
+    .notification-item.unread {
+      background-color: #f0f7ff;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #333;
+    }
+
+    .notification-message {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .notification-time {
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+    .notification-actions {
+      padding: 10px 15px;
+      border-top: 1px solid #eee;
+      text-align: center;
+    }
+
+    .mark-all-read {
+      background: none;
+      border: none;
+      color: #3498db;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .mark-all-read:hover {
+      text-decoration: underline;
+    }
+
+    .empty-notifications {
+      padding: 20px;
+      text-align: center;
+      color: #999;
+    }
+
+    .notification-item.read {
+      opacity: 0.7;
+    }
+  </style>
 </head>
 
 <body>
@@ -30,6 +164,29 @@
 
     <!-- RIGHT SIDE -->
     <div class="nav-right">
+      <!-- Notification Icon -->
+      <div class="notification-container">
+        <button class="notification-icon" id="notificationIcon">
+          <i class="bi bi-bell"></i>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </button>
+        <div class="notification-dropdown" id="notificationDropdown">
+          <div class="notification-header">
+            <h4>Notifications</h4>
+            <button class="mark-all-read" id="markAllRead">Mark all read</button>
+          </div>
+          <div class="notification-list" id="notificationList">
+            <!-- Notifications will be dynamically inserted here -->
+            <div class="empty-notifications">
+              <i class="bi bi-bell" style="font-size: 2rem; margin-bottom: 10px;"></i>
+              <p>No notifications yet</p>
+            </div>
+          </div>
+          <div class="notification-actions">
+            <a href="/notifications" style="color: #3498db; text-decoration: none;">View All Notifications</a>
+          </div>
+        </div>
+      </div>
 
       <a href="/cart" class="cart-icon">
         <i class="bi bi-cart3"></i>
@@ -42,8 +199,6 @@
 
   </div>
 </nav>
-
-
 
   <!-- ================= PROFILE SECTION ================= -->
   <main class="profile-section">
@@ -130,9 +285,7 @@
               </div>
               <div class="info-content">
                 <h4>Member Since</h4>
-         <p>{{formatDate data.createdAt "dd-mm-yyyy"}}</p>
-
-
+                <p>{{formatDate data.createdAt "dd-mm-yyyy"}}</p>
               </div>
             </div>
           </div>
@@ -225,7 +378,6 @@
                 <div class="order-total">
                   <strong>Total: ₹{{this.totalPrice}}</strong>
                 </div>
-
               </div>
             </div>
             {{/each}}
@@ -300,27 +452,213 @@
       });
     });
 
-  </script>
-  <script>
-     const ws = new WebSocket(`ws://${window.location.host}`);
+    // Notification System
+    class NotificationSystem {
+      constructor() {
+        this.notifications = JSON.parse(localStorage.getItem('userNotifications')) || [];
+        this.unreadCount = this.notifications.filter(n => !n.read).length;
+        this.init();
+      }
 
-ws.onopen = () => {
-    console.log("🟢 Connected to WebSocket");
-};
+      init() {
+        this.renderNotifications();
+        this.setupEventListeners();
+        this.updateBadge();
+      }
 
-ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
+      setupEventListeners() {
+        // Toggle dropdown
+        document.getElementById('notificationIcon').addEventListener('click', (e) => {
+          e.stopPropagation();
+          document.getElementById('notificationDropdown').classList.toggle('active');
+        });
 
-    if (data.type === "new_product") {
-        alert("🔥 " + data.text);
+        // Mark all as read
+        document.getElementById('markAllRead').addEventListener('click', () => {
+          this.markAllAsRead();
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+          document.getElementById('notificationDropdown').classList.remove('active');
+        });
+
+        // Prevent dropdown close when clicking inside
+        document.getElementById('notificationDropdown').addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      }
+
+      addNotification(title, message, orderId, status) {
+        const newNotification = {
+          id: Date.now(),
+          title,
+          message,
+          orderId,
+          status,
+          timestamp: new Date(),
+          read: false
+        };
+
+        this.notifications.unshift(newNotification);
+        this.saveToStorage();
+        this.renderNotifications();
+        this.updateBadge();
+        this.showNotificationToast(newNotification);
+      }
+
+      markAsRead(notificationId) {
+        const notification = this.notifications.find(n => n.id === notificationId);
+        if (notification && !notification.read) {
+          notification.read = true;
+          this.saveToStorage();
+          this.renderNotifications();
+          this.updateBadge();
+        }
+      }
+
+      markAllAsRead() {
+        this.notifications.forEach(notification => {
+          notification.read = true;
+        });
+        this.saveToStorage();
+        this.renderNotifications();
+        this.updateBadge();
+      }
+
+      renderNotifications() {
+        const container = document.getElementById('notificationList');
+        
+        if (this.notifications.length === 0) {
+          container.innerHTML = `
+            <div class="empty-notifications">
+              <i class="bi bi-bell" style="font-size: 2rem; margin-bottom: 10px;"></i>
+              <p>No notifications yet</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = this.notifications.map(notification => `
+          <div class="notification-item ${notification.read ? 'read' : 'unread'}" 
+               onclick="notificationSystem.markAsRead(${notification.id})">
+            <div class="notification-title">${notification.title}</div>
+            <div class="notification-message">${notification.message}</div>
+            <div class="notification-time">${this.formatTime(notification.timestamp)}</div>
+          </div>
+        `).join('');
+      }
+
+      updateBadge() {
+        const badge = document.getElementById('notificationBadge');
+        this.unreadCount = this.notifications.filter(n => !n.read).length;
+        
+        if (this.unreadCount > 0) {
+          badge.textContent = this.unreadCount > 99 ? '99+' : this.unreadCount;
+          badge.style.display = 'flex';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+
+      showNotificationToast(notification) {
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = 'notification-toast';
+        toast.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: white;
+          border-left: 4px solid #3498db;
+          padding: 15px;
+          border-radius: 4px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          z-index: 10000;
+          max-width: 300px;
+          animation: slideIn 0.3s ease;
+        `;
+
+        toast.innerHTML = `
+          <div style="font-weight: 600; margin-bottom: 5px;">${notification.title}</div>
+          <div style="font-size: 0.9rem; color: #666;">${notification.message}</div>
+          <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">${this.formatTime(notification.timestamp)}</div>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Remove toast after 5 seconds
+        setTimeout(() => {
+          toast.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => {
+            if (toast.parentNode) {
+              toast.parentNode.removeChild(toast);
+            }
+          }, 300);
+        }, 5000);
+      }
+
+      formatTime(timestamp) {
+        const now = new Date();
+        const time = new Date(timestamp);
+        const diff = now - time;
+        
+        if (diff < 60000) return 'Just now';
+        if (diff < 3600000) return `${Math.floor(diff / 60000)} min ago`;
+        if (diff < 86400000) return `${Math.floor(diff / 3600000)} hours ago`;
+        return time.toLocaleDateString();
+      }
+
+      saveToStorage() {
+        localStorage.setItem('userNotifications', JSON.stringify(this.notifications));
+      }
     }
-};
 
-ws.onclose = () => {
-    console.log("🔴 WebSocket disconnected");
-};
+    // Initialize notification system
+    const notificationSystem = new NotificationSystem();
 
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // WebSocket connection
+    const ws = new WebSocket("ws://localhost:4000/?userId={{userId}}");
+
+    ws.onopen = () => console.log("WS Connected");
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("WS DATA RECEIVED:", data);
+
+      // ORDER STATUS UPDATE (USER)
+      if (data.type === "order_status_update") {
+        // Add notification instead of showing alert
+        notificationSystem.addNotification(
+          'Order Status Updated',
+          `Your order #${data.orderId} is now ${data.status}`,
+          data.orderId,
+          data.status
+        );
+
+        // Play notification sound
+        const audio = new Audio("/sounds/notification.mp3");
+        audio.play().catch(() => {});
+
+        // Update status in HTML if exists
+        const statusEl = document.getElementById(`order-status-${data.orderId}`);
+        if (statusEl) statusEl.textContent = data.status;
+      }
+    };
   </script>
-
 </body>
 </html>

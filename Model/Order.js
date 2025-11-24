@@ -32,8 +32,9 @@ const orderSchema = new mongoose.Schema(
           ref: "Seller",
           required: true
         },
-
-        status: {
+      },
+    ],
+    status: {
           type: String,
           enum: [
             "Pending",
@@ -45,10 +46,7 @@ const orderSchema = new mongoose.Schema(
             "Cancelled"
           ],
           default: "Pending"
-        }
-      },
-    ],
-
+    },
     totalPrice: {
       type: Number,
       required: true,
