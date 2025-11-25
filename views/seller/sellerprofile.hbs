@@ -15,7 +15,7 @@
     <style>
         :root {
             --primary: #4361ee;
-            --secondary: #ff9f00;
+            --secondary: #4361ee;
             --success: #4cc9f0;
             --warning: #f72585;
             --light: #f8f9fa;
@@ -912,7 +912,6 @@
                                         <th>Order ID</th>
                                         <th>Customer</th>
                                         <th>Product</th>
-                                        <th>Price (₹)</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -922,14 +921,18 @@
     <td>#{{this._id}}</td>
     <td>{{this.user.name}}</td>
 
-    {{#each this.items}}
         <td class="product-col">
+             {{#each this.items}}
+             <div class="mb-2">
             <strong>{{this.product.name}}</strong><br>
-            <span class="text-muted small">ID: {{this.product._id}}</span>
+            <span class="text-muted small">ID: {{this.product._id}}</span><br>
+            <span>₹{{this.product.price}}</span>
+            </div>
+            {{/each}}
         </td>
 
-        <td>₹{{this.product.price}}</td>
-    {{/each}}
+        
+    
 
     <td>
         <form class="order-status-form p-2 rounded shadow-sm border">

@@ -2,8 +2,8 @@
    ROOT VARIABLES (UNCHANGED)
 ============================================ */
 :root {
-    --color-primary: #3b82f6;
-    --color-primary-dark: #1e40af;
+    --color-primary: #3917e4;
+    --color-primary-dark: #3917e4;
     --color-secondary: #6b7280;
     --color-accent: #10b981;
     --color-danger: #ef4444;
@@ -297,7 +297,7 @@ body {
 }
 .status-pending {
     background-color: rgba(245, 158, 11, 0.12);
-    color: #d97706;
+    color: #3917e4;
 }
 
 .order-details p {

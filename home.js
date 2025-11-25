@@ -22,9 +22,10 @@ app.use(express.static(__dirname + '/public'));
 app.use('/uploads', express.static('uploads'));
 
 mongoose
-  .connect("mongodb://localhost:27017/LiveProject")
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.log("❌ Connection error:", err));
+
 
 // Routes
 app.use('/seller', sellerRouter);
