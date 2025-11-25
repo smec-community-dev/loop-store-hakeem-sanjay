@@ -108,7 +108,7 @@ router.use(session({
     resave: false,
     saveUninitialized: false,
     store: mongostore.create({
-        mongoUrl: "mongodb://localhost:27017/LiveProject",
+        mongoUrl: process.env.MONGO_URI,
         collectionName: "usersession",
         ttl: 60 * 60,
     }),

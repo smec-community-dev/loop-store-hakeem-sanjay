@@ -11,6 +11,7 @@ const Order = require('../Model/Order')
 const Category = require('../Model/Category')
 let passport=require('passport')
 require("../config/sellerpassport")(passport);   
+require("dotenv").config();
 const Notification = require("../Model/sellerNotification");
 
 
@@ -34,7 +35,7 @@ router.use(
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: "mongodb://localhost:27017/LiveProject",
+      mongoUrl: process.env.MONGO_URI,
       collectionName: "seller_sessions",
       ttl: 24 * 60 * 60,
     }),
