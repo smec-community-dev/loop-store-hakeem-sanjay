@@ -4,7 +4,7 @@ require("dotenv").config();
 
 module.exports = function (passport) {
 
-    passport.use(
+    passport.use("google-seller",
         new GoogleStrategy(
             {
                 clientID: process.env.GOOGLE_CLIENT_ID,

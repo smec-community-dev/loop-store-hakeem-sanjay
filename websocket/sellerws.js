@@ -1,3 +1,5 @@
+const Notification = require("../Model/sellerNotification");
+
 const WebSocket = require("ws");
 
 let clients = new Set();
@@ -47,14 +49,35 @@ function notifyUserFor(userId, message) {
 }
 
 
-function notifySellerFor(sellerId, message) {
-    console.log("Sending WS to Seller:", sellerId, message);
+async function notifySellerFor({ sellerId, type, orderId, total }) {
+    try {
+        // 1️⃣ Save MongoDB Notification
+        await Notification.create({
+            sellerId,
+            message: type === "new_order" 
+                ? `New Order Received (₹${total})`
+                : "Notification",
+            orderId
+        });
 
-    clients.forEach(ws => {
-        if (ws.readyState === 1 && ws.sellerId === sellerId.toString()) {
-            ws.send(JSON.stringify(message));
-        }
-    });
+        console.log("📌 Notification stored in DB for seller:", sellerId);
+
+        // 2️⃣ Send WebSocket to seller
+        clients.forEach(ws => {
+            if (ws.readyState === 1 && ws.sellerId === sellerId.toString()) {
+                ws.send(JSON.stringify({
+                    type,
+                    orderId,
+                    total,
+                    sellerId
+                }));
+            }
+        });
+
+        console.log("📡 Notification sent to seller WebSocket");
+    } catch (err) {
+        console.error("❌ Error storing WS notification:", err);
+    }
 }
 
 module.exports = { initSellerWebSocket, notifySellerFor ,notifyUserFor};

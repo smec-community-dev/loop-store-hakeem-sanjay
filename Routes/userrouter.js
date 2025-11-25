@@ -17,6 +17,8 @@ const { any } = require("../multer/multer");
 const userrauth=require('../middleware/userauth');
 let passport=require('passport')
 require("../config/userpassport")(passport); 
+require("dotenv").config();
+const razorpay=require('../config/razorpay')
 
 
 hbs.registerHelper("multiply", function (a, b) {
@@ -512,7 +514,7 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
         const quantity = parseInt(req.query.qty) || 1;
 
         const productdata = await Products.findById(productid).populate("seller");
-        const { notifySellerFor } = require("../websocket/sellerws");
+        // const { notifySellerFor } = require("../websocket/sellerws");
 
         if (productdata.stock < quantity) {
             return res.send("Not enough stock available!");
@@ -527,6 +529,19 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
         console.log("SELLER WHO SHOULD RECEIVE:", sellerId);
 
 
+        
+    let amount = productdata.price * quantity * 100; // Razorpay needs INR paise
+
+    // 1️⃣ Create Razorpay order
+    const options = {
+        amount: amount,
+        currency: "INR",
+        receipt: "order_rcpt_" + Date.now()
+    };
+      let razorOrder = await razorpay.orders.create(options);
+console.log("razorOrder:",razorOrder);
+
+
             let newOrder = await Order.create({
                 user: userid,
                 items: [
@@ -537,22 +552,86 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
                         seller: sellerId
                     }
                 ],
-                totalPrice: productdata.price * quantity
+                totalPrice: productdata.price * quantity,
+                  razorpayOrderId: razorOrder.id,
+        paymentStatus: "pending"
             });
-         productdata.stock = productdata.stock - quantity;
-        if (productdata.stock < 0) productdata.stock = 0;
-        await productdata.save();
+//          productdata.stock = productdata.stock - quantity;
+//         if (productdata.stock < 0) productdata.stock = 0;
+//         await productdata.save();
 
-            // Notify ONLY that seller
-            notifySellerFor(sellerId.toString(), {
-                type: "new_order",
-                orderId: newOrder._id,
-                total: productdata.price,
-                user: userid
-            });
+//             // Notify ONLY that seller
+//  notifySellerFor({
+//     sellerId: sellerId.toString(),
+//     type: "new_order",
+//     orderId:orderdata._id,
+//     total: productdata.price,
+// });
 
-            return res.redirect("/ordersuccess");
+
+  res.render("user/razorpay_checkout", {
+        key: process.env.RAZORPAY_KEY,
+        amount,
+        newOrder,
+        razorOrder
+    });
+
+
+//            return res.redirect("/ordersuccess");
 });
+router.get("/payment/success", userrauth, async (req, res) => {
+    const { orderId, paymentId } = req.query;
+
+    let order = await Order.findById(orderId).populate("items.product");
+
+    order.paymentStatus = "paid";
+    order.razorpayPaymentId = paymentId;
+    await order.save();
+
+    // 🔥 reduce stock
+    const item = order.items[0];
+    let product = await Products.findById(item.product._id);
+    product.stock -= item.quantity;
+    if (product.stock < 0) product.stock = 0;
+    await product.save();
+
+    // 🔥 Notify seller
+    const { notifySellerFor } = require("../websocket/sellerws");
+
+    notifySellerFor({
+        sellerId: item.seller.toString(),
+        type: "new_order",
+        orderId: order._id,
+        total: order.totalPrice,
+    });
+
+    res.redirect("/ordersuccess");
+});
+router.post("/razorpay/webhook", express.json(), async (req, res) => {
+    const crypto = require("crypto");
+
+    const secret = process.env.RAZORPAY_SECRET;
+
+    const shasum = crypto.createHmac("sha256", secret);
+    shasum.update(JSON.stringify(req.body));
+    const digest = shasum.digest("hex");
+
+    if (digest === req.headers["x-razorpay-signature"]) {
+        const payload = req.body.payload.payment.entity;
+
+        await Order.findOneAndUpdate(
+            { razorpayOrderId: payload.order_id },
+            {
+                paymentStatus: "paid",
+                razorpayPaymentId: payload.id
+            }
+        );
+        return res.status(200).json({ status: "ok" });
+    } else {
+        return res.status(400).json({ error: "Invalid signature" });
+    }
+});
+
 
 router.get("/ordersuccess", userrauth, async (req, res) => {
  
