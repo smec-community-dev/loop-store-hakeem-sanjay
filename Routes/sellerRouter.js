@@ -159,7 +159,7 @@ router.get('/profile', sellerauth, async (req, res) => {
         totalPrice += item.quantity * item.product.price;
       });
     });
-// console.log("finalOrders:"+finalOrders)
+
     const categorydata = await Category.find();
 
     const sellerproduct = await Product.find({ seller: sellerID })
@@ -184,41 +184,45 @@ router.get('/profile', sellerauth, async (req, res) => {
   }
 });
 router.get("/orderupdate", async (req, res) => {
-    try {
-        const orderId = req.query.id;
-        const newStatus = req.query.status;
+  try {
+    const orderId = req.query.id;
+    const newStatus = req.query.status;
 
-        if (!orderId || !newStatus) {
-            return res.status(400).send("Missing parameters");
-        }
-
-        // Update order
-        await Order.findByIdAndUpdate(orderId, { status: newStatus });
-
-        // Get order with user info
-        const orderData = await Order.findById(orderId).populate("user");
-
-        if (!orderData) {
-            return res.status(404).send("Order not found");
-        }
-
-        const userId = orderData.user._id.toString();
-
-        // Send WebSocket notification to the USER
-        const { notifyUserFor } = require("../websocket/sellerws");
-
-        notifyUserFor(userId, {
-            type: "order_status_update",
-            orderId: orderId,
-            status: newStatus
-        });
-
-        return res.redirect("/seller/profile");
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Server Error");
+    if (!orderId || !newStatus) {
+      return res.status(400).send("Missing parameters");
     }
+
+
+    let updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { status: newStatus },
+      { new: true }
+    ).populate("user");
+
+    if (!updatedOrder) {
+      return res.status(404).send("Order not found");
+    }
+
+    const userId = updatedOrder.user._id.toString();
+
+    const { notifyUserFor } = require("../websocket/sellerws");
+
+    notifyUserFor(userId, {
+      type: "order_status_update",
+      orderId,
+      status: newStatus
+    });
+
+    if (newStatus === "Cancelled") {
+      await Order.findByIdAndDelete(orderId);
+    }
+
+    return res.redirect("/seller/profile");
+
+  } catch (error) {
+    console.error("Order update error:", error);
+    res.status(500).send("Server Error");
+  }
 });
 
 

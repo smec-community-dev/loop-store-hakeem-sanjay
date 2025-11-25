@@ -2,7 +2,7 @@
        GLOBAL
 ========================================= */
 :root {
-  --primary: #111;
+  --primary: #ffffff;
   --secondary: #555;
   --accent: #ff4d4d;
   --highlight: #3917e4;
@@ -32,14 +32,29 @@ body {
 .main-nav.scrolled {
   background: #3917e4;
   padding: 8px 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
 }
 
-.navbar-brand {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #fff !important;
+.logo {
+    color: var(--primary);
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
+
+.logo i {
+    font-size: 1.7rem;
+    color: var(--white);
+}
+
+.logo span {
+    color: var(--white);
+}
+
+
 
 .navbar .nav-link {
   font-weight: 600;

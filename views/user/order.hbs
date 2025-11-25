@@ -14,13 +14,52 @@
 <body>
 
   <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg topbar">
+   <nav class="navbar navbar-expand-lg main-nav">
     <div class="container">
-      <a class="navbar-brand" href="/">LookMe <span>Loopstore</span></a>
-      <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item"><a class="nav-link" href="/"><i class="bi bi-house"></i> Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="/cart"><i class="bi bi-cart3"></i> Cart</a></li>
-      </ul>
+
+      <a href="/" class="logo">
+    <i class="bi bi-bag-fill"></i>
+    <span>LoopStore</span>
+</a>
+
+
+
+      <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav ms-auto">
+
+          <li class="nav-item">
+  <a class="nav-link" href="/">
+    <i class="bi bi-house-door"></i> Home
+  </a>
+</li>
+
+
+
+          <li class="nav-item">
+            <a class="nav-link" href="/allproducts">
+              <i class="bi bi-grid"></i> Products
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/profile">
+              <i class="bi bi-person"></i> Profile
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/cart">
+              <i class="bi bi-cart3"></i>
+            </a>
+          </li>
+
+        </ul>
+      </div>
+
     </div>
   </nav>
 
@@ -96,30 +135,54 @@
         </div>
 
         <!-- ORDER SUMMARY -->
-        <div class="section-box">
-          <h5 class="section-title"><i class="bi bi-bag-check"></i> Order Summary</h5>
-          <div class="product-item">
-            <img src="{{data.images.[0]}}" alt="product image" />
+        <!-- ORDER SUMMARY -->
+<div class="section-box">
+    <h5 class="section-title"><i class="bi bi-bag-check"></i> Order Summary</h5>
+    <div class="product-item">
+        <img src="{{data.images.[0]}}" alt="product image" />
 
-            <div class="w-100">
-              <p class="fw-semibold">{{data.name}}</p>
-              <p class="text-muted">₹{{data.price}}</p>
+        <div class="product-details">
+            <!-- Product Name -->
+            <p class="product-name">{{data.name}}</p>
+            
+            <!-- Product Category -->
+            {{#if data.category}}
+            <span class="product-category">{{data.category.name}}</span>
+            {{/if}}
+            
+            <!-- Product Description -->
+            {{#if data.description}}
+            <p class="product-description">{{data.description}}</p>
+            {{/if}}
 
-              <!-- QUANTITY SELECTOR -->
-              <div class="d-flex align-items-center gap-3 mt-2">
-                <button type="button" class="qty-btn" data-action="decrease">−</button>
+            <!-- Product Price -->
+            <p class="product-price">₹{{data.price}}</p>
 
-                <span id="qty" class="fw-semibold" style="font-size: 1.1rem;"
-                  data-stock="{{data.stock}}" data-price="{{data.price}}">1</span>
-
-                <button type="button" class="qty-btn" data-action="increase">+</button>
-              </div>
-
+            <!-- Stock Information -->
+            <div class="stock-info">
+                {{#if data.stock}}
+                    {{#gt data.stock 10}}
+                    <span class="in-stock"><i class="bi bi-check-circle"></i> In Stock</span>
+                    {{else}}
+                    {{#gt data.stock 0}}
+                    <span class="low-stock"><i class="bi bi-exclamation-triangle"></i> Only {{data.stock}} left</span>
+                    {{else}}
+                    <span class="out-of-stock"><i class="bi bi-x-circle"></i> Out of Stock</span>
+                    {{/gt}}
+                    {{/gt}}
+                {{/if}}
             </div>
-          </div>
-          <p class="summary-total">Total: ₹<span id="total">{{data.price}}</span></p>
-        </div>
 
+            <!-- QUANTITY SELECTOR -->
+            <div class="quantity-selector">
+                <button type="button" class="qty-btn" data-action="decrease">−</button>
+                <span id="qty" class="qty-display" data-stock="{{data.stock}}" data-price="{{data.price}}">1</span>
+                <button type="button" class="qty-btn" data-action="increase">+</button>
+            </div>
+        </div>
+    </div>
+    <p class="summary-total">Total: ₹<span id="total">{{data.price}}</span></p>
+</div>
       </div>
 
       <!-- RIGHT SIDE -->
@@ -155,7 +218,7 @@
   </div>
 
   <footer class="text-center">
-    <p>© 2025 LookMe. All rights reserved.</p>
+    <p>© 2025 LoopStore. All rights reserved.</p>
   </footer>
 
   <!-- CLEAN FINAL SCRIPT -->

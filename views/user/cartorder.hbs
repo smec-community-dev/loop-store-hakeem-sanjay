@@ -14,20 +14,57 @@
 <body>
 
   <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg topbar">
+  <nav class="navbar navbar-expand-lg main-nav">
     <div class="container">
-      <a class="navbar-brand" href="/">LookMe <span>Loopstore</span></a>
 
-      <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item"><a class="nav-link" href="/"><i class="bi bi-house"></i> Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="/cart"><i class="bi bi-cart3"></i> Cart</a></li>
-      </ul>
+      <a href="/" class="logo">
+    <i class="bi bi-bag-fill"></i>
+    <span>LoopStore</span>
+</a>
+
+
+
+      <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav ms-auto">
+
+          <li class="nav-item">
+  <a class="nav-link" href="/">
+    <i class="bi bi-house-door"></i> Home
+  </a>
+</li>
+
+
+
+          <li class="nav-item">
+            <a class="nav-link" href="/allproducts">
+              <i class="bi bi-grid"></i> Products
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/profile">
+              <i class="bi bi-person"></i> Profile
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/cart">
+              <i class="bi bi-cart3"></i>
+            </a>
+          </li>
+
+        </ul>
+      </div>
+
     </div>
   </nav>
 
   <div class="container checkout-container">
     <div class="row">
-
       <!-- LEFT SIDE -->
       <div class="col-lg-8">
 
@@ -111,8 +148,10 @@
             <div class="w-100">
               <p class="fw-semibold">{{this.name}}</p>
 
-              <!-- ⭐ PRODUCT DESCRIPTION -->
-              <p class="text-muted small">{{this.description}}</p>
+               <p class="text-muted small product-category">{{this.category.name}}</p>
+
+          <!-- ⭐ PRODUCT DESCRIPTION -->
+          <p class="text-muted small">{{this.description}}</p>
 
               <p class="text-muted">₹{{this.price}}</p>
 

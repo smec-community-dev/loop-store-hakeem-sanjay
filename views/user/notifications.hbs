@@ -1,48 +1,311 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>All Notifications – LoopStore</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
     <style>
-        :root {
-            --primary: #4361ee;
-            --primary-light: #eef2ff;
-            --secondary: #3f37c9;
-            --success: #4cc9f0;
-            --danger: #f72585;
-            --warning: #f8961e;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --gray: #64748b;
-            --gray-light: #e2e8f0;
-            --border-radius: 12px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --transition: all 0.3s ease;
+       :root {
+  --primary: #3917e4;
+  --primary-dark: #3917e4;
+  --secondary: #6c757d;
+  --success: #28a745;
+  --danger: #dc3545;
+  --warning: #3917e4;
+  --info: #17a2b8;
+  --light: #f8f9fa;
+  --dark: #343a40;
+  --white: #ffffff;
+  --gray-100: #f8f9fa;
+  --gray-200: #e9ecef;
+  --gray-300: #dee2e6;
+  --gray-400: #ced4da;
+  --gray-500: #adb5bd;
+  --gray-600: #6c757d;
+  --gray-700: #495057;
+  --gray-800: #343a40;
+  --gray-900: #212529;
+  --border-radius: 12px;
+  --shadow: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
+  --transition: all 0.3s ease;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  color: var(--gray-800);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1280px;
+  margin: auto;
+  padding: 0 20px;
+}
+        /* Navbar Styles */
+        .main-nav {
+    background: var(--primary);
+    padding: 16px 0;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    border-radius: var(--border-radius);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* CONTAINER */
+.main-nav .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+}
+
+/* LOGO */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    color: var(--white);                  /* changed from dark → white */
+    font-weight: 700;
+    font-size: 1.7rem;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.navbar-brand:hover {
+    transform: translateY(-2px);
+}
+
+.logo-icon {
+    font-size: 1.8rem;
+    margin-right: 8px;
+    color: var(--white);                  /* changed from primary → white */
+}
+
+/* NAV LINKS (CENTER) */
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 28px;
+    align-items: center;
+
+    flex: 1;
+    justify-content: right;
+}
+
+.nav-links a {
+    color: var(--white);                  /* changed from dark → white */
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+
+    transition: var(--transition);
+}
+
+.nav-links a:hover {
+    background: rgba(255,255,255,0.15);   /* profile page hover */
+    transform: translateY(-2px);
+}
+
+/* RIGHT SIDE ICON GROUP */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    white-space: nowrap;
+}
+
+        /* CART ICON & LOGOUT BUTTON (Profile Style Match) */
+.cart-icon,
+.logout-btn {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--white);                   /* changed from dark → white */
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: var(--transition);
+    position: relative;
+    font-weight: 600;
+}
+
+/* HOVER EFFECT – same as profile navbar buttons */
+.cart-icon:hover,
+.logout-btn:hover {
+    background: rgba(255,255,255,0.25);    /* soft white layer */
+    color: var(--white);                   /* keep text white */
+    transform: translateY(-2px);
+}
+
+/* CART BADGE – consistent with profile theme */
+.cart-icon .badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--danger);
+    color: var(--white);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow);
+}
+
+
+        /* Notification Styles */
+        .notification-container {
+            position: relative;
         }
 
-        * {
+        .notification-icon {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            color: #333;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .notification-icon:hover {
+            background-color: #f5f5f5;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+
+        .notification-dropdown.active {
+            display: block;
+        }
+
+        .notification-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-header h4 {
             margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            flex: 1;
         }
 
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: var(--dark);
-            line-height: 1.6;
-            min-height: 100vh;
+        .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .notification-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .notification-item.unread {
+            background-color: #f0f7ff;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #333;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .notification-actions {
+            padding: 10px 15px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+
+        .mark-all-read {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .mark-all-read:hover {
+            text-decoration: underline;
+        }
+
+        .empty-notifications {
             padding: 20px;
+            text-align: center;
+            color: #999;
         }
 
+        .notification-item.read {
+            opacity: 0.7;
+        }
+
+        /* Main Notification Page Styles */
         .container {
             max-width: 800px;
             margin: 0 auto;
         }
 
-        .notification-header {
+        .notification-header-page {
             background: white;
             border-radius: var(--border-radius);
             padding: 25px;
@@ -99,7 +362,7 @@
             color: var(--gray);
         }
 
-        .notification-actions {
+        .notification-actions-page {
             display: flex;
             gap: 12px;
             margin-bottom: 25px;
@@ -197,7 +460,7 @@
             margin-bottom: 8px;
         }
 
-        .notification-title {
+        .notification-title-card {
             font-weight: 700;
             font-size: 1.1rem;
             color: var(--dark);
@@ -206,7 +469,7 @@
             gap: 10px;
         }
 
-        .notification-icon {
+        .notification-icon-card {
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -233,13 +496,13 @@
             background: var(--danger);
         }
 
-        .notification-time {
+        .notification-time-card {
             font-size: 0.85rem;
             color: var(--gray);
             white-space: nowrap;
         }
 
-        .notification-message {
+        .notification-message-card {
             color: var(--dark);
             margin-bottom: 5px;
             padding-left: 46px;
@@ -303,7 +566,7 @@
         }
 
         @media (max-width: 768px) {
-            .notification-header {
+            .notification-header-page {
                 flex-direction: column;
                 align-items: flex-start;
             }
@@ -321,14 +584,23 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            .nav-links {
+                display: none;
+            }
+
+            .notification-dropdown {
+                width: 300px;
+                right: -50px;
+            }
         }
 
         @media (max-width: 480px) {
-            .notification-actions {
+            .notification-actions-page {
                 flex-direction: column;
             }
             
-            .notification-actions .btn {
+            .notification-actions-page .btn {
                 width: 100%;
                 justify-content: center;
             }
@@ -336,12 +608,72 @@
             .notification-stats {
                 flex-direction: column;
             }
+
+            .notification-dropdown {
+                width: 280px;
+                right: -80px;
+            }
         }
     </style>
 </head>
+
 <body>
+    <!-- ================= NAVBAR ================= -->
+    <nav class="main-nav">
+        <div class="container">
+            
+            <!-- LOGO -->
+            <a href="/" class="navbar-brand">
+                <i class="bi bi-bag-fill logo-icon"></i>
+                <span class="logo-text">LoopStore</span>
+            </a>
+
+            <!-- NAV LINKS -->
+            <ul class="nav-links">
+                <li><a href="/"><i class="bi bi-house-door"></i> Home</a></li>
+                <li><a href="/allproducts"><i class="bi bi-grid"></i> Products</a></li>
+                <li><a href="/contact"><i class="bi bi-envelope"></i> Contact</a></li>
+            </ul>
+
+            <!-- RIGHT SIDE -->
+            <div class="nav-right">
+                <!-- Notification Icon -->
+                <div class="notification-container">
+                    <button class="notification-icon" id="notificationIcon">
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                    </button>
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <button class="mark-all-read" id="markAllRead">Mark all read</button>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <!-- Notifications will be dynamically inserted here -->
+                            <div class="empty-notifications">
+                                <i class="bi bi-bell" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                                <p>No notifications yet</p>
+                            </div>
+                        </div>
+                        <div class="notification-actions">
+                            <a href="/notifications" style="color: #3498db; text-decoration: none;">View All Notifications</a>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="/cart" class="cart-icon">
+                    <i class="bi bi-cart3"></i>
+                    <span class="badge" id="cartCount">0</span>
+                </a>
+
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ================= NOTIFICATIONS PAGE CONTENT ================= -->
     <div class="container">
-        <div class="notification-header">
+        <div class="notification-header-page">
             <div class="header-content">
                 <h1><i class="bi bi-bell-fill"></i> Notifications</h1>
                 <p>Stay updated with your recent activities and alerts</p>
@@ -358,11 +690,11 @@
             </div>
         </div>
 
-        <div class="notification-actions">
+        <div class="notification-actions-page">
             <button class="btn btn-primary" onclick="markAllAsRead()">
                 <i class="bi bi-check-all"></i> Mark All as Read
             </button>
-            <button class="btn btn-outline" onclick="filterUnread()">
+            <button class="btn btn-outline" id="filterBtn" onclick="filterUnread()">
                 <i class="bi bi-filter"></i> Show Unread Only
             </button>
             <button class="btn btn-danger" onclick="clearAll()">
@@ -376,187 +708,373 @@
             <button class="btn btn-outline" onclick="window.location.href='/profile'">
                 <i class="bi bi-arrow-left"></i> Back to Profile
             </button>
-            <button class="btn btn-primary" onclick="window.location.href='/settings'">
-                <i class="bi bi-gear"></i> Notification Settings
-            </button>
         </div>
     </div>
 
     <script>
-        // Sample notifications data
-        let notifications = JSON.parse(localStorage.getItem('userNotifications')) || [
-            {
-                id: 1,
-                title: "Order Shipped",
-                message: "Your order #LOOP-2023-4582 has been shipped and is on its way.",
-                timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).getTime(), // 2 hours ago
-                read: false,
-                type: "shipping"
-            },
-            {
-                id: 2,
-                title: "Special Offer",
-                message: "Get 20% off on all electronics this weekend. Use code: WEEKEND20",
-                timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).getTime(), // 5 hours ago
-                read: true,
-                type: "promo"
-            },
-            {
-                id: 3,
-                title: "Order Confirmed",
-                message: "Your order #LOOP-2023-4581 has been confirmed and is being processed.",
-                timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).getTime(), // 1 day ago
-                read: false,
-                type: "order"
-            },
-            {
-                id: 4,
-                title: "Security Alert",
-                message: "A new device has logged into your account. Please verify if it was you.",
-                timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).getTime(), // 2 days ago
-                read: true,
-                type: "security"
-            },
-            {
-                id: 5,
-                title: "Payment Received",
-                message: "Your payment of $129.99 for order #LOOP-2023-4579 has been received.",
-                timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).getTime(), // 3 days ago
-                read: true,
-                type: "order"
+        // Notification System Class
+        class NotificationSystem {
+            constructor() {
+                this.notifications = JSON.parse(localStorage.getItem('userNotifications')) || this.getDefaultNotifications();
+                this.unreadCount = this.notifications.filter(n => !n.read).length;
+                this.init();
             }
-        ];
 
+            getDefaultNotifications() {
+                return [
+                    {
+                        id: 1,
+                        title: "Order Shipped",
+                        message: "Your order #LOOP-2023-4582 has been shipped and is on its way.",
+                        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).getTime(),
+                        read: false,
+                        type: "shipping"
+                    },
+                    {
+                        id: 2,
+                        title: "Special Offer",
+                        message: "Get 20% off on all electronics this weekend. Use code: WEEKEND20",
+                        timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).getTime(),
+                        read: true,
+                        type: "promo"
+                    },
+                    {
+                        id: 3,
+                        title: "Order Confirmed",
+                        message: "Your order #LOOP-2023-4581 has been confirmed and is being processed.",
+                        timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).getTime(),
+                        read: false,
+                        type: "order"
+                    },
+                    {
+                        id: 4,
+                        title: "Security Alert",
+                        message: "A new device has logged into your account. Please verify if it was you.",
+                        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).getTime(),
+                        read: true,
+                        type: "security"
+                    },
+                    {
+                        id: 5,
+                        title: "Payment Received",
+                        message: "Your payment of $129.99 for order #LOOP-2023-4579 has been received.",
+                        timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).getTime(),
+                        read: true,
+                        type: "order"
+                    }
+                ];
+            }
+
+            init() {
+                this.renderNotifications();
+                this.setupEventListeners();
+                this.updateBadge();
+                this.updateStats();
+            }
+
+            setupEventListeners() {
+                // Toggle dropdown
+                const notificationIcon = document.getElementById('notificationIcon');
+                if (notificationIcon) {
+                    notificationIcon.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        document.getElementById('notificationDropdown').classList.toggle('active');
+                    });
+                }
+
+                // Mark all as read
+                const markAllReadBtn = document.getElementById('markAllRead');
+                if (markAllReadBtn) {
+                    markAllReadBtn.addEventListener('click', () => {
+                        this.markAllAsRead();
+                    });
+                }
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', () => {
+                    const dropdown = document.getElementById('notificationDropdown');
+                    if (dropdown) dropdown.classList.remove('active');
+                });
+
+                // Prevent dropdown close when clicking inside
+                const dropdown = document.getElementById('notificationDropdown');
+                if (dropdown) {
+                    dropdown.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                    });
+                }
+            }
+
+            addNotification(title, message, type = "order") {
+                const newNotification = {
+                    id: Date.now(),
+                    title,
+                    message,
+                    type,
+                    timestamp: new Date().getTime(),
+                    read: false
+                };
+
+                this.notifications.unshift(newNotification);
+                this.saveToStorage();
+                this.renderNotifications();
+                this.updateBadge();
+                this.updateStats();
+                this.showNotificationToast(newNotification);
+            }
+
+            markAsRead(notificationId) {
+                const notification = this.notifications.find(n => n.id === notificationId);
+                if (notification && !notification.read) {
+                    notification.read = true;
+                    this.saveToStorage();
+                    this.renderNotifications();
+                    this.updateBadge();
+                    this.updateStats();
+                }
+            }
+
+            markAllAsRead() {
+                this.notifications.forEach(notification => {
+                    notification.read = true;
+                });
+                this.saveToStorage();
+                this.renderNotifications();
+                this.updateBadge();
+                this.updateStats();
+                
+                // Close dropdown if open
+                const dropdown = document.getElementById('notificationDropdown');
+                if (dropdown) dropdown.classList.remove('active');
+            }
+
+            deleteNotification(notificationId) {
+                this.notifications = this.notifications.filter(n => n.id !== notificationId);
+                this.saveToStorage();
+                this.renderNotifications();
+                this.updateBadge();
+                this.updateStats();
+            }
+
+            renderNotifications() {
+                // Render dropdown notifications
+                const dropdownContainer = document.getElementById('notificationList');
+                if (dropdownContainer) {
+                    if (this.notifications.length === 0) {
+                        dropdownContainer.innerHTML = `
+                            <div class="empty-notifications">
+                                <i class="bi bi-bell" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                                <p>No notifications yet</p>
+                            </div>
+                        `;
+                    } else {
+                        // Show only latest 5 in dropdown
+                        const latestNotifications = this.notifications.slice(0, 5);
+                        dropdownContainer.innerHTML = latestNotifications.map(notification => `
+                            <div class="notification-item ${notification.read ? 'read' : 'unread'}" 
+                                onclick="notificationSystem.markAsRead(${notification.id})">
+                                <div class="notification-title">${notification.title}</div>
+                                <div class="notification-message">${notification.message}</div>
+                                <div class="notification-time">${this.formatTime(notification.timestamp)}</div>
+                            </div>
+                        `).join('');
+                    }
+                }
+
+                // Render main page notifications
+                const mainContainer = document.getElementById("allNotifications");
+                if (mainContainer) {
+                    const filteredNotifications = showUnreadOnly 
+                        ? this.notifications.filter(n => !n.read) 
+                        : this.notifications;
+
+                    if (filteredNotifications.length === 0) {
+                        mainContainer.innerHTML = `
+                            <div class="empty-state">
+                                <i class="bi bi-bell-slash"></i>
+                                <h3>No notifications found</h3>
+                                <p>${showUnreadOnly ? 'You have no unread notifications.' : 'All caught up! You have no notifications at the moment.'}</p>
+                                ${showUnreadOnly ? '<button class="btn btn-primary" onclick="showUnreadOnly = false; notificationSystem.renderNotifications()">Show All Notifications</button>' : ''}
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    mainContainer.innerHTML = filteredNotifications.map(n => `
+                        <div class="notification-card ${!n.read ? "unread" : ""}" onclick="notificationSystem.markAsRead(${n.id})">
+                            <div class="notification-header-row">
+                                <div class="notification-title-card">
+                                    <div class="notification-icon-card icon-${n.type}">
+                                        ${this.getIconForType(n.type)}
+                                    </div>
+                                    ${n.title}
+                                </div>
+                                <div class="notification-time-card">${this.formatTime(n.timestamp)}</div>
+                            </div>
+                            <div class="notification-message-card">${n.message}</div>
+                            <div class="notification-actions-row">
+                                <button class="action-btn" onclick="event.stopPropagation(); notificationSystem.markAsRead(${n.id})">
+                                    <i class="bi bi-check-lg"></i> Mark Read
+                                </button>
+                                <button class="action-btn" onclick="event.stopPropagation(); notificationSystem.deleteNotification(${n.id})">
+                                    <i class="bi bi-x-lg"></i> Dismiss
+                                </button>
+                            </div>
+                        </div>
+                    `).join("");
+                }
+            }
+
+            getIconForType(type) {
+                const icons = {
+                    'order': '<i class="bi bi-bag-check"></i>',
+                    'shipping': '<i class="bi bi-truck"></i>',
+                    'promo': '<i class="bi bi-tag"></i>',
+                    'security': '<i class="bi bi-shield-exclamation"></i>'
+                };
+                return icons[type] || '<i class="bi bi-bell"></i>';
+            }
+
+            updateBadge() {
+                const badge = document.getElementById('notificationBadge');
+                this.unreadCount = this.notifications.filter(n => !n.read).length;
+                
+                if (badge) {
+                    if (this.unreadCount > 0) {
+                        badge.textContent = this.unreadCount > 99 ? '99+' : this.unreadCount;
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            }
+
+            updateStats() {
+                const totalCountEl = document.getElementById('totalCount');
+                const unreadCountEl = document.getElementById('unreadCount');
+                
+                if (totalCountEl) totalCountEl.textContent = this.notifications.length;
+                if (unreadCountEl) unreadCountEl.textContent = this.notifications.filter(n => !n.read).length;
+            }
+
+            showNotificationToast(notification) {
+                // Create toast element
+                const toast = document.createElement('div');
+                toast.className = 'notification-toast';
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: white;
+                    border-left: 4px solid #3498db;
+                    padding: 15px;
+                    border-radius: 4px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    max-width: 300px;
+                    animation: slideIn 0.3s ease;
+                `;
+
+                toast.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 5px;">${notification.title}</div>
+                    <div style="font-size: 0.9rem; color: #666;">${notification.message}</div>
+                    <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">${this.formatTime(notification.timestamp)}</div>
+                `;
+
+                document.body.appendChild(toast);
+
+                // Remove toast after 5 seconds
+                setTimeout(() => {
+                    toast.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
+                }, 5000);
+            }
+
+            formatTime(timestamp) {
+                const now = new Date();
+                const time = new Date(timestamp);
+                const diff = now - time;
+                
+                if (diff < 60000) return 'Just now';
+                if (diff < 3600000) return `${Math.floor(diff / 60000)} min ago`;
+                if (diff < 86400000) return `${Math.floor(diff / 3600000)} hours ago`;
+                return time.toLocaleDateString();
+            }
+
+            saveToStorage() {
+                localStorage.setItem('userNotifications', JSON.stringify(this.notifications));
+            }
+        }
+
+        // Global variables
         let showUnreadOnly = false;
 
-        function loadNotifications() {
-            const container = document.getElementById("allNotifications");
-            const filteredNotifications = showUnreadOnly 
-                ? notifications.filter(n => !n.read) 
-                : notifications;
+        // Initialize notification system
+        const notificationSystem = new NotificationSystem();
 
-            // Update stats
-            document.getElementById('totalCount').textContent = notifications.length;
-            document.getElementById('unreadCount').textContent = notifications.filter(n => !n.read).length;
-
-            if (filteredNotifications.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="bi bi-bell-slash"></i>
-                        <h3>No notifications found</h3>
-                        <p>${showUnreadOnly ? 'You have no unread notifications.' : 'All caught up! You have no notifications at the moment.'}</p>
-                        ${showUnreadOnly ? '<button class="btn btn-primary" onclick="showUnreadOnly = false; loadNotifications()">Show All Notifications</button>' : ''}
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = filteredNotifications.map(n => `
-                <div class="notification-card ${!n.read ? "unread" : ""}" onclick="markAsRead(${n.id})">
-                    <div class="notification-header-row">
-                        <div class="notification-title">
-                            <div class="notification-icon icon-${n.type}">
-                                ${getIconForType(n.type)}
-                            </div>
-                            ${n.title}
-                        </div>
-                        <div class="notification-time">${formatTime(n.timestamp)}</div>
-                    </div>
-                    <div class="notification-message">${n.message}</div>
-                    <div class="notification-actions-row">
-                        <button class="action-btn" onclick="event.stopPropagation(); markAsRead(${n.id})">
-                            <i class="bi bi-check-lg"></i> Mark Read
-                        </button>
-                        <button class="action-btn" onclick="event.stopPropagation(); deleteNotification(${n.id})">
-                            <i class="bi bi-x-lg"></i> Dismiss
-                        </button>
-                    </div>
-                </div>
-            `).join("");
-        }
-
-        function getIconForType(type) {
-            const icons = {
-                'order': '<i class="bi bi-bag-check"></i>',
-                'shipping': '<i class="bi bi-truck"></i>',
-                'promo': '<i class="bi bi-tag"></i>',
-                'security': '<i class="bi bi-shield-exclamation"></i>'
-            };
-            return icons[type] || '<i class="bi bi-bell"></i>';
-        }
-
+        // Global functions for button clicks
         function markAllAsRead() {
-            notifications.forEach(n => n.read = true);
-            save();
-            loadNotifications();
+            notificationSystem.markAllAsRead();
         }
 
         function markAsRead(id) {
-            const notification = notifications.find(n => n.id === id);
-            if (notification) {
-                notification.read = true;
-                save();
-                loadNotifications();
-            }
+            notificationSystem.markAsRead(id);
         }
 
         function deleteNotification(id) {
-            notifications = notifications.filter(n => n.id !== id);
-            save();
-            loadNotifications();
+            notificationSystem.deleteNotification(id);
         }
 
         function filterUnread() {
             showUnreadOnly = !showUnreadOnly;
-            loadNotifications();
+            notificationSystem.renderNotifications();
             
             // Update button text
-            const filterBtn = document.querySelector('.btn-outline');
-            if (showUnreadOnly) {
-                filterBtn.innerHTML = '<i class="bi bi-filter"></i> Show All';
-            } else {
-                filterBtn.innerHTML = '<i class="bi bi-filter"></i> Show Unread Only';
+            const filterBtn = document.getElementById('filterBtn');
+            if (filterBtn) {
+                if (showUnreadOnly) {
+                    filterBtn.innerHTML = '<i class="bi bi-filter"></i> Show All';
+                } else {
+                    filterBtn.innerHTML = '<i class="bi bi-filter"></i> Show Unread Only';
+                }
             }
         }
 
         function clearAll() {
-            if (notifications.length === 0) {
+            if (notificationSystem.notifications.length === 0) {
                 alert("There are no notifications to clear.");
                 return;
             }
             
             if (confirm("Are you sure you want to clear all notifications? This action cannot be undone.")) {
-                notifications = [];
-                save();
-                loadNotifications();
+                notificationSystem.notifications = [];
+                notificationSystem.saveToStorage();
+                notificationSystem.renderNotifications();
+                notificationSystem.updateBadge();
+                notificationSystem.updateStats();
             }
         }
 
-        function save() {
-            localStorage.setItem("userNotifications", JSON.stringify(notifications));
-        }
-
-        function formatTime(timestamp) {
-            const now = new Date();
-            const time = new Date(timestamp);
-            const diffInMs = now - time;
-            const diffInHours = diffInMs / (1000 * 60 * 60);
-            const diffInDays = diffInHours / 24;
-            
-            if (diffInHours < 1) {
-                const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-                return `${diffInMinutes} min ago`;
-            } else if (diffInHours < 24) {
-                return `${Math.floor(diffInHours)} hours ago`;
-            } else if (diffInDays < 7) {
-                return `${Math.floor(diffInDays)} days ago`;
-            } else {
-                return time.toLocaleDateString();
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
             }
-        }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
 
-        // Initialize the page
-        loadNotifications();
+        // Simulate cart count (in a real app, this would come from your backend)
+        document.getElementById('cartCount').textContent = '3';
     </script>
 </body>
 </html>

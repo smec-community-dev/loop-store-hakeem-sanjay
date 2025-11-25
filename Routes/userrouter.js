@@ -90,6 +90,9 @@ hbs.handlebars.registerHelper("formatDate", function (date, format) {
     }
 });
 
+hbs.registerHelper("gt", function(a, b, options) {
+    return (a > b) ? options.fn(this) : options.inverse(this);
+});
 
 
 hbs.registerHelper("eq", function(a, b) {
@@ -222,10 +225,14 @@ router.get("/profile",userrauth, async (req, res) => {
     const cart = await Cart.findOne({ user: userid }).lean();
     const cartCount = cart ? cart.items.length : 0;
 
+
+    let ordercount=await Order.countDocuments({user:userid})
+    let wishlistcount=await Wishlist.countDocuments({user:userid})
+
     res.render("user/profile", {
         data,
         items,
-        cartCount,orders,userId: userid
+        cartCount,orders,userId: userid,ordercount,wishlistcount
     });
 });
 
@@ -471,7 +478,7 @@ router.get("/order/:id",userrauth, async (req, res) => {
         const userid = req.session.user.userid;
         const productId = req.params.id;
 
-        let data = await Products.findById(productId).lean();
+        let data = await Products.findById(productId).populate("category").lean();
         let address = await Address.findOne({ user: userid }).lean();
         res.render("user/order", {
             data,
@@ -568,8 +575,11 @@ router.get("/cartorder", userrauth,async (req, res) => {
 
    
     const cart = await Cart.findOne({ user: userid })
-      .populate("items.product")
-      .lean();
+  .populate({
+    path: "items.product",
+    populate: { path: "category" }
+  })
+  .lean();
 
 
     const address = await Address.findOne({ user: userid }).lean();
@@ -586,6 +596,8 @@ router.get("/cartorder", userrauth,async (req, res) => {
     const cartdata = cart.items.map((item) => ({
       _id: item.product._id,
       name: item.product.name,
+      category:item.product.category,
+      description:item.product.description,
       images: item.product.images,
       price: item.priceAtAddTime,
       quantity: item.quantity
@@ -691,10 +703,10 @@ router.get("/multipleordersuccess",userrauth, async (req, res) => {
 
 
 
-router.get("/review/:id", async (req, res) => {
+router.get("/review/:id",userrauth, async (req, res) => {
 
         let productId = req.params.id;
-        let product = await Products.findById(productId).populate("review.user").lean();
+        let product = await Products.findById(productId).populate("review.user").populate("category").lean();
         res.render("user/review", { product });
 });
 router.post("/review/:id", async (req, res) => {

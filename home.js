@@ -39,5 +39,4 @@ initSellerWebSocket(server);
 server.listen(4000, () => {
     console.log("🚀 HTTP Server http://localhost:4000");
     console.log("💬 Seller WS at ws://localhost:4000/");
-
 });

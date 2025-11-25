@@ -4,38 +4,764 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{product.name}} - Reviews</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Add Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    /* ================= GLOBAL IMPROVEMENTS ================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap');
 
+/* ================= ROOT COLORS ================= */
+:root {
+    --primary-color: #3917e4;
+    --primary-dark: #2d11c2;
+    --secondary-color: #ff9f00;
+    --background: #f8f9fa;
+    --surface: #ffffff;
 
+    --text-primary: #1a1a1a;
+    --text-secondary: #555555;
+    --text-muted: #888888;
+
+    --border: #e5e7eb;
+
+    --shadow: 0 4px 18px rgba(0,0,0,0.08);
+    --shadow-hover: 0 8px 25px rgba(0,0,0,0.12);
+
+    --radius: 16px;
+}
+
+/* ================= RESET ================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 25px 0;
+}
+
+/* ================= NAVBAR ================= */
+.main-nav {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    height: 70px;                       
+    padding: 0;
+    display: flex;
+    justify-content: center;     /* ⬅ horizontally centered */
+    align-items: center;         /* ⬅ vertically centered */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.main-nav .container {
+    display: flex;
+    align-items: center;   
+    justify-content: space-between;
+    height: 100%;
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+.navbar-collapse {
+    flex-grow: 0;
+}
+
+/* ================= LOGO ================= */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.logo i {
+    font-size: 1.8rem;
+    color: #fff;
+}
+
+/* ================= NAV LINKS ================= */
+.nav-link {
+    color: #fff !important;
+    margin-left: 12px;
+
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 8px 16px !important;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    border-radius: 8px;
+    transition: 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Shine hover effect */
+.nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.nav-link:hover::before {
+    left: 100%;
+}
+
+.nav-link:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-1px);
+}
+/* ================= PRODUCT BOX STYLES ================= */
+.product-box {
+    display: flex;
+    gap: 30px;
+    background: var(--surface);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-box:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.product-box img {
+    width: 240px;
+    height: 240px;
+    border-radius: 14px;
+    object-fit: contain;
+    background: var(--surface);
+    padding: 15px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.product-info {
+    flex: 1;
+}
+
+.product-info h2 {
+    margin: 0 0 15px 0;
+    font-size: 32px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.product-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.meta-label {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.meta-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.price {
+    color: var(--primary-color) !important;
+    font-size: 18px !important;
+}
+
+.category-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.product-description {
+    margin-top: 20px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: 15px;
+}
+
+.product-description h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* ================= REVIEW SECTION STYLES ================= */
+.review-section {
+    margin-top: 30px;
+    background: var(--surface);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+}
+
+.review-section h3 {
+    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: "Poppins", sans-serif;
+}
+
+/* ================= FORM ELEMENTS ================= */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Review Type Dropdown */
+.review-type {
+    width: 100%;
+    max-width: 300px;
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    font-size: 15px;
+    color: var(--text-primary);
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: "Inter", sans-serif;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' fill='%23444' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
+}
+
+.review-type:hover {
+    border-color: #999;
+}
+
+.review-type:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(57, 23, 228, 0.15);
+}
+
+/* ================= STAR RATING SYSTEM ================= */
+.rating-stars {
+    direction: rtl;
+    display: inline-flex;
+    gap: 8px;
+    padding: 10px 0;
+}
+
+.rating-stars input {
+    display: none;
+}
+
+.rating-stars label {
+    font-size: 36px;
+    color: #e5e7eb;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.rating-stars label:hover,
+.rating-stars label:hover ~ label {
+    color: #ffd700;
+    transform: scale(1.1);
+}
+
+.rating-stars input:checked ~ label {
+    color: #ffd700;
+}
+
+.rating-stars input:checked ~ label:hover {
+    color: #ffed4a;
+}
+
+/* ================= TEXTAREA STYLES ================= */
+textarea {
+    width: 100%;
+    height: 140px;
+    border: 2px solid var(--border);
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--surface);
+    font-size: 16px;
+    font-family: "Inter", sans-serif;
+    transition: all 0.3s ease;
+    resize: vertical;
+    min-height: 120px;
+}
+
+textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(57, 23, 228, 0.15);
+    outline: none;
+}
+
+/* ================= BUTTON STYLES ================= */
+.btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    padding: 16px 35px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: "Poppins", sans-serif;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+    box-shadow: 0 4px 15px rgba(57, 23, 228, 0.3);
+}
+
+.btn:hover {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(57, 23, 228, 0.4);
+}
+
+.btn:active {
+    transform: translateY(-1px);
+}
+
+/* ================= REVIEW CARD STYLES ================= */
+.review-card {
+    background: var(--surface);
+    padding: 25px;
+    margin-top: 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.review-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary-color);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.review-card:hover::before {
+    opacity: 1;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.review-header h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.stars {
+    color: #ffd700;
+    font-size: 20px;
+    letter-spacing: 2px;
+}
+
+/* Review Type Tag */
+.type-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.comment {
+    margin: 15px 0;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    font-size: 15px;
+}
+
+.date {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* ================= SECTION HEADINGS ================= */
+h3 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 40px 0 25px 0;
+    font-family: "Poppins", sans-serif;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    border-radius: 2px;
+}
+
+/* ================= EMPTY STATE ================= */
+.no-reviews {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+
+.no-reviews i {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: var(--border);
+}
+
+.no-reviews h4 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+}
+
+.no-reviews p {
+    font-size: 16px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* ================= RESPONSIVE DESIGN ================= */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 15px 0;
+    }
+
+    .product-box {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+        gap: 20px;
+    }
+
+    .product-box img {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+    }
+
+    .product-info h2 {
+        font-size: 26px;
+    }
+
+    .product-meta {
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .review-section {
+        padding: 20px;
+    }
+
+    .review-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .rating-stars label {
+        font-size: 32px;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+        align-self: stretch;
+    }
+
+    .nav-link {
+        margin-left: 0;
+        font-size: 1rem;
+        padding: 10px 15px !important;
+        justify-content: center;
+    }
+
+    .logo {
+        font-size: 1.6rem;
+    }
+
+    .logo i {
+        font-size: 1.6rem;
+    }
+
+    .navbar-nav {
+        text-align: center;
+        padding: 10px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-box img {
+        width: 160px;
+        height: 160px;
+    }
+
+    .product-info h2 {
+        font-size: 22px;
+    }
+
+    .rating-stars label {
+        font-size: 28px;
+    }
+
+    h3 {
+        font-size: 24px;
+    }
+    
+    .product-meta {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .review-type {
+        max-width: 100%;
+    }
+
+    .review-card {
+        padding: 20px;
+    }
+}
+
+/* ================= UTILITY CLASSES ================= */
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================= LOADING STATES ================= */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-right-color: transparent;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+</style>
 </head>
-<link rel="stylesheet" href="/user/review.css">
 <body>
+<nav class="main-nav navbar navbar-expand-lg">
+    <div class="container">
+        <!-- Logo -->
+        <a href="/" class="logo">
+            <i class="bi bi-bag-fill"></i>
+            <span>LoopStore</span>
+        </a>
+
+        <!-- Mobile menu button -->
+        <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Menu items -->
+        <div class="collapse navbar-collapse" id="navbarMenu">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="bi bi-house-door"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/allproducts"><i class="bi bi-grid"></i> Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile"><i class="bi bi-person"></i> Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link cart-link" href="/cart">
+                        <i class="bi bi-cart3"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
 <div class="container">
-
     <!-- PRODUCT DETAILS -->
     <div class="product-box">
-        <img src="{{product.images.[0]}}" alt="Product">
+        <img src="{{product.images.[0]}}" alt="{{product.name}}">
         <div class="product-info">
             <h2>{{product.name}}</h2>
-            <p>Price: ₹{{product.price}}</p>
-            <p>Total Reviews: {{product.review.length}}</p>
+            
+            <div class="product-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Price</span>
+                    <span class="meta-value price">₹{{product.price}}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Category</span>
+                    <span class="meta-value category-tag">{{product.category.name}}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Total Reviews</span>
+                    <span class="meta-value">{{product.review.length}}</span>
+                </div>
+            </div>
+
+            <div class="product-description">
+                <h4>Product Description</h4>
+                <p>{{product.description}}</p>
+            </div>
         </div>
     </div>
 
     <!-- ADD REVIEW -->
     <div class="review-section">
         <h3>Write a Review</h3>
-
         <form action="/review/{{product._id}}" method="POST">
-        <label>Review Type</label>
-    <select id="reviewType" name="content_typing" class="review-type">
-        <option value="Good Product">Good Product</option>
-        <option value="Bad Product">Bad Product</option>
-        <option value="Value for Money">Value for Money</option>
-        <option value="Poor Packaging">Poor Packaging</option>
-        <option value="Quality is Average">Quality is Average</option>
-    </select>
-
+            <label>Review Type</label>
+            <select id="reviewType" name="content_typing" class="review-type">
+                <option value="Good Product">Good Product</option>
+                <option value="Bad Product">Bad Product</option>
+                <option value="Value for Money">Value for Money</option>
+                <option value="Poor Packaging">Poor Packaging</option>
+                <option value="Quality is Average">Quality is Average</option>
+            </select>
 
             <!-- ⭐ REVERSE STAR ORDER -->
             <div class="rating-stars">
@@ -55,39 +781,46 @@
                 <label for="star1">★</label>
             </div>
 
-            <textarea name="content" placeholder="Write your review..."></textarea>
+            <textarea name="content" placeholder="Share your experience with this product... What did you like or dislike? How does it compare to similar products?"></textarea>
             <button class="btn">Submit Review</button>
         </form>
     </div>
 
     <!-- SHOW ALL REVIEWS -->
-    <h3 style="margin-top:25px;">Customer Reviews</h3>
+    <h3>Customer Reviews</h3>
 
     {{#each product.review}}
-<div class="review-card">
+    <div class="review-card">
+        <div class="review-header">
+            <h4>{{this.user.name}}</h4>
+            <p class="stars">
+                {{#times this.rating}}★{{/times}}
+            </p>
+        </div>
 
-    <div class="review-header">
-        <h4>{{this.user.name}}</h4>
-        <p class="stars">
-            {{#times this.rating}}★{{/times}}
-        </p>
+        <!-- Show content typing tag (Good, Bad, etc.) -->
+        {{#if this.content_typing}}
+        <span class="type-tag">{{this.content_typing}}</span>
+        {{/if}}
+
+        <!-- The user's main written comment -->
+        <p class="comment">{{this.content}}</p>
+
+        <p class="date">{{this.createdAt}}</p>
     </div>
-
-    <!-- Show content typing tag (Good, Bad, etc.) -->
-    {{#if this.content_typing}}
-    <span class="type-tag">{{this.content_typing}}</span>
-    {{/if}}
-
-    <!-- The user's main written comment -->
-    <p class="comment">{{this.content}}</p>
-
-    <p class="date">{{this.createdAt}}</p>
+    {{/each}}
 
 </div>
-{{/each}}
 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-</div>
+<script>
+window.addEventListener("scroll", () => {
+    const nav = document.querySelector(".main-nav");
+    nav.classList.toggle("scrolled", window.scrollY > 20);
+});
+</script>
 
 </body>
 </html>

@@ -1,12 +1,33 @@
-/* ================= GLOBAL ================= */
+/* ================= GLOBAL IMPROVEMENTS ================= */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap');
+
+:root {
+    --primary-color: #3917e4;
+    --primary-dark: #2d11c2;
+    --secondary-color: #ff9f00;
+    --background: #f8f9fa;
+    --surface: #ffffff;
+    --text-primary: #1a1a1a;
+    --text-secondary: #555555;
+    --text-muted: #888888;
+    --border: #e5e7eb;
+    --shadow: 0 4px 18px rgba(0,0,0,0.08);
+    --radius: 16px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
     font-family: "Inter", sans-serif;
-    background: #f2f4f8;
+    background: var(--background);
     margin: 0;
     padding: 0;
-    color: #1a1a1a;
+    color: var(--text-primary);
+    line-height: 1.6;
 }
 
 .container {
@@ -16,53 +37,119 @@ body {
     padding: 25px 0;
 }
 
-/* ================= PRODUCT BOX ================= */
+/* ================= PRODUCT BOX IMPROVEMENTS ================= */
 .product-box {
     display: flex;
-    gap: 25px;
-    background: white;
-    padding: 25px;
-    border-radius: 18px;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    gap: 30px;
+    background: var(--surface);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
 }
 
 .product-box img {
-    width: 220px;
-    height: 220px;
+    width: 240px;
+    height: 240px;
     border-radius: 14px;
     object-fit: contain;
-    background: #fff;
-    padding: 10px;
-    border: 1px solid #eee;
+    background: var(--surface);
+    padding: 15px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
 }
 
 .product-info h2 {
-    margin: 0;
-    font-size: 28px;
+    margin: 0 0 15px 0;
+    font-size: 32px;
     font-family: "Poppins", sans-serif;
     font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
 }
 
 .product-info p {
-    margin: 8px 0;
-    font-size: 15px;
-    color: #555;
+    margin: 12px 0;
+    font-size: 16px;
+    color: var(--text-secondary);
+    font-weight: 500;
 }
 
-/* ================= REVIEW SECTION ================= */
+.product-info p:last-child {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* ================= REVIEW SECTION IMPROVEMENTS ================= */
 .review-section {
-    margin-top: 25px;
-    background: white;
-    padding: 25px;
-    border-radius: 18px;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    margin-top: 30px;
+    background: var(--surface);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
 }
 
-/* ================= STAR INPUT (RTL) ================= */
+.review-section h3 {
+    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: "Poppins", sans-serif;
+}
+
+/* ================= FORM ELEMENTS IMPROVEMENTS ================= */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Review Type Dropdown Improvements */
+.review-type {
+    width: 100%;
+    max-width: 300px;
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    font-size: 15px;
+    color: var(--text-primary);
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: "Inter", sans-serif;
+}
+
+.review-type:hover {
+    border-color: #999;
+}
+
+.review-type:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(57, 23, 228, 0.15);
+}
+
+/* ================= STAR RATING IMPROVEMENTS ================= */
 .rating-stars {
     direction: rtl;
     display: inline-flex;
-    gap: 6px;
+    gap: 8px;
+    padding: 10px 0;
 }
 
 .rating-stars input {
@@ -70,160 +157,377 @@ body {
 }
 
 .rating-stars label {
-    font-size: 34px;
-    color: #ddd;
+    font-size: 36px;
+    color: #e5e7eb;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.2s ease;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Fill stars on click */
-.rating-stars input:checked ~ label {
-    color: #3917e4;
-}
-
-/* Hover effect */
 .rating-stars label:hover,
 .rating-stars label:hover ~ label {
-    color: #3917e4;
+    color: #ffd700;
+    transform: scale(1.1);
 }
 
-/* ================= REVIEW TEXTAREA ================= */
+.rating-stars input:checked ~ label {
+    color: #ffd700;
+}
+
+.rating-stars input:checked ~ label:hover {
+    color: #ffed4a;
+}
+
+/* ================= TEXTAREA IMPROVEMENTS ================= */
 textarea {
     width: 100%;
-    height: 130px;
-    border: 2px solid #e5e7eb;
-    padding: 12px;
+    height: 140px;
+    border: 2px solid var(--border);
+    padding: 16px;
     border-radius: 12px;
-    background: #fafafa;
-    font-size: 1rem;
-    transition: 0.3s ease;
+    background: var(--surface);
+    font-size: 16px;
+    font-family: "Inter", sans-serif;
+    transition: all 0.3s ease;
+    resize: vertical;
+    min-height: 120px;
 }
 
 textarea:focus {
-    border-color: #3917e4;
-    box-shadow: 0 0 0 4px rgba(255,159,0,0.2);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(57, 23, 228, 0.15);
     outline: none;
 }
 
-/* ================= BUTTON ================= */
+/* ================= BUTTON IMPROVEMENTS ================= */
 .btn {
-    background: #3917e4;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     color: white;
-    padding: 14px 30px;
+    padding: 16px 35px;
     border: none;
-    margin-top: 12px;
     border-radius: 12px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 16px;
     font-weight: 600;
-    font-family: "Poppins";
-    transition: 0.25s;
+    font-family: "Poppins", sans-serif;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+    box-shadow: 0 4px 15px rgba(57, 23, 228, 0.3);
 }
 
 .btn:hover {
-    background: #3917e4;
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(57, 23, 228, 0.4);
 }
 
-/* ================= REVIEW LIST CARD ================= */
+.btn:active {
+    transform: translateY(-1px);
+}
+
+/* ================= REVIEW CARD IMPROVEMENTS ================= */
 .review-card {
-    background: white;
-    padding: 20px;
-    margin-top: 18px;
-    border-radius: 16px;
-    border: 1px solid #eee;
+    background: var(--surface);
+    padding: 25px;
+    margin-top: 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
     box-shadow: 0 4px 14px rgba(0,0,0,0.05);
-    transition: 0.3s;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.review-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary-color);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .review-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
-/* Header inside review */
+.review-card:hover::before {
+    opacity: 1;
+}
+
 .review-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .review-header h4 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
+    color: var(--text-primary);
 }
 
 .stars {
-    color: #3917e4;
+    color: #ffd700;
     font-size: 20px;
+    letter-spacing: 2px;
+}
+
+/* Type Tag Improvements */
+.type-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .comment {
-    margin-top: 10px;
-    line-height: 1.6;
-    color: #444;
+    margin: 15px 0;
+    line-height: 1.7;
+    color: var(--text-secondary);
     font-size: 15px;
 }
 
 .date {
-    font-size: 12px;
-    color: #888;
-    margin-top: 6px;
-}
-/* Review Type Label */
-label {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 6px;
-    display: block;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    font-style: italic;
 }
 
-/* Review Type Dropdown */
-.review-type {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #dcdcdc;
+/* ================= SECTION HEADINGS ================= */
+h3 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 40px 0 25px 0;
+    font-family: "Poppins", sans-serif;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    border-radius: 2px;
+}
+
+/* ================= NAVBAR IMPROVEMENTS ================= */
+.main-nav {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    padding: 16px 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.main-nav.scrolled {
+    padding: 10px 0;
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+    box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+}
+
+/* Logo Improvements */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 2rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: #fff;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.logo i {
+    font-size: 2rem;
+    color: #fff;
+}
+
+/* Nav Links Improvements */
+.nav-link {
+    color: #fff !important;
+    margin-left: 20px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    padding: 10px 16px !important;
     border-radius: 10px;
-    background: #fff;
-    font-size: 15px;
-    color: #444;
-    outline: none;
-    margin-bottom: 15px;
-    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.nav-link:hover::before {
+    left: 100%;
+}
+
+.nav-link:hover {
+    background: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Cart Icon Improvements */
+.cart-link {
+    position: relative;
+}
+
+.cart-link::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 8px;
+    height: 8px;
+    background: #ff4757;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.cart-link:hover::after {
+    opacity: 1;
+}
+
+.cart-link:hover i {
+    animation: cartBounce 0.6s ease;
+}
+
+@keyframes cartBounce {
+    0%, 20%, 60%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-5px); }
+    80% { transform: translateY(-2px); }
+}
+
+/* Mobile Menu Button */
+.navbar-toggler {
+    border: none;
+    font-size: 1.8rem;
+    padding: 8px 12px;
+    border-radius: 8px;
     transition: all 0.3s ease;
 }
 
-/* Hover effect */
-.review-type:hover {
-    border-color: #999;
+.navbar-toggler:hover {
+    background: rgba(255,255,255,0.1);
 }
 
-/* When focused (clicked) */
-.review-type:focus {
-    border-color: #3917e4;
-    box-shadow: 0 0 0 3px rgba(255, 159, 0, 0.25);
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
 }
 
-/* Style the dropdown arrow */
-.review-type::-ms-expand {
-    display: none;
+/* ================= RESPONSIVE DESIGN ================= */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 15px 0;
+    }
+
+    .product-box {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+        gap: 20px;
+    }
+
+    .product-box img {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+    }
+
+    .product-info h2 {
+        font-size: 26px;
+    }
+
+    .review-section {
+        padding: 20px;
+    }
+
+    .review-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .rating-stars label {
+        font-size: 32px;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-link {
+        margin-left: 10px;
+        font-size: 1rem;
+        padding: 8px 12px !important;
+    }
+
+    .logo {
+        font-size: 1.7rem;
+    }
+
+    .logo i {
+        font-size: 1.7rem;
+    }
 }
 
-.review-type {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' fill='%23444' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    background-size: 16px;
-}
-.type-tag {
-    display: inline-block;
-    background: #ffe5b3;
-    color: #3917e4;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 8px;
+@media (max-width: 480px) {
+    .product-box img {
+        width: 160px;
+        height: 160px;
+    }
+
+    .product-info h2 {
+        font-size: 22px;
+    }
+
+    .rating-stars label {
+        font-size: 28px;
+    }
+
+    h3 {
+        font-size: 24px;
+    }
 }
