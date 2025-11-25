@@ -18,9 +18,10 @@ function initSellerWebSocket(server) {
 
     }
 
-if (url.searchParams.get("userId")) {
-    ws.userId = url.searchParams.get("userId");
-}
+     if( url.searchParams.get("userId")){
+         ws.userId = url.searchParams.get("userId");
+
+    }
 
 
     if (!ws.sellerId  && !ws.userId) {

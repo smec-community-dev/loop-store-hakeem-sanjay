@@ -225,7 +225,7 @@ router.get("/profile",userrauth, async (req, res) => {
     res.render("user/profile", {
         data,
         items,
-        cartCount,orders
+        cartCount,orders,userId: userid
     });
 });
 
@@ -238,6 +238,9 @@ router.post("/profile", async (req, res) => {
     });
 
     res.redirect("/profile");
+});
+router.get("/notifications", (req, res) => {
+    res.render("user/notifications");
 });
 
 router.get("/", async (req, res) => {
@@ -469,9 +472,7 @@ router.get("/order/:id",userrauth, async (req, res) => {
         const productId = req.params.id;
 
         let data = await Products.findById(productId).lean();
-
         let address = await Address.findOne({ user: userid }).lean();
-
         res.render("user/order", {
             data,
             address
@@ -499,7 +500,6 @@ router.post("/order/:id", async (req, res) => {
 
 
 router.get("/placeorder/:id", userrauth, async (req, res) => {
-    try {
         const userid = req.session.user.userid;
         const productid = req.params.id;
         const quantity = parseInt(req.query.qty) || 1;
@@ -519,7 +519,6 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
         // DEBUG LOG — very important
         console.log("SELLER WHO SHOULD RECEIVE:", sellerId);
 
-        if (!orderdata) {
 
             let newOrder = await Order.create({
                 user: userid,
@@ -533,6 +532,9 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
                 ],
                 totalPrice: productdata.price * quantity
             });
+         productdata.stock = productdata.stock - quantity;
+        if (productdata.stock < 0) productdata.stock = 0;
+        await productdata.save();
 
             // Notify ONLY that seller
  notifySellerFor({
@@ -545,40 +547,6 @@ router.get("/placeorder/:id", userrauth, async (req, res) => {
 
 
             return res.redirect("/ordersuccess");
-        }
-
-        // Existing order add item
-        orderdata.items.push({
-            product: productid,
-            quantity: quantity,
-            priceAtPurchase: productdata.price,
-            seller: sellerId
-        });
-
-        orderdata.totalPrice = orderdata.items.reduce((sum, item) => {
-            return sum + item.quantity * item.priceAtPurchase;
-        }, 0);
-
-        await orderdata.save();
-         productdata.stock = productdata.stock - quantity;
-        if (productdata.stock < 0) productdata.stock = 0;
-        await productdata.save();
-        
-notifySellerFor({
-    sellerId: sellerId.toString(),
-    type: "new_order",
-    orderId:orderdata._id,
-    total: productdata.price,
-});
-
-
-
-        res.redirect("/ordersuccess");
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Server Error");
-    }
 });
 
 router.get("/ordersuccess", userrauth, async (req, res) => {
@@ -672,26 +640,12 @@ router.get("/placemultiorder",userrauth, async (req, res) => {
             0
         );
 
-    
-        let orderData = await Order.findOne({ user: userId });
-
-        let savedOrder;
-
-        if (!orderData) {
-         
-            savedOrder = await Order.create({
+          let savedOrder = await Order.create({
                 user: userId,
                 items: orderItems,
                 totalPrice: totalAmount
             });
-        } else {
-            orderItems.forEach(i => orderData.items.push(i));
-
-            orderData.totalPrice += totalAmount;
-
-            
-            savedOrder = await orderData.save();
-        }
+        
         for (let item of cart.items) {
         const product = item.product;
 

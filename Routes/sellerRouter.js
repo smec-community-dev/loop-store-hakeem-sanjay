@@ -57,8 +57,7 @@ hbs.registerHelper("times", function(n, block) {
     return accum;
 });
 
-
-
+hbs.registerHelper("eq", (a, b) => a === b);
 
 
 
@@ -187,6 +186,43 @@ router.get('/profile', sellerauth, async (req, res) => {
     console.error("eroor on fetching seller datas on order:" + error)
   }
 });
+router.get("/orderupdate", async (req, res) => {
+    try {
+        const orderId = req.query.id;
+        const newStatus = req.query.status;
+
+        if (!orderId || !newStatus) {
+            return res.status(400).send("Missing parameters");
+        }
+
+        // Update order
+        await Order.findByIdAndUpdate(orderId, { status: newStatus });
+
+        // Get order with user info
+        const orderData = await Order.findById(orderId).populate("user");
+
+        if (!orderData) {
+            return res.status(404).send("Order not found");
+        }
+
+        const userId = orderData.user._id.toString();
+
+        // Send WebSocket notification to the USER
+        const { notifyUserFor } = require("../websocket/sellerws");
+
+        notifyUserFor(userId, {
+            type: "order_status_update",
+            orderId: orderId,
+            status: newStatus
+        });
+
+        return res.redirect("/seller/profile");
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Server Error");
+    }
+});
 
 
 
@@ -214,22 +250,6 @@ router.post('/profile', upload.array("productImages[]", 10), async (req, res) =>
 
         console.log("Product created");
 
-        // 🔔 Send notification to all WS clients
-        if (global.wss) {
-            const message = {
-                type: "new_product",
-                text: `New product added: ${newProduct.name}`,
-                productId: newProduct._id
-            };
-
-            global.wss.clients.forEach(client => {
-                if (client.readyState === 1) {
-                    client.send(JSON.stringify(message));
-                }
-            });
-
-            console.log("🔔 Notification sent to all WebSocket users");
-        }
 
         return res.redirect('/seller/profile');
 
