@@ -669,7 +669,7 @@ router.get("/cartorder", userrauth,async (req, res) => {
         total: 0,
         address
       });
-    }
+    };
 
    
     const cartdata = cart.items.map((item) => ({
