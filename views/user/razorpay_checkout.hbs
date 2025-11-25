@@ -1,0 +1,25 @@
+<h2 class="text-center">Complete Payment</h2>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    var options = {
+        "key": "{{key}}",
+        "amount": "{{amount}}",
+        "currency": "INR",
+        "name": "ShopHub Orders",
+        "description": "Order Payment",
+        "order_id": "{{razorOrder.id}}",
+
+        "handler": function (response){
+            window.location.href = "/payment/success?orderId={{newOrder._id}}&paymentId=" + response.razorpay_payment_id;
+        },
+
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+</script>
