@@ -183,7 +183,7 @@ h1, h2, h3, h4 {
     width: 180px;
     height: 180px;
     border-radius: 50%;
-    background: url('/uploads/slider-1.jpg') center/cover no-repeat;
+    background: url('https://images.unsplash.com/photo-1556742393-d75f468bfcb0') center/cover no-repeat;
     border: 4px solid white;
     margin: auto;
     box-shadow: 0 12px 25px rgba(0,0,0,0.25);

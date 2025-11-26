@@ -69,26 +69,26 @@
 <!-- ================= HEADER INFO STRIP ================= -->
 <div class="header-info">
   <div class="container-fluid">
-    <div class="row">
+    <div class="row align-items-center">
 
       <div class="col-md-4">
-        <div class="header-item">
-          <img src="/uploads/delivery.png" alt="">
-          <p>Free shipping on orders over $30 in USA</p>
+        <div class="header-item d-flex align-items-center gap-2">
+          <img src="https://img.icons8.com/ios-filled/50/000000/delivery.png" class="img-fluid" style="width: 28px;" alt="">
+          <p class="mb-0">Free shipping on orders over $30 in USA</p>
         </div>
       </div>
 
       <div class="col-md-4 text-center">
-        <div class="header-item">
-          <img src="/uploads/voucher.png" alt="">
-          <p>20% Student Discount</p>
+        <div class="header-item d-flex justify-content-center align-items-center gap-2">
+          <img src="https://img.icons8.com/ios-filled/50/000000/discount.png" class="img-fluid" style="width: 28px;" alt="">
+          <p class="mb-0">20% Student Discount</p>
         </div>
       </div>
 
       <div class="col-md-4 text-end">
-        <div class="header-item">
-          <img src="/uploads/sales.png" alt="">
-          <p>30% off on dresses – Use code: 30OFF</p>
+        <div class="header-item d-flex justify-content-end align-items-center gap-2">
+          <img src="https://img.icons8.com/ios-filled/50/percentage.png" class="img-fluid" style="width: 28px;" alt="">
+          <p class="mb-0">30% off on dresses – Use code: 30OFF</p>
         </div>
       </div>
 
@@ -96,13 +96,14 @@
   </div>
 </div>
 
+
 <!-- ================= HERO SLIDER ================= -->
 <section class="hero-slider">
   <div class="single-slider-item hero-bg">
     <div class="container">
       <h1>Since 2000</h1>
       <h2>Loopstore.</h2>
-      <a href="#" class="primary-btn">See More</a>
+      <a href="/allproducts" class="primary-btn">See More</a>
     </div>
   </div>
 </section>
@@ -144,21 +145,39 @@
     
 
 <!-- ================= HERO CAROUSEL ================= -->
-<div class="container mt-4">
+<div class="container-fluid px-0 hero-slider">
   <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
 
     <div class="carousel-inner">
+
       <div class="carousel-item active">
-        <img src="/uploads/web site banner.jpg" class="d-block w-100">
+        <div class="hero-slide" 
+             style="background-image: url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=2000&q=80');">
+        </div>
       </div>
+
       <div class="carousel-item">
-        <img src="/uploads/Motorola Edge.jpg" class="d-block w-100">
+        <div class="hero-slide"
+             style="background-image: url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=2000&q=80');">
+        </div>
       </div>
+
       <div class="carousel-item">
-        <img src="/uploads/Huawei FreeBuds.jpg" class="d-block w-100">
+        <div class="hero-slide"
+             style="background-image: url('https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80');">
+        </div>
       </div>
+
+      <div class="carousel-item">
+        <div class="hero-slide"
+             style="background-image: url('https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');">
+        </div>
+      </div>
+
+
     </div>
 
+    <!-- Controls -->
     <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
       <span class="carousel-control-prev-icon"></span>
     </button>
@@ -169,6 +188,7 @@
 
   </div>
 </div>
+
 
 <!-- ================= TOP OFFERS ================= -->
 <div class="container mt-5">

@@ -122,9 +122,6 @@
     /* =========================================
        HERO SLIDER
     ========================================= */
-    .hero-slider {
-        margin-top: 0;
-    }
 
     /* Background Image Container */
     .hero-bg {
@@ -139,76 +136,151 @@
         color: #fff;
     }
 
-    /* REMOVE DARK OVERLAY */
-    .single-slider-item::after {
-        content: none !important;
-    }
+    /* HERO SLIDER FIX */
+/* =========================================
+   HERO SLIDER
+========================================= */
+.hero-slider {
+  margin-top: 0;
+}
 
-    /* Hero Text Styling */
-    .single-slider-item h1 {
-        font-size: 70px;
-        font-weight: 700;
-        animation: fadeInUp 1s ease-out;
-    }
+/* Fullscreen responsive slider */
+.hero-slide {
+  height: 550px;                     /* Modern fixed height */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  border-radius: 20px;               /* Smooth modern round shape */
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  transition: 0.4s ease-in-out;
+}
 
-    .single-slider-item h2 {
-        font-size: 42px;
-        margin-bottom: 20px;
-        animation: fadeInUp 1s ease-out 0.2s forwards;
-        opacity: 0;
-    }
+/* Subtle hover zoom */
+.hero-slide:hover {
+  transform: scale(1.01);
+}
 
-    .primary-btn {
-        display: inline-block;
-        padding: 12px 32px;
-        background: #ff4d4d;
-        color: #fff;
-        font-weight: 600;
-        border-radius: 10px;
-        text-decoration: none;
-        transition: 0.3s;
-        animation: fadeInUp 1s ease-out 0.4s forwards;
-        opacity: 0;
-    }
+/* Soft dark overlay */
+.hero-slide::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.15),
+    rgba(0,0,0,0.45)
+  );
+  z-index: 1;
+}
 
-    .primary-btn:hover {
-        background: #e03636;
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
+/* Remove unwanted old overlay */
+.single-slider-item::after {
+  content: none !important;
+}
 
-    /* =========================================
-       FEATURES SECTION
-    ========================================= */
-    .features-section {
-        padding: 80px 0;
-        background: #fff;
-    }
-    .single-features-ads {
-        background: #fff;
-        padding: 30px 25px;
-        text-align: center;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        transition: 0.3s ease;
-    }
-    .single-features-ads:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 6px 25px rgba(0,0,0,0.18);
-    }
-    .single-features-ads img {
-        width: 55px;
-        margin-bottom: 15px;
-    }
-    .single-features-ads h4 {
-        font-size: 20px;
-        margin-bottom: 12px;
-        color: var(--primary);
-    }
-    .single-features-ads p {
-        font-size: 14px;
-        color: var(--secondary);
-    }
+/* Hero text styling */
+.single-slider-item h1 {
+  font-size: 58px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 5px 25px rgba(0,0,0,0.4);
+  animation: fadeInUp 1s ease;
+}
+
+.single-slider-item h2 {
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 20px;
+  text-shadow: 0 3px 15px rgba(0,0,0,0.3);
+  animation: fadeInUp 1s ease 0.3s forwards;
+  opacity: 0;
+}
+
+/* CTA Button */
+.primary-btn {
+  padding: 12px 36px;
+  background: #ff4646;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 50px;                /* premium pill button */
+  text-decoration: none;
+  box-shadow: 0 5px 20px rgba(255,70,70,0.4);
+  transition: 0.3s ease;
+  animation: fadeInUp 1s ease 0.6s forwards;
+  opacity: 0;
+}
+
+.primary-btn:hover {
+  background: #e52d2d;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255,70,70,0.5);
+}
+
+/* =========================================
+   FEATURES SECTION
+========================================= */
+.features-section {
+  padding: 90px 0;
+  background: #fafafa;
+}
+
+/* Single Feature Card */
+.single-features-ads {
+  background: #fff;
+  padding: 40px 30px;
+  text-align: center;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  transition: 0.35s ease;
+  border: 1px solid rgba(0,0,0,0.04);
+  cursor: pointer;
+}
+
+.single-features-ads:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 20px 35px rgba(0,0,0,0.12);
+}
+
+/* Icon */
+.single-features-ads img {
+  width: 60px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
+}
+
+/* Title */
+.single-features-ads h4 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #ff4646;
+}
+
+/* Text */
+.single-features-ads p {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.6;
+}
+
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
     /* =========================================
        CATEGORY GRID
