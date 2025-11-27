@@ -2,8 +2,8 @@
     /* ================= MODERN VARIABLES ================= */
  /* ================= MODERN VARIABLES ================= */
 :root {
-  --primary: #4f46e5;
-  --primary-grad: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 100%);
+  --primary: #3917e4;
+  --primary-grad: linear-gradient(135deg, #3917e4 0%,#3917e4 100%);
   --accent: #f43f5e;
   --dark: #0f172a;
   --light: #f8fafc;
@@ -28,7 +28,7 @@ a { text-decoration: none; color: inherit; }
 /* ================= BLUE/WHITE NAVBAR (New Model) ================= */
 .navbar {
   /* Applying the main-nav style to the existing .navbar class */
-  background: var(--highlight); /* Blue background */
+  background: #3917e4; /* Blue background */
   padding: 12px 0;
   box-shadow: var(--shadow);
   transition: all 0.3s ease;
