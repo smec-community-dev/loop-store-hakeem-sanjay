@@ -321,7 +321,7 @@ router.post("/contact",async (req, res) => {
 router.get("/allproducts", async (req, res) => {
     const { brand, price } = req.query;  
     const page = Number(req.query.page) || 1;
-    const perPage = 3;
+    const perPage = 9;
 
     let filter = {};
 
@@ -357,24 +357,6 @@ router.get("/allproducts", async (req, res) => {
 });
 
 
-
-
-
-router.get("/usercategorypage", async (req, res) => {
-    let catName = req.query.cat;
-     const categories = await Category.find();
-    let category = await Category.findOne({
-        name: catName
-    });
-    let data = [];
-    if (category) {
-        data = await Products.find({ category: category._id}).populate("category")
-    }
-    console.log(data,categories,catName);
-    
-    
-    res.render("user/usercategorypage",{data,categories,catName});
-});
 
 router.get("/singlepage/:id", async (req, res) => {
         let id = req.params.id;
