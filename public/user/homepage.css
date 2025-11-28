@@ -1,6 +1,4 @@
-
-    /* ================= MODERN VARIABLES ================= */
- /* ================= MODERN VARIABLES ================= */
+/* ================= MODERN VARIABLES ================= */
 :root {
   --primary: #3917e4;
   --primary-grad: linear-gradient(135deg, #3917e4 0%,#3917e4 100%);
@@ -50,24 +48,25 @@ a { text-decoration: none; color: inherit; }
 }
 
 .navbar-brand {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: #fff !important;
-    }
-    .navbar .nav-link {
-        font-weight: 600;
-        color: #fff !important;
-        transition: color 0.3s ease;
-    }
-    
-    .navbar .nav-link:hover {
-        color: #fff !important;
-        transform: translateY(-2px);
-    }
-    
-    .logo-icon {
-        font-size: 1.8rem;
-    }
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff !important;
+}
+
+.navbar .nav-link {
+    font-weight: 600;
+    color: #fff !important;
+    transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+    color: #fff !important;
+    transform: translateY(-2px);
+}
+
+.logo-icon {
+    font-size: 1.8rem;
+}
 
 
 /* Updated Search Bar Modern to fit the new theme */
@@ -87,7 +86,6 @@ a { text-decoration: none; color: inherit; }
   width: 250px;
 }
 
-/* The rest of your styles for hero, cards, etc. remain the same */
 /* ================= DYNAMIC HERO SECTION ================= */
 .hero-section {
   /* Increased top padding to account for non-glass, solid navbar */
@@ -288,4 +286,118 @@ a { text-decoration: none; color: inherit; }
   padding: 3rem;
   color: white;
   box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+/* ================= RESPONSIVE STYLES ================= */
+
+/* Base container padding for mobile */
+.container {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Adjustments for the Hero Section */
+.hero-section {
+  padding: 8rem 0 3rem; /* Reduced top padding for mobile */
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 2.5rem; /* Smaller title on mobile */
+}
+
+/* Hide background blobs on small screens for performance and clarity */
+.blob {
+  display: none;
+}
+
+/* Marquee width correction for small screens */
+.marquee-container {
+  width: 100%;
+  left: 0;
+  margin: 1.5rem 0;
+}
+
+/* General section padding */
+section {
+  padding: 3rem 0;
+}
+
+/* Adjust section title size for mobile */
+.section-title {
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+/* ================= MEDIA QUERIES ================= */
+
+/* Max Width 991.98px (Less than Desktop/Large Tablet) */
+@media (max-width: 991.98px) {
+  /* Hide the desktop search bar on smaller screens - relies on Bootstrap structure */
+  .navbar .search-input-group {
+    display: none;
+  }
+}
+
+/* Max Width 767.98px (Mobile & Small Tablet) */
+@media (max-width: 767.98px) {
+  /* Hero Section */
+  .hero-btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Info Strip */
+  .info-strip-modern {
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+}
+
+/* Max Width 575.98px (Extra Small Devices/Phones) */
+@media (max-width: 575.98px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  /* Category Circles */
+  .cat-circle {
+    width: 90px;
+    height: 90px;
+  }
+  .cat-name {
+    font-size: 0.8rem;
+  }
+}
+
+/* Min Width 768px (Tablet and larger screens - Restoring desktop look) */
+@media (min-width: 768px) {
+  .hero-section {
+    padding: 10rem 0 5rem; /* Restore original padding */
+  }
+  .hero-title {
+    font-size: 3.5rem;
+  }
+  .section-title {
+    text-align: left; /* Align section titles back to the left */
+  }
+  .blob {
+    display: block; /* Show blobs on tablets/desktops */
+  }
+  .hero-btn {
+    width: auto;
+  }
+}
+
+/* Min Width 992px (Larger desktop screens - Restore full title and search) */
+@media (min-width: 992px) {
+  .hero-title {
+    font-size: 4.5rem; /* Restore original title size */
+  }
+  .navbar .search-input-group {
+    display: flex; /* Show desktop search bar */
+  }
 }
