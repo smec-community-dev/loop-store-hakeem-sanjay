@@ -656,7 +656,8 @@
     document.head.appendChild(style);
 
     // WebSocket connection
-    const ws = new WebSocket("ws://loopstore.sanjay.mysmeclabs.com/?userId={{userId}}");
+   const ws = new WebSocket("wss://loopstore.sanjay.mysmeclabs.com/?userId={{{userId}}}");
+
 
     ws.onopen = () => console.log("WS Connected");
 
