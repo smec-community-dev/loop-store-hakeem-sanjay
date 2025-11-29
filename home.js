@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'hbs');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
-app.use('/uploads', express.static('uploads'));
+
 
 mongoose
   .connect(process.env.MONGO_URI)

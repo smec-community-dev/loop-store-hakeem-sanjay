@@ -13,6 +13,8 @@ let passport=require('passport')
 require("../config/sellerpassport")(passport);   
 require("dotenv").config();
 const Notification = require("../Model/sellerNotification");
+const uploadProduct = require("../middleware/uploadProductS3");
+
 
 
 
@@ -230,12 +232,12 @@ router.get("/orderupdate", async (req, res) => {
 });
 
 
-
-router.post('/profile', upload.array("productImages[]", 10), async (req, res) => {
+router.post('/profile', uploadProduct.array("productImages[]", 10), async (req, res) => {
     let { name, description, price, stock, category } = req.body;
+
     const sellerID = req.session.seller.id;
 
-    const images = req.files.map(file => "/uploads/products/" + file.filename);
+    const images = req.files.map(file => file.location);  // S3 URLs
 
     try {
         let newProduct = await Product.create({
@@ -253,15 +255,14 @@ router.post('/profile', upload.array("productImages[]", 10), async (req, res) =>
             { $push: { products: newProduct._id } }
         );
 
-        console.log("Product created");
-
-
         return res.redirect('/seller/profile');
 
     } catch (error) {
-        console.error("Product save error:", error);
+        console.error(error);
+        res.send("Error saving product");
     }
 });
+
 
 router.get('/profile/update', sellerauth, async (req, res) => {
   let id = req.query.id
